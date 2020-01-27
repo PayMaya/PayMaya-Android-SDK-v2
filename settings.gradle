@@ -1,0 +1,3 @@
+include ':sdk',
+        ':sdk-demo'
+rootProject.name='paymaya-sdk-android'

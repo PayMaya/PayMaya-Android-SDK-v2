@@ -21,7 +21,7 @@ class PayMayaGatewayRepositoryTest {
         val repository =
             PayMayaGatewayRepository(PayMayaEnvironment.SANDBOX, CLIENT_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.checkoutUrl == BuildConfig.API_CHECKOUT_ENDPOINT_SANDBOX)
+        assert(repository.checkoutBaseUrl == BuildConfig.API_CHECKOUT_BASE_URL_SANDBOX)
     }
 
     @Test
@@ -29,7 +29,7 @@ class PayMayaGatewayRepositoryTest {
         val repository =
             PayMayaGatewayRepository(PayMayaEnvironment.PRODUCTION, CLIENT_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.checkoutUrl == BuildConfig.API_CHECKOUT_ENDPOINT_PRODUCTION)
+        assert(repository.checkoutBaseUrl == BuildConfig.API_CHECKOUT_BASE_URL_PRODUCTION)
     }
 
     companion object {

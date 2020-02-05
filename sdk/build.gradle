@@ -13,10 +13,10 @@ android {
         versionName "2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "API_CHECKOUT_ENDPOINT_SANDBOX", API_CHECKOUT_ENDPOINT_SANDBOX
-        buildConfigField "String", "API_CHECKOUT_ENDPOINT_PRODUCTION", API_CHECKOUT_ENDPOINT_RELEASE
-        buildConfigField "String", "API_PAYMENTS_ENDPOINT_SANDBOX", API_PAYMENTS_ENDPOINT_SANDBOX
-        buildConfigField "String", "API_PAYMENTS_ENDPOINT_PRODUCTION", API_PAYMENTS_ENDPOINT_RELEASE
+        buildConfigField "String", "API_CHECKOUT_BASE_URL_SANDBOX", API_CHECKOUT_BASE_URL_SANDBOX
+        buildConfigField "String", "API_CHECKOUT_BASE_URL_PRODUCTION", API_CHECKOUT_BASE_URL_PRODUCTION
+        buildConfigField "String", "API_PAYMENTS_BASE_URL_SANDBOX", API_PAYMENTS_BASE_URL_SANDBOX
+        buildConfigField "String", "API_PAYMENTS_BASE_URL_PRODUCTION", API_PAYMENTS_BASE_URL_PRODUCTION
     }
 
     buildTypes {

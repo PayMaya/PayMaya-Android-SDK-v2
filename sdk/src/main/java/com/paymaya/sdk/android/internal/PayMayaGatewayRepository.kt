@@ -18,9 +18,9 @@ internal class PayMayaGatewayRepository(
     private val httpClient: OkHttpClient
 ) {
 
-    val checkoutUrl = when (environment) {
-        PayMayaEnvironment.PRODUCTION -> BuildConfig.API_CHECKOUT_ENDPOINT_PRODUCTION
-        PayMayaEnvironment.SANDBOX -> BuildConfig.API_CHECKOUT_ENDPOINT_SANDBOX
+    val checkoutBaseUrl = when (environment) {
+        PayMayaEnvironment.PRODUCTION -> BuildConfig.API_CHECKOUT_BASE_URL_PRODUCTION
+        PayMayaEnvironment.SANDBOX -> BuildConfig.API_CHECKOUT_BASE_URL_SANDBOX
     }
 
     suspend fun checkout(checkoutModel: Checkout): Response {
@@ -33,7 +33,7 @@ internal class PayMayaGatewayRepository(
         val requestBody = bodyString.toRequestBody()
 
         val request = Request.Builder()
-            .url(checkoutUrl)
+            .url(checkoutBaseUrl + CHECKOUT_ENDPOINT)
             .header(
                 HEADER_CONTENT_TYPE,
                 MIME_APPLICATION_JSON
@@ -50,6 +50,7 @@ internal class PayMayaGatewayRepository(
     }
 
     companion object {
+        private const val CHECKOUT_ENDPOINT = "checkouts"
         private const val HEADER_CONTENT_TYPE = "Content-Type"
         private const val HEADER_AUTHORIZATION = "Authorization"
         private const val HEADER_CONTENT_LENGTH = "Content-Length"

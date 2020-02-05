@@ -1,1 +1,13 @@
-<manifest package="com.paymaya.sdk.android" />
+<manifest package="com.paymaya.sdk.android"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name=".checkout.internal.PayMayaCheckoutActivity" />
+    </application>
+
+</manifest>

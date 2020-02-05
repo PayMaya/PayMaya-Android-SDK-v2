@@ -65,8 +65,6 @@ appcenter {
     ownerName = getAppCenterOwnerName()
     // Name of the AppCenter Distribution Group
     distributionGroups = [getAppCenterDistributionGroup()]
-    // Can be a file or text
-    releaseNotes = file("../changelog.md")
     // Send mail to testers
     notifyTesters = true
     apps {

@@ -3,12 +3,12 @@ package com.paymaya.sdk.android.checkout
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
-import com.paymaya.sdk.android.PayMayaEnvironment
-import com.paymaya.sdk.android.checkout.exceptions.BadRequestException
-import com.paymaya.sdk.android.internal.Logger
-import com.paymaya.sdk.android.checkout.internal.PayMayaCheckoutActivity
-import com.paymaya.sdk.android.checkout.models.Checkout
-import kotlin.IllegalStateException
+import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.checkout.internal.CheckoutActivity
+import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.common.internal.Logger
+import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 
 class PayMayaCheckout private constructor(
     private val clientKey: String,
@@ -21,10 +21,10 @@ class PayMayaCheckout private constructor(
         Logger.level = logLevel
     }
 
-    fun execute(activity: Activity, checkout: Checkout) {
-        val intent = PayMayaCheckoutActivity.newIntent(
+    fun execute(activity: Activity, requestData: CheckoutRequest) {
+        val intent = CheckoutActivity.newIntent(
             activity,
-            checkout,
+            requestData,
             clientKey,
             environment
         )
@@ -35,27 +35,27 @@ class PayMayaCheckout private constructor(
         requestCode: Int,
         resultCode: Int,
         data: Intent?
-    ): PayMayaResult? {
+    ): PayMayaCheckoutResult? {
         if (requestCode == CHECKOUT_REQUEST_CODE) {
             requireNotNull(data)
-            val checkoutId = data.getStringExtra(PayMayaCheckoutActivity.EXTRAS_CHECKOUT_ID)
+            val checkoutId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
             return when (resultCode) {
                 Activity.RESULT_OK ->
-                    ResultSuccess(checkoutId)
+                    PayMayaCheckoutResult.Success(checkoutId)
 
                 Activity.RESULT_CANCELED ->
-                    ResultCancel(checkoutId)
+                    PayMayaCheckoutResult.Cancel(checkoutId)
 
-                PayMayaCheckoutActivity.RESULT_FAILURE -> {
+                PayMayaPaymentActivity.RESULT_FAILURE -> {
                     val exception =
-                        data.getSerializableExtra(PayMayaCheckoutActivity.EXTRAS_FAILURE_EXCEPTION) as Exception
+                        data.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_FAILURE_EXCEPTION) as Exception
 
                     if (exception is BadRequestException) {
-                        Logger.e(TAG, exception.payMayaError.toString())
+                        Logger.e(TAG, exception.error.toString())
                     }
 
-                    ResultFailure(checkoutId, exception)
+                    PayMayaCheckoutResult.Failure(checkoutId, exception)
                 }
                 else ->
                     throw IllegalStateException("Invalid result code: $resultCode")

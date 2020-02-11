@@ -1,6 +1,7 @@
 package com.paymaya.sdk.android.checkout.models
 
 import android.os.Parcelable
+import com.paymaya.sdk.android.common.models.TotalAmount
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 

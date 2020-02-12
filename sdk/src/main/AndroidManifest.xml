@@ -7,7 +7,15 @@
     <application>
         <activity
             android:configChanges="orientation|screenSize"
-            android:name=".checkout.internal.PayMayaCheckoutActivity" />
+            android:name=".checkout.internal.CheckoutActivity" />
+
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name=".paywithpaymaya.internal.SinglePaymentActivity" />
+
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name=".paywithpaymaya.internal.CreateWalletLinkActivity" />
     </application>
 
 </manifest>

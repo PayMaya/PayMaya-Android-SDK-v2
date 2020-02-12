@@ -28,6 +28,22 @@
         android:layout_margin="16dp"
         android:text="Checkout" />
 
+    <Button
+        android:id="@+id/payWithPayMayaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:text="Pay With PayMaya - Single payment" />
+
+    <Button
+        android:id="@+id/payWithPayMayaCreateWalletLinkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:text="Pay With PayMaya - Create wallet link" />
+
     <View
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

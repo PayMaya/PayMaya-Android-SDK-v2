@@ -4,14 +4,14 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.paymaya.sdk.android.checkout.internal.SendCheckoutRequestUseCase
+import com.paymaya.sdk.android.checkout.internal.CheckoutUseCase
 import com.paymaya.sdk.android.checkout.models.Buyer
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponse
-import com.paymaya.sdk.android.common.internal.SuccessResponse
+import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
+import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl
@@ -36,7 +36,7 @@ class PayMayaCheckoutPresenterTest {
     private lateinit var json: Json
 
     @Mock
-    private lateinit var sendCheckoutRequestUseCase: SendCheckoutRequestUseCase
+    private lateinit var checkoutUseCase: CheckoutUseCase
 
     @Mock
     private lateinit var view: PayMayaPaymentContract.View
@@ -48,15 +48,15 @@ class PayMayaCheckoutPresenterTest {
         MockitoAnnotations.initMocks(this)
 
         json = Json(JsonConfiguration.Stable)
-        presenter = PayMayaPaymentPresenter(sendCheckoutRequestUseCase)
+        presenter = PayMayaPaymentPresenter(checkoutUseCase)
     }
 
     @Test
     fun success() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = CHECKOUT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
@@ -69,8 +69,8 @@ class PayMayaCheckoutPresenterTest {
     @Test
     fun failure() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                ErrorResponse(InternalException("Internal exception"))
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                ErrorResponseWrapper(InternalException("Internal exception"))
             )
             presenter.viewCreated(view, prepareCheckoutRequest())
 
@@ -81,9 +81,9 @@ class PayMayaCheckoutPresenterTest {
     @Test
     fun cancel() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = CHECKOUT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
@@ -97,8 +97,8 @@ class PayMayaCheckoutPresenterTest {
     @Test
     fun cancelUninitialized() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                ErrorResponse(UnknownHostException())
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                ErrorResponseWrapper(UnknownHostException())
             )
             presenter.viewCreated(view, prepareCheckoutRequest())
             presenter.backButtonPressed()
@@ -110,9 +110,9 @@ class PayMayaCheckoutPresenterTest {
     @Test
     fun urlRedirectionSuccess() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = CHECKOUT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
@@ -126,9 +126,9 @@ class PayMayaCheckoutPresenterTest {
     @Test
     fun urlRedirectionCancel() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = CHECKOUT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
@@ -142,9 +142,9 @@ class PayMayaCheckoutPresenterTest {
     @Test
     fun urlRedirectionFailure() {
         runBlocking {
-            whenever(sendCheckoutRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(checkoutUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = CHECKOUT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )

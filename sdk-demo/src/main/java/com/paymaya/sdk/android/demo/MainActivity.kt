@@ -19,6 +19,8 @@ import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.vault.PayMayaVault
+import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigDecimal
 
@@ -31,6 +33,12 @@ class MainActivity : Activity() {
         .build()
 
     private val payWityPayMayaClient = PayWithPayMaya.Builder()
+        .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
+        .environment(PayMayaEnvironment.SANDBOX)
+        .logLevel(Log.VERBOSE)
+        .build()
+
+    private val payMayaVaultClient = PayMayaVault.Builder()
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
         .logLevel(Log.VERBOSE)
@@ -51,6 +59,14 @@ class MainActivity : Activity() {
         payWithPayMayaCreateWalletLinkButton.setOnClickListener {
             payWithPayMayaCreateWalletLink()
         }
+
+        payMayaVaultTokenizeCardButton.setOnClickListener {
+            payMayaVaultTokenizeCard()
+        }
+    }
+
+    private fun payMayaVaultTokenizeCard() {
+        payMayaVaultClient.execute(this)
     }
 
     private fun payCheckout() {
@@ -123,6 +139,12 @@ class MainActivity : Activity() {
             processPayWithWithPayMayaResult(it)
             return
         }
+
+        val vaultResult = payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
+        vaultResult?.let {
+            processVaultResult(it)
+            return
+        }
     }
 
     private fun processCheckoutResult(result: PayMayaCheckoutResult) {
@@ -193,6 +215,22 @@ class MainActivity : Activity() {
                 if (result.exception is BadRequestException) {
                     Log.d(TAG, (result.exception as BadRequestException).error.toString())
                 }
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun processVaultResult(result: PayMayaVaultResult) {
+        when (result) {
+            is PayMayaVaultResult.Success -> {
+                val message = "Success, result: ${result.paymentTokenId}, ${result.state}"
+                Log.i(TAG, message)
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+
+            is PayMayaVaultResult.Cancel -> {
+                val message = "Canceled"
+                Log.w(TAG, message)
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             }
         }

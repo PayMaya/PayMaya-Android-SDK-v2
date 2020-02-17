@@ -44,6 +44,14 @@
         android:layout_margin="16dp"
         android:text="Pay With PayMaya - Create wallet link" />
 
+    <Button
+        android:id="@+id/payMayaVaultTokenizeCardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:text="PayMaya Vault - tokenize card" />
+
     <View
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

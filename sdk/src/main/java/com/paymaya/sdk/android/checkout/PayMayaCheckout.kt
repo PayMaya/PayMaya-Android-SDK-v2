@@ -7,6 +7,7 @@ import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.checkout.internal.CheckoutActivity
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.common.internal.Constants
 import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 
@@ -28,7 +29,7 @@ class PayMayaCheckout private constructor(
             clientKey,
             environment
         )
-        activity.startActivityForResult(intent, CHECKOUT_REQUEST_CODE)
+        activity.startActivityForResult(intent, Constants.CHECKOUT_REQUEST_CODE)
     }
 
     fun onActivityResult(
@@ -36,7 +37,7 @@ class PayMayaCheckout private constructor(
         resultCode: Int,
         data: Intent?
     ): PayMayaCheckoutResult? {
-        if (requestCode == CHECKOUT_REQUEST_CODE) {
+        if (requestCode == Constants.CHECKOUT_REQUEST_CODE) {
             requireNotNull(data)
             val checkoutId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
@@ -89,6 +90,5 @@ class PayMayaCheckout private constructor(
 
     companion object {
         private const val TAG = "PayMayaCheckout"
-        private const val CHECKOUT_REQUEST_CODE = 70707
     }
 }

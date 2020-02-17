@@ -24,13 +24,11 @@ internal class CheckoutActivity : PayMayaPaymentActivity<CheckoutRequest>() {
         val httpClient = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
-
-        return PayMayaPaymentPresenter(
-            SendCheckoutRequestUseCase(
-                json,
-                CheckoutRepository(environment, clientKey, json, httpClient)
-            )
+        val sendRequestUseCase = CheckoutUseCase(
+            json,
+            CheckoutRepository(environment, clientKey, json, httpClient)
         )
+        return PayMayaPaymentPresenter(sendRequestUseCase)
     }
 
     companion object {

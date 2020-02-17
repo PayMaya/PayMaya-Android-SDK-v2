@@ -1,10 +1,10 @@
 package com.paymaya.sdk.android.common.internal.screen
 
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponse
+import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
+import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.internal.SendRequestBaseUseCase
-import com.paymaya.sdk.android.common.internal.SuccessResponse
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,18 +66,25 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
 
     private fun processResponse(responseWrapper: ResponseWrapper) {
         when (responseWrapper) {
-            is SuccessResponse -> processSuccessResponse(responseWrapper)
-            is ErrorResponse -> processErrorResponse(responseWrapper)
+            is RedirectSuccessResponseWrapper -> processSuccessResponse(responseWrapper)
+            is ErrorResponseWrapper -> processErrorResponse(responseWrapper)
+            else -> throw IllegalStateException("Unexpected response wrapper: ${responseWrapper.javaClass.simpleName}")
         }
     }
 
-    private fun processSuccessResponse(responseWrapper: SuccessResponse) {
-        val redirectUrl = responseWrapper.redirectUrl
-        resultId = responseWrapper.responseId
+    private fun processSuccessResponse(redirectSuccessResponse: RedirectSuccessResponseWrapper) {
+        val redirectUrl = redirectSuccessResponse.redirectUrl
+        resultId = redirectSuccessResponse.resultId
         view?.loadUrl(redirectUrl)
     }
 
-    private fun processErrorResponse(responseWrapper: ErrorResponse) {
-        view?.finishFailure(resultId, responseWrapper.exception)
+    private fun processErrorResponse(responseWrapper: ErrorResponseWrapper) {
+        val exception = responseWrapper.exception
+        if (exception is kotlinx.coroutines.CancellationException) {
+            view?.finishCanceled(resultId)
+            return
+        }
+
+        view?.finishFailure(resultId, exception)
     }
 }

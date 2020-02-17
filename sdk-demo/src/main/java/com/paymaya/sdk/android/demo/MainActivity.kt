@@ -1,10 +1,13 @@
 package com.paymaya.sdk.android.demo
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import com.google.android.material.badge.BadgeDrawable
 import com.paymaya.sdk.android.PayMayaEnvironment
 import com.paymaya.sdk.android.checkout.*
 import com.paymaya.sdk.android.checkout.exceptions.BadRequestException
@@ -12,7 +15,7 @@ import com.paymaya.sdk.android.checkout.models.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigDecimal
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity(), ShopViewActions {
 
     private val payMayaClient = PayMayaCheckout.Builder()
         .clientKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
@@ -24,9 +27,9 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        checkoutButton.setOnClickListener {
-            payCheckout()
-        }
+//        checkoutButton.setOnClickListener {
+//            payCheckout()
+//        }
     }
 
     private fun payCheckout() {
@@ -57,6 +60,7 @@ class MainActivity : Activity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         val result = payMayaClient.onActivityResult(requestCode, resultCode, data)
         if (result != null) {
             processResult(result)
@@ -87,6 +91,12 @@ class MainActivity : Activity() {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun updateBadgeCounter(value: Int) {
+        bottomNavigationView
+            .getOrCreateBadge(R.id.menu_item_cart)
+            ?.number = value
     }
 
     companion object {

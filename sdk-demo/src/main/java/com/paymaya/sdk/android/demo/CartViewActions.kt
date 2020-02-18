@@ -1,8 +1,8 @@
 package com.paymaya.sdk.android.demo
 
-import com.paymaya.sdk.android.checkout.models.Checkout
+import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 
 interface CartViewActions {
     fun updateBadgeCounter(value: Int)
-    fun payWithCheckout(checkout: Checkout)
+    fun payWithCheckout(checkout: CheckoutRequest)
 }

@@ -26,6 +26,7 @@ class CartProductsKeeper {
 
             val singleProductCount = value.size
             val totalAmount: BigDecimal =
+
                 (value.first().amount?.value)?.let { it * singleProductCount.toBigDecimal() }
                     ?: 0.toBigDecimal()
 

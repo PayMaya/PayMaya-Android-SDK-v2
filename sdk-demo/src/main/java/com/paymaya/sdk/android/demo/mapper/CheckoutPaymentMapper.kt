@@ -1,14 +1,17 @@
 package com.paymaya.sdk.android.demo.mapper
 
 import com.paymaya.sdk.android.checkout.models.*
+import com.paymaya.sdk.android.common.models.AmountDetails
+import com.paymaya.sdk.android.common.models.RedirectUrl
+import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.model.CartProduct
 import java.math.BigDecimal
 
 class CheckoutPaymentMapper {
 
-    fun run(cartProducts: List<CartProduct>): Checkout? {
+    fun run(cartProducts: List<CartProduct>): CheckoutRequest? {
         return if (cartProducts.isNotEmpty())
-            Checkout(
+            CheckoutRequest(
                 getTotalAmount(cartProducts),
                 getBuyerDetails(),
                 getItemsList(cartProducts),
@@ -21,7 +24,7 @@ class CheckoutPaymentMapper {
         TotalAmount(
             getTotalAmountValue(products),
             getCurrency(products),
-            getAmountDetails(products.firstOrNull())
+            getAmountDetails()
         )
 
 
@@ -54,7 +57,7 @@ class CheckoutPaymentMapper {
 
     private fun getItemAmount(product: CartProduct): ItemAmount? {
         val amount = getSingleAmount(product)
-        val amountDetails = getAmountDetails(product)
+        val amountDetails = getAmountDetails()
 
         return if (amount != null && amountDetails != null) {
             ItemAmount(amount, amountDetails)
@@ -65,7 +68,7 @@ class CheckoutPaymentMapper {
         product.items.first().amount?.value
 
 
-    private fun getAmountDetails(product: CartProduct?): AmountDetails? {
+    private fun getAmountDetails(): AmountDetails? {
         return AmountDetails()
     }
 

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.paymaya.sdk.android.checkout.models.Checkout
+import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.demo.BaseFragment
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
@@ -57,7 +57,7 @@ class CartFragment : BaseFragment(), CartContract.View {
         adapter.setItems(productsList)
     }
 
-    override fun payWithCheckout(checkoutPaymentModel: Checkout) {
+    override fun payWithCheckout(checkoutPaymentModel: CheckoutRequest) {
         cartViewActions?.payWithCheckout(checkoutPaymentModel)
     }
 

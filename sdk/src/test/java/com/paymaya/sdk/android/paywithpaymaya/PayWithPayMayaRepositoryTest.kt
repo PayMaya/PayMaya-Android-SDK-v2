@@ -21,8 +21,7 @@ class PayWithPayMayaRepositoryTest {
     @Test
     fun sandbox() {
         val repository =
-            PayWithPayMayaRepository(PayMayaEnvironment.SANDBOX,
-                CLIENT_KEY, json, httpClient = OkHttpClient())
+            PayWithPayMayaRepository(PayMayaEnvironment.SANDBOX, CLIENT_KEY, json, httpClient = OkHttpClient())
 
         assert(repository.baseUrl == BuildConfig.API_PAY_WITH_PAYMAYA_BASE_URL_SANDBOX)
     }
@@ -30,8 +29,7 @@ class PayWithPayMayaRepositoryTest {
     @Test
     fun production() {
         val repository =
-            PayWithPayMayaRepository(PayMayaEnvironment.PRODUCTION,
-                CLIENT_KEY, json, httpClient = OkHttpClient())
+            PayWithPayMayaRepository(PayMayaEnvironment.PRODUCTION, CLIENT_KEY, json, httpClient = OkHttpClient())
 
         assert(repository.baseUrl == BuildConfig.API_PAY_WITH_PAYMAYA_BASE_URL_PRODUCTION)
     }

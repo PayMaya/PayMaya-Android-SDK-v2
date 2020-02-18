@@ -4,7 +4,7 @@ import java.lang.Exception
 
 sealed class PayWithPayMayaResult
 
-sealed class SinglePaymentResult: PayWithPayMayaResult() {
+sealed class SinglePaymentResult : PayWithPayMayaResult() {
 
     class Success(
         val paymentId: String
@@ -20,7 +20,7 @@ sealed class SinglePaymentResult: PayWithPayMayaResult() {
     ) : SinglePaymentResult()
 }
 
-sealed class CreateWalletLinkResult: PayWithPayMayaResult() {
+sealed class CreateWalletLinkResult : PayWithPayMayaResult() {
 
     class Success(
         val linkId: String

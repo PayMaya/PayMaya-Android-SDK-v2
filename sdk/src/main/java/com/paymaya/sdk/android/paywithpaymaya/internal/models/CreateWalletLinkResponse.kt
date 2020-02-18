@@ -1,9 +1,9 @@
-package com.paymaya.sdk.android.paywithpaymaya.models
+package com.paymaya.sdk.android.paywithpaymaya.internal.models
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateWalletLinkResponse(
+internal data class CreateWalletLinkResponse(
     val linkId: String,
     val redirectUrl: String
 )

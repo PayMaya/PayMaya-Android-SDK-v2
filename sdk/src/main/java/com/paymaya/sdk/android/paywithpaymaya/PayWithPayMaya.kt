@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.common.internal.Constants
 import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 import com.paymaya.sdk.android.paywithpaymaya.internal.SinglePaymentActivity
@@ -30,7 +31,7 @@ class PayWithPayMaya(
             clientKey,
             environment
         )
-        activity.startActivityForResult(intent, PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE)
+        activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE)
     }
 
     fun executeCreateWalletLink(activity: Activity, requestData: CreateWalletLinkRequest) {
@@ -40,7 +41,7 @@ class PayWithPayMaya(
             clientKey,
             environment
         )
-        activity.startActivityForResult(intent, PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE)
+        activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE)
     }
 
     fun onActivityResult(
@@ -49,7 +50,7 @@ class PayWithPayMaya(
         data: Intent?
     ): PayWithPayMayaResult? {
         when (requestCode) {
-            PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE -> {
+            Constants.PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE -> {
                 requireNotNull(data)
                 val resultId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
@@ -74,7 +75,7 @@ class PayWithPayMaya(
                         throw IllegalStateException("Invalid result code: $resultCode")
                 }
             }
-            PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE -> {
+            Constants.PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE -> {
                 requireNotNull(data)
                 val resultId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
@@ -127,7 +128,5 @@ class PayWithPayMaya(
 
     companion object {
         private const val TAG = "PayWithPayMaya"
-        private const val PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE = 70708
-        private const val PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE = 70709
     }
 }

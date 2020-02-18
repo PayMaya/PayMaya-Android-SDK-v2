@@ -1,15 +1,15 @@
-package com.paymaya.sdk.android.checkout
+package com.paymaya.sdk.android.vault
 
 import com.paymaya.sdk.android.BuildConfig
-import com.paymaya.sdk.android.checkout.internal.CheckoutRepository
 import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.paymaya.sdk.android.vault.internal.VaultRepository
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
 
-class CheckoutRepositoryTest {
+class VaultRepositoryTest {
 
     private lateinit var json: Json
 
@@ -21,17 +21,17 @@ class CheckoutRepositoryTest {
     @Test
     fun sandbox() {
         val repository =
-            CheckoutRepository(PayMayaEnvironment.SANDBOX, CLIENT_KEY, json, httpClient = OkHttpClient())
+            VaultRepository(PayMayaEnvironment.SANDBOX, CLIENT_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.baseUrl == BuildConfig.API_CHECKOUT_BASE_URL_SANDBOX)
+        assert(repository.baseUrl == BuildConfig.API_VAULT_BASE_URL_SANDBOX)
     }
 
     @Test
     fun production() {
         val repository =
-            CheckoutRepository(PayMayaEnvironment.PRODUCTION, CLIENT_KEY, json, httpClient = OkHttpClient())
+            VaultRepository(PayMayaEnvironment.PRODUCTION, CLIENT_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.baseUrl == BuildConfig.API_CHECKOUT_BASE_URL_PRODUCTION)
+        assert(repository.baseUrl == BuildConfig.API_VAULT_BASE_URL_PRODUCTION)
     }
 
     companion object {

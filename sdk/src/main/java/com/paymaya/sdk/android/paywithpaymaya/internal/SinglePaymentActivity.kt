@@ -26,7 +26,7 @@ internal class SinglePaymentActivity : PayMayaPaymentActivity<SinglePaymentReque
             .build()
 
         return PayMayaPaymentPresenter(
-            SendSinglePaymentRequestUseCase(
+            SinglePaymentUseCase(
                 json,
                 PayWithPayMayaRepository(environment, clientKey, json, httpClient)
             )

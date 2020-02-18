@@ -11,16 +11,16 @@ import android.webkit.WebViewClient
 import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
-import kotlinx.android.synthetic.main.paymaya_payment_activity.*
+import kotlinx.android.synthetic.main.activity_paymaya_payment.*
 
-internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> : Activity(),
-    PayMayaPaymentContract.View {
+internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
+    Activity(), PayMayaPaymentContract.View {
 
     private lateinit var presenter: PayMayaPaymentContract.Presenter<R>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.paymaya.sdk.android.R.layout.paymaya_payment_activity)
+        setContentView(com.paymaya.sdk.android.R.layout.activity_paymaya_payment)
 
         val intent = requireNotNull(intent)
         val bundle = requireNotNull(intent.getBundleExtra(EXTRAS_BUNDLE))
@@ -39,7 +39,7 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> : Activity(),
         super.onDestroy()
     }
 
-    abstract fun buildPresenter(
+    protected abstract fun buildPresenter(
         environment: PayMayaEnvironment,
         clientKey: String
     ): PayMayaPaymentContract.Presenter<R>
@@ -49,18 +49,18 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> : Activity(),
     }
 
     private fun initializeView() {
-        CookieManager.getInstance().setAcceptThirdPartyCookies(paymayaPaymentActivityWebView, true)
+        CookieManager.getInstance().setAcceptThirdPartyCookies(payMayaPaymentActivityWebView, true)
         if (BuildConfig.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
         @SuppressLint("SetJavaScriptEnabled")
-        paymayaPaymentActivityWebView.settings.javaScriptEnabled = true
-        paymayaPaymentActivityWebView.settings.allowFileAccess = true
-        paymayaPaymentActivityWebView.webViewClient = WebViewClientImpl()
+        payMayaPaymentActivityWebView.settings.javaScriptEnabled = true
+        payMayaPaymentActivityWebView.settings.allowFileAccess = true
+        payMayaPaymentActivityWebView.webViewClient = WebViewClientImpl()
     }
 
     override fun loadUrl(redirectUrl: String) {
-        paymayaPaymentActivityWebView.loadUrl(redirectUrl)
+        payMayaPaymentActivityWebView.loadUrl(redirectUrl)
     }
 
     override fun finishSuccess(resultId: String) {
@@ -78,11 +78,6 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> : Activity(),
     }
 
     override fun finishFailure(resultId: String?, exception: Exception) {
-        if (exception is kotlinx.coroutines.CancellationException) {
-            finishCanceled(resultId)
-            return
-        }
-
         val intent = Intent()
         resultId?.let { intent.putExtra(EXTRAS_RESULT_ID, it) }
         intent.putExtra(EXTRAS_FAILURE_EXCEPTION, exception)
@@ -91,7 +86,7 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> : Activity(),
     }
 
     private fun hideProgress() {
-        paymayaPaymentActivityProgressBar.visibility = View.GONE
+        payMayaPaymentActivityProgressBar.visibility = View.GONE
     }
 
     inner class WebViewClientImpl : WebViewClient() {

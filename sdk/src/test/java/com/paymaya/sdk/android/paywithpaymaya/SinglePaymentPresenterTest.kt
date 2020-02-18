@@ -6,13 +6,13 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponse
-import com.paymaya.sdk.android.common.internal.SuccessResponse
+import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
+import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
-import com.paymaya.sdk.android.paywithpaymaya.internal.SendSinglePaymentRequestUseCase
+import com.paymaya.sdk.android.paywithpaymaya.internal.SinglePaymentUseCase
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +34,7 @@ class SinglePaymentPresenterTest {
     private lateinit var json: Json
 
     @Mock
-    private lateinit var sendSinglePaymentRequestUseCase: SendSinglePaymentRequestUseCase
+    private lateinit var singlePaymentUseCase: SinglePaymentUseCase
 
     @Mock
     private lateinit var view: PayMayaPaymentContract.View
@@ -46,15 +46,15 @@ class SinglePaymentPresenterTest {
         MockitoAnnotations.initMocks(this)
 
         json = Json(JsonConfiguration.Stable)
-        presenter = PayMayaPaymentPresenter(sendSinglePaymentRequestUseCase)
+        presenter = PayMayaPaymentPresenter(singlePaymentUseCase)
     }
 
     @Test
     fun success() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
@@ -67,8 +67,8 @@ class SinglePaymentPresenterTest {
     @Test
     fun failure() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                ErrorResponse(InternalException("Internal exception"))
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                ErrorResponseWrapper(InternalException("Internal exception"))
             )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
 
@@ -79,24 +79,24 @@ class SinglePaymentPresenterTest {
     @Test
     fun cancel() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.backButtonPressed()
 
-            verify(view).finishCanceled(CHECKOUT_ID)
+            verify(view).finishCanceled(PAYMENT_ID)
         }
     }
 
     @Test
     fun cancelUninitialized() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                ErrorResponse(UnknownHostException())
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                ErrorResponseWrapper(UnknownHostException())
             )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.backButtonPressed()
@@ -108,48 +108,48 @@ class SinglePaymentPresenterTest {
     @Test
     fun urlRedirectionSuccess() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.urlBeingLoaded("$REDIRECT_URL_SUCCESS?someParameter=123")
 
-            verify(view).finishSuccess(CHECKOUT_ID)
+            verify(view).finishSuccess(PAYMENT_ID)
         }
     }
 
     @Test
     fun urlRedirectionCancel() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.urlBeingLoaded("$REDIRECT_URL_CANCEL?someParameter=123")
 
-            verify(view).finishCanceled(CHECKOUT_ID)
+            verify(view).finishCanceled(PAYMENT_ID)
         }
     }
 
     @Test
     fun urlRedirectionFailure() {
         runBlocking {
-            whenever(sendSinglePaymentRequestUseCase.run(any())).thenReturn(
-                SuccessResponse(
-                    responseId = CHECKOUT_ID,
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.urlBeingLoaded("$REDIRECT_URL_FAILURE?someParameter=123")
 
-            verify(view).finishFailure(CHECKOUT_ID, PaymentFailedException)
+            verify(view).finishFailure(PAYMENT_ID, PaymentFailedException)
         }
     }
 
@@ -168,7 +168,7 @@ class SinglePaymentPresenterTest {
         )
 
     companion object {
-        private const val CHECKOUT_ID = "SAMPLE CHECKOUT ID"
+        private const val PAYMENT_ID = "SAMPLE PAYMENT ID"
         private const val REDIRECT_CHECKOUT_URL = "http://paymaya.com"
         private const val REDIRECT_URL_SUCCESS = "http://success.com"
         private const val REDIRECT_URL_FAILURE = "http://failure.com"

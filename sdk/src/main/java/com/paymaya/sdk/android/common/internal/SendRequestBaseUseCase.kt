@@ -21,12 +21,12 @@ internal abstract class SendRequestBaseUseCase<T>(
                 sendRequest(request)
             )
         } catch (e: Exception) {
-            ErrorResponse(e)
+            ErrorResponseWrapper(e)
         }
 
-    abstract suspend fun sendRequest(request: T): Response
+    protected abstract suspend fun sendRequest(request: T): Response
 
-    abstract fun prepareSuccessResponse(responseBody: ResponseBody): SuccessResponse
+    protected abstract fun prepareSuccessResponse(responseBody: ResponseBody): SuccessResponseWrapper
 
     private fun processResponse(httpResponse: Response): ResponseWrapper =
         when (httpResponse.code) {
@@ -51,7 +51,7 @@ internal abstract class SendRequestBaseUseCase<T>(
                 val paymentError =
                     json.parse(PaymentError.serializer(), responseBody.string())
 
-                ErrorResponse(
+                ErrorResponseWrapper(
                     BadRequestException(paymentError.message, paymentError)
                 )
             } catch (e: SerializationException) {
@@ -65,7 +65,7 @@ internal abstract class SendRequestBaseUseCase<T>(
                 val genericError =
                     json.parse(GenericError.serializer(), responseBody.string())
 
-                ErrorResponse(
+                ErrorResponseWrapper(
                     BadRequestException(genericError.error, genericError)
                 )
             } catch (e: SerializationException) {
@@ -73,16 +73,16 @@ internal abstract class SendRequestBaseUseCase<T>(
             }
         } ?: handleEmptyBody(httpResponse)
 
-    private fun handleEmptyBody(httpResponse: Response): ErrorResponse {
+    private fun handleEmptyBody(httpResponse: Response): ErrorResponseWrapper {
         val message = "Backend response with empty body. HTTP response: " +
                 "${httpResponse.code}, $httpResponse.message"
         Logger.e(TAG, message)
-        return ErrorResponse(InternalException(message))
+        return ErrorResponseWrapper(InternalException(message))
     }
 
     private fun processOtherHttpErrorResponse(httpResponse: Response): ResponseWrapper {
         Logger.e(TAG, "HTTP response: ${httpResponse.code}, ${httpResponse.message}")
-        return ErrorResponse(
+        return ErrorResponseWrapper(
             HttpException(
                 httpResponse.code,
                 httpResponse.message
@@ -90,12 +90,12 @@ internal abstract class SendRequestBaseUseCase<T>(
         )
     }
 
-    private fun handleSerializationException(httpResponse: Response, e: SerializationException): ResponseWrapper {
+    private fun handleSerializationException(httpResponse: Response, e: SerializationException): ErrorResponseWrapper {
         val message =
             "Backend response deserialization problem. Backend response: " +
                     "${httpResponse.code}, ${httpResponse.message}"
         Logger.e(TAG, message, e)
-        return ErrorResponse(InternalException(message, e))
+        return ErrorResponseWrapper(InternalException(message, e))
     }
 
     companion object {

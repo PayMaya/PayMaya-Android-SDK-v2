@@ -5,27 +5,55 @@ import com.paymaya.sdk.android.common.models.AmountDetails
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.model.CartProduct
+import com.paymaya.sdk.android.demo.usecase.FetchProductsFromCartUseCase
 import java.math.BigDecimal
 
-class CheckoutPaymentMapper {
+class CheckoutPaymentMapper(
+    private val fetchProductsFromCartUseCase: FetchProductsFromCartUseCase
+) {
 
-    fun run(cartProducts: List<CartProduct>): CheckoutRequest? {
-        return if (cartProducts.isNotEmpty())
+    fun run(): CheckoutRequest? {
+        val products = fetchProductsFromCartUseCase.run()
+
+        return if (products.isNotEmpty())
             CheckoutRequest(
-                getTotalAmount(cartProducts),
+                getProductsTotalAmounts(products),
                 getBuyerDetails(),
-                getItemsList(cartProducts),
+                getItemsList(products),
                 getRequestReferenceNumber(),
                 getRedirectUrl()
             ) else null
     }
 
-    private fun getTotalAmount(products: List<CartProduct>): TotalAmount =
+    private fun getProductsTotalAmounts(products: List<CartProduct>): TotalAmount =
         TotalAmount(
-            getTotalAmountValue(products),
-            getCurrency(products),
+            getProductsAmountValue(products),
+            getCurrency(products.first()),
             getAmountDetails()
         )
+
+    private fun getSingleProductTotalAmount(product: CartProduct): TotalAmount =
+        TotalAmount(
+            getSingleProductAmountValue(product),
+            getCurrency(product),
+            getAmountDetails()
+        )
+
+    private fun getProductsAmountValue(products: List<CartProduct>): BigDecimal {
+        var totalAmount = BigDecimal(0)
+        products.forEach {
+            totalAmount += it.totalAmount
+        }
+        return totalAmount
+    }
+
+    private fun getSingleProductAmountValue(product: CartProduct): BigDecimal {
+        var totalAmount = BigDecimal(0)
+        product.items.forEach {
+            it.amount?.value?.let { value -> totalAmount += value }
+        }
+        return totalAmount
+    }
 
 
     private fun getBuyerDetails(): Buyer {
@@ -55,8 +83,8 @@ class CheckoutPaymentMapper {
             cancel = "http://cancel.com"
         )
 
-    private fun getItemAmount(product: CartProduct): ItemAmount? {
-        val amount = getSingleAmount(product)
+    private fun getSingleItemAmount(product: CartProduct): ItemAmount? {
+        val amount =  product.items.firstOrNull()?.amount?.value
         val amountDetails = getAmountDetails()
 
         return if (amount != null && amountDetails != null) {
@@ -64,26 +92,13 @@ class CheckoutPaymentMapper {
         } else null
     }
 
-    private fun getSingleAmount(product: CartProduct): BigDecimal? =
-        product.items.first().amount?.value
-
-
     private fun getAmountDetails(): AmountDetails? {
         return AmountDetails()
     }
 
-    private fun getCurrency(products: List<CartProduct>): String {
-        val cartProduct = products.first()
-        val singleCartItem = cartProduct.items.first()
+    private fun getCurrency(product: CartProduct): String {
+        val singleCartItem = product.items.first()
         return singleCartItem.currency
-    }
-
-    private fun getTotalAmountValue(products: List<CartProduct>): BigDecimal {
-        var totalAmount = BigDecimal(0)
-        products.forEach {
-            totalAmount += it.totalAmount
-        }
-        return totalAmount
     }
 
     private fun List<CartProduct>.toItemsList(): List<Item> {
@@ -93,8 +108,8 @@ class CheckoutPaymentMapper {
                 it.items.size,
                 it.code,
                 it.description,
-                getItemAmount(it),
-                getTotalAmount(this)
+                getSingleItemAmount(it),
+                getSingleProductTotalAmount(it)
             )
         }
     }

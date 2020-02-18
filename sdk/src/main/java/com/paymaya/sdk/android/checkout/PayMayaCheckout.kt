@@ -89,6 +89,6 @@ class PayMayaCheckout private constructor(
 
     companion object {
         private const val TAG = "PayMayaCheckout"
-        private const val CHECKOUT_REQUEST_CODE = 668
+        private const val CHECKOUT_REQUEST_CODE = 60707
     }
 }

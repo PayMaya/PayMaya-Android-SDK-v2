@@ -11,6 +11,8 @@ import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
 import com.paymaya.sdk.android.demo.model.CartProduct
 import com.paymaya.sdk.android.demo.ui.cart.item.CartItemAdapter
+import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import kotlinx.android.synthetic.main.fragment_cart.*
 import java.math.BigDecimal
 
@@ -43,6 +45,8 @@ class CartFragment : BaseFragment(), CartContract.View {
 
         pay_with_checkout_button.setOnClickListener { presenter.payWithCheckoutClicked() }
         pay_with_paymaya_button.setOnClickListener { presenter.payWithPayMayaClicked() }
+        create_wallet_link_button.setOnClickListener { presenter.createWalletLinkClicked() }
+
     }
 
     override fun setTotalAmount(totalAmount: BigDecimal) {
@@ -50,22 +54,22 @@ class CartFragment : BaseFragment(), CartContract.View {
     }
 
     override fun clearBadgeCounter() {
-        cartViewActions?.updateBadgeCounter(DEFAULT_BADGE_VALUE)
+        cartViewActions?.removeBadgeCounter()
     }
 
     override fun populateView(productsList: List<CartProduct>) {
         adapter.setItems(productsList)
     }
 
-    override fun payWithCheckout(checkoutPaymentModel: CheckoutRequest) {
-        cartViewActions?.payWithCheckout(checkoutPaymentModel)
+    override fun payWithCheckout(checkoutRequest: CheckoutRequest) {
+        cartViewActions?.payWithCheckout(checkoutRequest)
     }
 
-    override fun payWithPayMaya() {
-//        TODO
+    override fun payWithPayMaya(singlePaymentRequest: SinglePaymentRequest) {
+        cartViewActions?.payWithPayMayaSinglePayment(singlePaymentRequest)
     }
 
-    companion object {
-        private const val DEFAULT_BADGE_VALUE = 0
+    override fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest) {
+        cartViewActions?.payWithPayMayaCreateWalletLink(walletLinkRequest)
     }
 }

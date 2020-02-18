@@ -127,7 +127,7 @@ class PayWithPayMaya(
 
     companion object {
         private const val TAG = "PayWithPayMaya"
-        private const val PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE = 70708
-        private const val PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE = 70709
+        private const val PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE = 60708
+        private const val PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE = 60709
     }
 }

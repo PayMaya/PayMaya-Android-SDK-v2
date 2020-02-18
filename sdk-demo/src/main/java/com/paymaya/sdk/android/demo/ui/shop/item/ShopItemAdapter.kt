@@ -41,7 +41,6 @@ class ShopItemAdapter(
             itemView.shop_product_container.setBackgroundResource(R.drawable.rectangle)
             itemView.add_to_cart_button.setOnClickListener {
                 onAddToCartRequestListener.invoke(product)
-                notifyDataSetChanged()
             }
         }
     }

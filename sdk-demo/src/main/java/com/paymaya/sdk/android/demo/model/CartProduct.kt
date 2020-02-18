@@ -7,5 +7,6 @@ data class CartProduct(
     val items: List<ShopProduct>,
     val totalAmount: BigDecimal,
     val code: String? = null,
-    val description: String? = null
+    val description: String? = null,
+    val currency: String
 )

@@ -42,7 +42,6 @@ class CartItemAdapter(
             itemView.cart_product_container.setBackgroundResource(R.drawable.rectangle)
             itemView.add_to_cart_button.setOnClickListener {
                 onRemoveFromCartRequestListener.invoke(product)
-                notifyDataSetChanged()
             }
         }
     }

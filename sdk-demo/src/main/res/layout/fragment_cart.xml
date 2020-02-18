@@ -48,6 +48,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pay with PayMaya"
+        app:layout_constraintBottom_toTopOf="@id/create_wallet_link_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/create_wallet_link_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Wallet Link"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

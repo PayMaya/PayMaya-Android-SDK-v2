@@ -22,7 +22,9 @@ internal object PresenterModuleProvider : PresenterModule {
         CartPresenter(
             UseCaseModuleProvider.fetchProductsFromCartUseCase,
             UseCaseModuleProvider.removeProductFromCartUseCase,
-            MapperModuleProvider.checkoutPaymentMapper
+            MapperModuleProvider.checkoutPaymentMapper,
+            MapperModuleProvider.singlePaymentMapper,
+            MapperModuleProvider.walletLinkMapper
         )
     }
 }

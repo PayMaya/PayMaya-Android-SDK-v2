@@ -24,17 +24,24 @@ class CartProductsKeeper {
 
         for ((key, value) in productsSortedByName) {
 
-            val singleProductCount = value.size
-            val totalAmount: BigDecimal =
+            val totalAmount: BigDecimal? = getTotalAmount(value)
 
-                (value.first().amount?.value)?.let { it * singleProductCount.toBigDecimal() }
-                    ?: 0.toBigDecimal()
+            val productCode = value.first().code
+            val productDescription = value.first().description
+            val productCurrency = value.first().currency
 
+            requireNotNull(totalAmount)
             productsInCart.add(
-                CartProduct(key, value, totalAmount)
+                CartProduct(key, value, totalAmount, productCode, productDescription, productCurrency)
             )
         }
         return productsInCart
+    }
+
+    private fun getTotalAmount(products: List<ShopProduct>): BigDecimal? {
+        val productsCount = products.size
+        val singleProductAmount = products.first().amount?.value
+        return singleProductAmount?.let { it * productsCount.toBigDecimal() }
     }
 
 }

@@ -3,10 +3,10 @@ package com.paymaya.sdk.android.demo.usecase
 import com.paymaya.sdk.android.demo.data.CartProductsKeeper
 import com.paymaya.sdk.android.demo.model.CartProduct
 
-class FetchProductsFromCartUseCase(
+class RemoveProductFromCartUseCase(
     private val cartProductsKeeper: CartProductsKeeper
 ) {
-    fun run(): List<CartProduct> =
-        cartProductsKeeper.fetchProducts()
-
+    fun run(cartProduct: CartProduct) {
+        cartProductsKeeper.removeProduct(cartProduct)
+    }
 }

@@ -10,9 +10,6 @@
         android:name="com.paymaya.sdk.android.demo.ui.shop.ShopFragment"
         android:label="shopFragment"
         tools:layout="@layout/fragment_shop">
-        <action
-            android:id="@+id/action_shopFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
     </fragment>
 
     <fragment

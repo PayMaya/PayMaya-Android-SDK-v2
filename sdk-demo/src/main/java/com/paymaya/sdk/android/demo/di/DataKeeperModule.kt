@@ -1,6 +1,6 @@
 package com.paymaya.sdk.android.demo.di
 
-import com.paymaya.sdk.android.demo.CartProductsKeeper
+import com.paymaya.sdk.android.demo.data.CartProductsKeeper
 
 internal interface DataKeeperModule {
     val cartProductsKeeper: CartProductsKeeper

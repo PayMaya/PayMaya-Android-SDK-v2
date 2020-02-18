@@ -9,10 +9,9 @@ import com.paymaya.sdk.android.demo.model.ShopProduct
 import com.paymaya.sdk.android.demo.ui.shop.OnAddToCartRequestListener
 import kotlinx.android.synthetic.main.holder_shop_product.view.*
 
-class ProductItemAdapter(
+class ShopItemAdapter(
     private val onAddToCartRequestListener: OnAddToCartRequestListener
-) :
-    RecyclerView.Adapter<ProductItemAdapter.ItemViewHolder>() {
+) : RecyclerView.Adapter<ShopItemAdapter.ItemViewHolder>() {
 
     private val items: MutableList<ShopProduct> = mutableListOf()
 
@@ -40,7 +39,10 @@ class ProductItemAdapter(
             itemView.product_name.text = product.name
             itemView.product_amount.text = product.amount?.value.toString() + " ${product.currency}"
             itemView.shop_product_container.setBackgroundResource(R.drawable.rectangle)
-            itemView.add_to_cart_button.setOnClickListener { onAddToCartRequestListener.invoke(product) }
+            itemView.add_to_cart_button.setOnClickListener {
+                onAddToCartRequestListener.invoke(product)
+                notifyDataSetChanged()
+            }
         }
     }
 }

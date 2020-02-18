@@ -5,17 +5,17 @@ import androidx.fragment.app.Fragment
 
 abstract class BaseFragment: Fragment() {
 
-    protected var shopViewActions: ShopViewActions? = null
+    protected var cartViewActions: CartViewActions? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is ShopViewActions) {
-            shopViewActions = context
+        if (context is CartViewActions) {
+            cartViewActions = context
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        shopViewActions = null
+        cartViewActions = null
     }
 }

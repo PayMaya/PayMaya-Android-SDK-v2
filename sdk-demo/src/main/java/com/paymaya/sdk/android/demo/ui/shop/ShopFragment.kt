@@ -9,7 +9,7 @@ import com.paymaya.sdk.android.demo.BaseFragment
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
 import com.paymaya.sdk.android.demo.model.ShopProduct
-import com.paymaya.sdk.android.demo.ui.shop.item.ProductItemAdapter
+import com.paymaya.sdk.android.demo.ui.shop.item.ShopItemAdapter
 import kotlinx.android.synthetic.main.fragment_shop.*
 
 typealias OnAddToCartRequestListener = (shopProduct: ShopProduct) -> Unit
@@ -19,7 +19,7 @@ class ShopFragment : BaseFragment(), ShopContract.View {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private val presenter: ShopContract.Presenter by lazy { PresenterModuleProvider.shopPresenter }
     private var adapter =
-        ProductItemAdapter(
+        ShopItemAdapter(
             onAddToCartRequestListener = {
                 presenter.addToCartClicked(it)
             }
@@ -49,6 +49,6 @@ class ShopFragment : BaseFragment(), ShopContract.View {
     }
 
     override fun updateBadgeCounter(value: Int) {
-        shopViewActions?.updateBadgeCounter(value)
+        cartViewActions?.updateBadgeCounter(value)
     }
 }

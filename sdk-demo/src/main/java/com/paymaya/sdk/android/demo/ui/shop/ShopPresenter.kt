@@ -20,6 +20,14 @@ class ShopPresenter(
 
     override fun addToCartClicked(product: ShopProduct) {
         saveProductInCartUseCase.run(product)
-        view?.updateBadgeCounter(fetchProductsFromCartUseCase.run().size)
+        view?.updateBadgeCounter(getCartProductsCount())
+    }
+
+    private fun getCartProductsCount(): Int {
+         var cartProductsCount = 0
+        fetchProductsFromCartUseCase.run().forEach {
+            cartProductsCount  += it.items.size
+        }
+        return cartProductsCount
     }
 }

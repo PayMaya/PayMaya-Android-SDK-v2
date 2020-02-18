@@ -1,6 +1,6 @@
 package com.paymaya.sdk.android.demo.usecase
 
-import com.paymaya.sdk.android.demo.model.ItemAmount
+import com.paymaya.sdk.android.demo.model.ProductDetail
 import com.paymaya.sdk.android.demo.model.ShopProduct
 import java.math.BigDecimal
 
@@ -11,21 +11,21 @@ class FetchShopDataUseCase {
                 "Shoes",
                 null,
                 null,
-                ItemAmount(BigDecimal.valueOf(99.0)),
+                ProductDetail.ItemAmount(BigDecimal.valueOf(99.0)),
                 "PHP"
             ),
             ShopProduct(
                 "Shirt",
                 null,
                 null,
-                ItemAmount(BigDecimal.valueOf(20.0)),
+                ProductDetail.ItemAmount(BigDecimal.valueOf(20.0)),
                 "PHP"
             ),
             ShopProduct(
                 "Pants",
                 null,
                 null,
-                ItemAmount(BigDecimal.valueOf(10.0)),
+                ProductDetail.ItemAmount(BigDecimal.valueOf(10.0)),
                 "PHP"
             )
         )

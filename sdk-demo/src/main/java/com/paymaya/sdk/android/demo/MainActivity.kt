@@ -7,16 +7,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import com.google.android.material.badge.BadgeDrawable
 import com.paymaya.sdk.android.PayMayaEnvironment
 import com.paymaya.sdk.android.checkout.*
 import com.paymaya.sdk.android.checkout.exceptions.BadRequestException
 import com.paymaya.sdk.android.checkout.models.*
+import com.paymaya.sdk.android.demo.common.clearStack
 import kotlinx.android.synthetic.main.activity_main.*
-import java.math.BigDecimal
 
-class MainActivity : AppCompatActivity(), ShopViewActions {
+class MainActivity : AppCompatActivity(), CartViewActions {
 
+    private val navigationController: NavController by lazy { findNavController(R.id.navigation_host_fragment) }
     private val payMayaClient = PayMayaCheckout.Builder()
         .clientKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
         .environment(PayMayaEnvironment.SANDBOX)
@@ -27,36 +27,7 @@ class MainActivity : AppCompatActivity(), ShopViewActions {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        checkoutButton.setOnClickListener {
-//            payCheckout()
-//        }
-    }
-
-    private fun payCheckout() {
-        val checkoutModel = Checkout(
-            totalAmount = TotalAmount(
-                value = BigDecimal(99999),
-                currency = "PHP"
-            ),
-            buyer = Buyer(
-                firstName = "John",
-                lastName = "Doe"
-            ),
-            items = listOf(
-                Item(
-                    name = "shoes",
-                    quantity = 1,
-                    totalAmount = TotalAmount(BigDecimal(10), "PHP")
-                )
-            ),
-            requestReferenceNumber = "REQ_1",
-            redirectUrl = RedirectUrl(
-                success = "http://success.com",
-                failure = "http://failure.com",
-                cancel = "http://cancel.com"
-            )
-        )
-        payMayaClient.execute(this, checkoutModel)
+        initBottomNavigationMenu()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -65,6 +36,10 @@ class MainActivity : AppCompatActivity(), ShopViewActions {
         if (result != null) {
             processResult(result)
         }
+    }
+
+    override fun payWithCheckout(checkout: Checkout) {
+        payMayaClient.execute(this, checkout)
     }
 
     private fun processResult(result: PayMayaResult) {
@@ -97,6 +72,21 @@ class MainActivity : AppCompatActivity(), ShopViewActions {
         bottomNavigationView
             .getOrCreateBadge(R.id.menu_item_cart)
             ?.number = value
+    }
+
+    private fun initBottomNavigationMenu() {
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.menu_item_shop -> navigateTo(R.id.shopFragment)
+                R.id.menu_item_cart -> navigateTo(R.id.cartFragment)
+            }
+            true
+        }
+    }
+
+    private fun navigateTo(navFragmentId: Int) {
+        navigationController.clearStack()
+        navigationController.navigate(navFragmentId)
     }
 
     companion object {

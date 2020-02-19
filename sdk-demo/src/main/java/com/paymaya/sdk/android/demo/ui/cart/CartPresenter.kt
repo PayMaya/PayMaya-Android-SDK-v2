@@ -1,28 +1,21 @@
 package com.paymaya.sdk.android.demo.ui.cart
 
-import com.paymaya.sdk.android.demo.mapper.CheckoutPaymentMapper
-import com.paymaya.sdk.android.demo.mapper.SinglePaymentsMapper
-import com.paymaya.sdk.android.demo.mapper.WalletLinkMapper
 import com.paymaya.sdk.android.demo.model.CartProduct
-import com.paymaya.sdk.android.demo.usecase.FetchProductsFromCartUseCase
-import com.paymaya.sdk.android.demo.usecase.RemoveProductFromCartUseCase
-import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
-import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
+import com.paymaya.sdk.android.demo.usecase.*
 import java.math.BigDecimal
 
 class CartPresenter(
     private val fetchProductsFromCartUseCase: FetchProductsFromCartUseCase,
     private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
-    private val checkoutPaymentMapper: CheckoutPaymentMapper,
-    private val singlePaymentsMapper: SinglePaymentsMapper,
-    private val payMayaWalletLinkMapper: WalletLinkMapper
+    private val createCheckoutRequestUseCase: CreateCheckoutRequestUseCase,
+    private val createSinglePaymentsRequestUseCase: CreateSinglePaymentsRequestUseCase,
+    private val createWalletLinkRequestUseCase: CreateWalletLinkRequestUseCase
 ) : CartContract.Presenter {
 
     private var view: CartContract.View? = null
 
     override fun viewCreated(view: CartContract.View) {
         this.view = view
-        view.clearBadgeCounter()
         view.populateView(fetchProductsFromCartUseCase.run())
         view.setTotalAmount(getTotalAmount())
     }
@@ -42,17 +35,17 @@ class CartPresenter(
     }
 
     override fun payWithCheckoutClicked() {
-        val checkoutPaymentModel = checkoutPaymentMapper.run()
-        checkoutPaymentModel?.let { view?.payWithCheckout(it) }
+        val checkoutRequest = createCheckoutRequestUseCase.run()
+        checkoutRequest?.let { view?.payWithCheckout(it) }
     }
 
     override fun payWithPayMayaClicked() {
-        val singlePaymentRequest: SinglePaymentRequest? = singlePaymentsMapper.run()
+        val singlePaymentRequest = createSinglePaymentsRequestUseCase.run()
         singlePaymentRequest?.let { view?.payWithPayMaya(it) }
     }
 
     override fun createWalletLinkClicked() {
-        val walletLinkRequest: CreateWalletLinkRequest = payMayaWalletLinkMapper.run()
-        view?.createWalletLink(walletLinkRequest)
+        val walletLinkRequest = createWalletLinkRequestUseCase.run()
+        walletLinkRequest?.let { view?.createWalletLink(it) }
     }
 }

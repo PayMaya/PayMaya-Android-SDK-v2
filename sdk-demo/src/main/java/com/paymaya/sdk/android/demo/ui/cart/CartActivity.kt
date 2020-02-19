@@ -1,28 +1,36 @@
-package com.paymaya.sdk.android.demo
+package com.paymaya.sdk.android.demo.ui.cart
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
-import com.paymaya.sdk.android.demo.common.clearStack
+import com.paymaya.sdk.android.demo.R
+import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
 import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
-import kotlinx.android.synthetic.main.activity_main.*
+import com.paymaya.sdk.android.demo.model.CartProduct
+import kotlinx.android.synthetic.main.activity_cart.*
+import java.math.BigDecimal
 
-class MainActivity : AppCompatActivity(), CartViewActions {
+typealias OnRemoveFromCartRequestListener = (shopProduct: CartProduct) -> Unit
 
-    private val navigationController: NavController by lazy { findNavController(R.id.navigation_host_fragment) }
+class CartActivity : AppCompatActivity(), CartContract.View {
+
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private val presenter: CartContract.Presenter = PresenterModuleProvider.cartPresenter
+    private var adapter = CartItemAdapter(
+        onRemoveFromCartRequestListener = { presenter.removeFromCartClicked(it) }
+    )
 
     private val payMayaCheckoutClient = PayMayaCheckout.Builder()
         .clientKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
@@ -30,7 +38,7 @@ class MainActivity : AppCompatActivity(), CartViewActions {
         .logLevel(Log.VERBOSE)
         .build()
 
-    private val payWityPayMayaClient = PayWithPayMaya.Builder()
+    private val payWithPayMayaClient = PayWithPayMaya.Builder()
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
         .logLevel(Log.VERBOSE)
@@ -38,9 +46,42 @@ class MainActivity : AppCompatActivity(), CartViewActions {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_cart)
 
-        initBottomNavigationMenu()
+        initView()
+        presenter.viewCreated(this)
+    }
+
+    private fun initView() {
+        linearLayoutManager = LinearLayoutManager(this)
+        cart_products_list.layoutManager = linearLayoutManager
+        cart_products_list.adapter = adapter
+        // TODO hide counter
+
+        pay_with_checkout_button.setOnClickListener { presenter.payWithCheckoutClicked() }
+        pay_with_paymaya_button.setOnClickListener { presenter.payWithPayMayaClicked() }
+        create_wallet_link_button.setOnClickListener { presenter.createWalletLinkClicked() }
+
+    }
+
+    override fun setTotalAmount(totalAmount: BigDecimal) {
+        payment_amount.text = totalAmount.toString()
+    }
+
+    override fun populateView(productsList: List<CartProduct>) {
+        adapter.setItems(productsList)
+    }
+
+    override fun payWithCheckout(checkoutRequest: CheckoutRequest) {
+        payMayaCheckoutClient.execute(this, checkoutRequest)
+    }
+
+    override fun payWithPayMaya(singlePaymentRequest: SinglePaymentRequest) {
+        payWithPayMayaClient.executeSinglePayment(this, singlePaymentRequest)
+    }
+
+    override fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest) {
+        payWithPayMayaClient.executeCreateWalletLink(this, walletLinkRequest)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -52,23 +93,11 @@ class MainActivity : AppCompatActivity(), CartViewActions {
         }
 
         val payWithPayMayaResult =
-            payWityPayMayaClient.onActivityResult(requestCode, resultCode, data)
+            payWithPayMayaClient.onActivityResult(requestCode, resultCode, data)
         payWithPayMayaResult?.let {
             processPayWithWithPayMayaResult(it)
             return
         }
-    }
-
-    override fun payWithCheckout(checkoutRequest: CheckoutRequest) {
-        payMayaCheckoutClient.execute(this, checkoutRequest)
-    }
-
-    override fun payWithPayMayaSinglePayment(singlePaymentRequest: SinglePaymentRequest) {
-        payWityPayMayaClient.executeSinglePayment(this, singlePaymentRequest)
-    }
-
-    override fun payWithPayMayaCreateWalletLink(createWalletLinkRequest: CreateWalletLinkRequest) {
-        payWityPayMayaClient.executeCreateWalletLink(this, createWalletLinkRequest)
     }
 
     private fun processCheckoutResult(result: PayMayaCheckoutResult) {
@@ -133,34 +162,6 @@ class MainActivity : AppCompatActivity(), CartViewActions {
                 }
             }
         }
-    }
-
-    override fun updateBadgeCounter(value: Int) {
-        val badge = bottomNavigationView
-            .getOrCreateBadge(R.id.menu_item_cart)
-        badge?.isVisible = true
-        badge?.number = value
-    }
-
-    override fun removeBadgeCounter() {
-        bottomNavigationView
-            .getBadge(R.id.menu_item_cart)
-            ?.isVisible = false
-    }
-
-    private fun initBottomNavigationMenu() {
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_item_shop -> navigateTo(R.id.shopFragment)
-                R.id.menu_item_cart -> navigateTo(R.id.cartFragment)
-            }
-            true
-        }
-    }
-
-    private fun navigateTo(navFragmentId: Int) {
-        navigationController.clearStack()
-        navigationController.navigate(navFragmentId)
     }
 
     companion object {

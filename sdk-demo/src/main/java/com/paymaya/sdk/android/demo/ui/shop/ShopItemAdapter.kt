@@ -1,4 +1,4 @@
-package com.paymaya.sdk.android.demo.ui.shop.item
+package com.paymaya.sdk.android.demo.ui.shop
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.model.ShopProduct
-import com.paymaya.sdk.android.demo.ui.shop.OnAddToCartRequestListener
 import kotlinx.android.synthetic.main.holder_shop_product.view.*
 
 class ShopItemAdapter(

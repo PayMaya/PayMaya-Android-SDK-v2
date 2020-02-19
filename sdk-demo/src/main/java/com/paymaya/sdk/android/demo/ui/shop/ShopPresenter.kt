@@ -12,22 +12,28 @@ class ShopPresenter(
 ) : ShopContract.Presenter {
 
     private var view: ShopContract.View? = null
+    private var productsInCartCount = 0
 
     override fun viewCreated(view: ShopContract.View) {
         this.view = view
         view.populateView(fetchShopDataUseCase.run())
     }
 
-    override fun addToCartClicked(product: ShopProduct) {
-        saveProductInCartUseCase.run(product)
-        view?.updateBadgeCounter(getCartProductsCount())
+    override fun viewRestarted() {
+        view?.updateBadgeCounter(getProductsInCartCount())
     }
 
-    private fun getCartProductsCount(): Int {
-         var cartProductsCount = 0
+    override fun addToCartClicked(product: ShopProduct) {
+        saveProductInCartUseCase.run(product)
+        productsInCartCount++
+        view?.updateBadgeCounter(productsInCartCount)
+    }
+
+    private fun getProductsInCartCount(): Int {
+        var productsInCartCount = 0
         fetchProductsFromCartUseCase.run().forEach {
-            cartProductsCount  += it.items.size
+            productsInCartCount += it.quantity
         }
-        return cartProductsCount
+        return productsInCartCount
     }
 }

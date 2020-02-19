@@ -11,7 +11,6 @@ interface CartContract {
     interface View {
         fun populateView(productsList: List<CartProduct>)
         fun setTotalAmount(totalAmount: BigDecimal)
-        fun clearBadgeCounter()
         fun payWithCheckout(checkoutRequest: CheckoutRequest)
         fun payWithPayMaya(singlePaymentRequest: SinglePaymentRequest)
         fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest)

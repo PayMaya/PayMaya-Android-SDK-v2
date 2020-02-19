@@ -1,9 +1,9 @@
-package com.paymaya.sdk.android.demo.mapper
+package com.paymaya.sdk.android.demo.usecase
 
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 
-class WalletLinkMapper {
+class CreateWalletLinkRequestUseCase {
 
     fun run(): CreateWalletLinkRequest =
         CreateWalletLinkRequest(
@@ -13,7 +13,6 @@ class WalletLinkMapper {
 
     private fun getRequestReferenceNumber(): String =
         "REQ_3"
-
 
     private fun getRedirectUrl(): RedirectUrl =
         RedirectUrl(

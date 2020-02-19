@@ -1,20 +1,18 @@
 package com.paymaya.sdk.android.demo.ui.shop
 
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.paymaya.sdk.android.demo.BaseFragment
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
 import com.paymaya.sdk.android.demo.model.ShopProduct
-import com.paymaya.sdk.android.demo.ui.shop.item.ShopItemAdapter
-import kotlinx.android.synthetic.main.fragment_shop.*
+import com.paymaya.sdk.android.demo.ui.cart.CartActivity
+import kotlinx.android.synthetic.main.activity_shop.*
 
 typealias OnAddToCartRequestListener = (shopProduct: ShopProduct) -> Unit
 
-class ShopFragment : BaseFragment(), ShopContract.View {
+class ShopActivity : AppCompatActivity(), ShopContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private val presenter: ShopContract.Presenter by lazy { PresenterModuleProvider.shopPresenter }
@@ -25,17 +23,17 @@ class ShopFragment : BaseFragment(), ShopContract.View {
             }
         )
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_shop, container, false)
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_shop)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         initView()
         presenter.viewCreated(this)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        presenter.viewRestarted()
     }
 
     override fun populateView(productsList: List<ShopProduct>) {
@@ -43,12 +41,16 @@ class ShopFragment : BaseFragment(), ShopContract.View {
     }
 
     private fun initView() {
-        linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager = LinearLayoutManager(this)
         shop_products_list.layoutManager = linearLayoutManager
         shop_products_list.adapter = adapter
+
+        go_to_cart_button.setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
+        }
     }
 
     override fun updateBadgeCounter(value: Int) {
-        cartViewActions?.updateBadgeCounter(value)
+        go_to_cart_button.text = if (value > 0) "Go to Cart($value)" else "Go to Cart"
     }
 }

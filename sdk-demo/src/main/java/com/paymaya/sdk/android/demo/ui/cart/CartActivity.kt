@@ -70,10 +70,6 @@ class CartActivity : Activity(), CartContract.View {
         pay_maya_vault_tokenize_card_button.setOnClickListener { presenter.payMayaVaultTokenizeCardClicked() }
     }
 
-    override fun payMayaVaultTokenizeCard() {
-        payMayaVaultClient.execute(this)
-    }
-
     override fun setTotalAmount(totalAmount: BigDecimal) {
         payment_amount.text = totalAmount.toString()
     }
@@ -94,32 +90,40 @@ class CartActivity : Activity(), CartContract.View {
         payWithPayMayaClient.executeCreateWalletLink(this, walletLinkRequest)
     }
 
+    override fun payMayaVaultTokenizeCard() {
+        payMayaVaultClient.execute(this)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         val checkoutResult: PayMayaCheckoutResult? =
             payMayaCheckoutClient.onActivityResult(requestCode, resultCode, data)
-        presenter.onCheckoutResult(checkoutResult)
+        checkoutResult?.let {
+            presenter.onCheckoutResult(it)
+            return
+        }
 
         val payWithPayMayaResult: PayWithPayMayaResult? =
             payWithPayMayaClient.onActivityResult(requestCode, resultCode, data)
-        presenter.onPayWithPayMayaResult(payWithPayMayaResult)
+        payWithPayMayaResult?.let {
+            presenter.onPayWithPayMayaResult(it)
+            return
+        }
 
         val vaultResult: PayMayaVaultResult? =
             payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
-        presenter.onVaultResult(vaultResult)
+        vaultResult?.let { presenter.onVaultResult(it) }
     }
 
     override fun showResultSuccessMessage(message: String) {
         Snackbar.make(cart_view_container, "Operation succeeded", Snackbar.LENGTH_SHORT).show()
         Log.i(TAG, message)
-        return
     }
 
     override fun showResultCancelMessage(message: String) {
         Snackbar.make(cart_view_container, "Operation cancelled", Snackbar.LENGTH_SHORT).show()
         Log.w(TAG, message)
-        return
     }
 
     override fun showResultFailureMessage(message: String, exception: Exception) {
@@ -128,7 +132,6 @@ class CartActivity : Activity(), CartContract.View {
         if (exception is BadRequestException) {
             Log.d(TAG, exception.error.toString())
         }
-        return
     }
 
     companion object {

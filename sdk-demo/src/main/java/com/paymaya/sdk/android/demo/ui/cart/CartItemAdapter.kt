@@ -37,7 +37,7 @@ class CartItemAdapter(
         fun setData(product: CartProduct) {
             itemView.product_name.text = product.name
             itemView.product_total_amount.text =
-                product.totalAmount.toString() + " ${product.currency}"
+                "${product.totalAmount} ${product.currency}"
             itemView.cart_product_container.setBackgroundResource(R.drawable.rectangle)
             itemView.product_count.text = product.quantity.toString()
             itemView.add_to_cart_button.setOnClickListener {
@@ -45,5 +45,4 @@ class CartItemAdapter(
             }
         }
     }
-
 }

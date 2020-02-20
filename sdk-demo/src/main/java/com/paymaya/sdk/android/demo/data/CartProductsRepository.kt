@@ -9,41 +9,31 @@ class CartProductsRepository {
     private var cartProducts: MutableList<CartProduct> = mutableListOf()
 
     fun addProduct(shopProduct: ShopProduct) {
-        if (productExistInCart(shopProduct)) {
-            val productIndex = productIndexInCart(shopProduct)
-            updateCartProduct(productIndex, shopProduct.amount.value)
-        } else {
+        val product = cartProducts.firstOrNull { it.name == shopProduct.name }
+        if (product == null) {
             addNewCartProduct(shopProduct)
+        } else {
+            updateCartProduct(product)
         }
     }
 
-    private fun productExistInCart(shopProduct: ShopProduct): Boolean {
-        cartProducts.forEach {
-            if (it.name == shopProduct.name) return true
-        }
-        return false
-    }
-
-    private fun productIndexInCart(shopProduct: ShopProduct): Int =
-        cartProducts.indexOfFirst { it.name == shopProduct.name }
-
-    private fun updateCartProduct(productIndex: Int, amount: BigDecimal) {
-        cartProducts[productIndex].apply {
+    private fun updateCartProduct(product: CartProduct) {
+        product.apply {
             quantity++
-            totalAmount += amount
+            totalAmount += this.amount.value
         }
     }
 
     private fun addNewCartProduct(shopProduct: ShopProduct) {
         cartProducts.add(
             CartProduct(
-                DEFAULT_PRODUCT_QUANTITY,
-                shopProduct.amount.value,
-                shopProduct.name,
-                shopProduct.currency,
-                shopProduct.amount,
-                shopProduct.description,
-                shopProduct.code
+                quantity = 1,
+                totalAmount = shopProduct.amount.value,
+                name = shopProduct.name,
+                currency = shopProduct.currency,
+                amount = shopProduct.amount,
+                description = shopProduct.description,
+                code = shopProduct.code
             )
         )
     }
@@ -52,16 +42,12 @@ class CartProductsRepository {
         val cartProduct = cartProducts.first { it.name == product.name }
         with(cartProduct) {
             totalAmount -= amount.value
-            quantity -= 1
+            quantity --
             if (quantity == 0) cartProducts.remove(this)
         }
     }
 
     fun fetchProducts(): List<CartProduct> =
         cartProducts
-
-    companion object {
-        private const val DEFAULT_PRODUCT_QUANTITY = 1
-    }
 
 }

@@ -51,7 +51,7 @@ class CartProductsRepository {
     fun removeProduct(product: CartProduct) {
         val cartProduct = cartProducts.first { it.name == product.name }
         with(cartProduct) {
-            totalAmount -= (totalAmount / BigDecimal(quantity))
+            totalAmount -= amount.value
             quantity -= 1
             if (quantity == 0) cartProducts.remove(this)
         }

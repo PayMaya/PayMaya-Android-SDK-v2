@@ -5,21 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
-import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.google.android.material.snackbar.Snackbar
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
-import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
-import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
+import com.paymaya.sdk.android.demo.model.CartProduct
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
-import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
-import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.vault.PayMayaVault
-import com.paymaya.sdk.android.demo.model.CartProduct
 import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.android.synthetic.main.activity_cart.*
 import java.math.BigDecimal
@@ -97,102 +96,39 @@ class CartActivity : Activity(), CartContract.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val checkoutResult = payMayaCheckoutClient.onActivityResult(requestCode, resultCode, data)
-        checkoutResult?.let {
-            processCheckoutResult(it)
-            return
-        }
 
-        val payWithPayMayaResult =
+        val checkoutResult: PayMayaCheckoutResult? =
+            payMayaCheckoutClient.onActivityResult(requestCode, resultCode, data)
+        presenter.onCheckoutResult(checkoutResult)
+
+        val payWithPayMayaResult: PayWithPayMayaResult? =
             payWithPayMayaClient.onActivityResult(requestCode, resultCode, data)
-        payWithPayMayaResult?.let {
-            processPayWithWithPayMayaResult(it)
-            return
-        }
+        presenter.onPayWithPayMayaResult(payWithPayMayaResult)
 
-        val vaultResult = payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
-        vaultResult?.let {
-            processVaultResult(it)
-            return
-        }
+        val vaultResult: PayMayaVaultResult? =
+            payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
+        presenter.onVaultResult(vaultResult)
     }
 
-    private fun processCheckoutResult(result: PayMayaCheckoutResult) {
-        when (result) {
-            is PayMayaCheckoutResult.Success -> {
-                val message = "Success, checkoutId: ${result.checkoutId}"
-                Log.i(TAG, message)
-            }
-
-            is PayMayaCheckoutResult.Cancel -> {
-                val message = "Canceled, checkoutId: ${result.checkoutId}"
-                Log.w(TAG, message)
-            }
-
-            is PayMayaCheckoutResult.Failure -> {
-                val message =
-                    "Failure, checkoutId: ${result.checkoutId}, exception: ${result.exception}"
-                Log.e(TAG, message)
-                if (result.exception is BadRequestException) {
-                    Log.d(TAG, (result.exception as BadRequestException).error.toString())
-                }
-            }
-        }
+    override fun showResultSuccessMessage(message: String) {
+        Snackbar.make(cart_view_container, "Operation succeeded", Snackbar.LENGTH_SHORT).show()
+        Log.i(TAG, message)
+        return
     }
 
-    private fun processPayWithWithPayMayaResult(result: PayWithPayMayaResult) {
-        when (result) {
-            is SinglePaymentResult.Success -> {
-                val message = "Success, paymentId: ${result.paymentId}"
-                Log.i(TAG, message)
-            }
-
-            is SinglePaymentResult.Cancel -> {
-                val message = "Canceled, paymentId: ${result.paymentId}"
-                Log.w(TAG, message)
-            }
-
-            is SinglePaymentResult.Failure -> {
-                val message =
-                    "Failure, paymentId: ${result.paymentId}, exception: ${result.exception}"
-                Log.e(TAG, message)
-                if (result.exception is BadRequestException) {
-                    Log.d(TAG, (result.exception as BadRequestException).error.toString())
-                }
-            }
-            is CreateWalletLinkResult.Success -> {
-                val message = "Success, linkId: ${result.linkId}"
-                Log.i(TAG, message)
-            }
-
-            is CreateWalletLinkResult.Cancel -> {
-                val message = "Canceled, linkId: ${result.linkId}"
-                Log.w(TAG, message)
-            }
-
-            is CreateWalletLinkResult.Failure -> {
-                val message =
-                    "Failure, linkId: ${result.linkId}, exception: ${result.exception}"
-                Log.e(TAG, message)
-                if (result.exception is BadRequestException) {
-                    Log.d(TAG, (result.exception as BadRequestException).error.toString())
-                }
-            }
-        }
+    override fun showResultCancelMessage(message: String) {
+        Snackbar.make(cart_view_container, "Operation cancelled", Snackbar.LENGTH_SHORT).show()
+        Log.w(TAG, message)
+        return
     }
 
-    private fun processVaultResult(result: PayMayaVaultResult) {
-        when (result) {
-            is PayMayaVaultResult.Success -> {
-                val message = "Success, result: ${result.paymentTokenId}, ${result.state}"
-                Log.i(TAG, message)
-            }
-
-            is PayMayaVaultResult.Cancel -> {
-                val message = "Canceled"
-                Log.w(TAG, message)
-            }
+    override fun showResultFailureMessage(message: String, exception: Exception) {
+        Snackbar.make(cart_view_container, "Operation failure", Snackbar.LENGTH_SHORT).show()
+        Log.e(TAG, message)
+        if (exception is BadRequestException) {
+            Log.d(TAG, exception.error.toString())
         }
+        return
     }
 
     companion object {

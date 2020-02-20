@@ -31,9 +31,9 @@ class ShopActivity : Activity(), ShopContract.View {
         presenter.viewCreated(this)
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        presenter.viewRestarted()
+    override fun onResume() {
+        super.onResume()
+        presenter.viewResumed()
     }
 
     override fun populateView(productsList: List<ShopProduct>) {

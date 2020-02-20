@@ -19,7 +19,7 @@ class ShopPresenter(
         view.populateView(fetchShopDataUseCase.run())
     }
 
-    override fun viewRestarted() {
+    override fun viewResumed() {
         view?.updateBadgeCounter(getProductsInCartCount())
     }
 

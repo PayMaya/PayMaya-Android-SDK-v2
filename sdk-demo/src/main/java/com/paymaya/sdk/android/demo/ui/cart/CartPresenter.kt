@@ -1,7 +1,12 @@
 package com.paymaya.sdk.android.demo.ui.cart
 
+import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.demo.model.CartProduct
 import com.paymaya.sdk.android.demo.usecase.*
+import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
+import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
+import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
+import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import java.math.BigDecimal
 
 class CartPresenter(
@@ -51,5 +56,95 @@ class CartPresenter(
 
     override fun payMayaVaultTokenizeCardClicked() {
         view?.payMayaVaultTokenizeCard()
+    }
+
+    override fun onCheckoutResult(checkoutResult: PayMayaCheckoutResult?) {
+        checkoutResult?.let {
+            processCheckoutResult(it)
+            return
+        }
+    }
+
+    override fun onPayWithPayMayaResult(payWithPayMayaResult: PayWithPayMayaResult?) {
+        payWithPayMayaResult?.let {
+            processPayWithWithPayMayaResult(it)
+            return
+        }
+    }
+
+    override fun onVaultResult(vaultResult: PayMayaVaultResult?) {
+        vaultResult?.let {
+            processVaultResult(it)
+            return
+        }
+    }
+
+    private fun processCheckoutResult(result: PayMayaCheckoutResult) {
+        when (result) {
+            is PayMayaCheckoutResult.Success -> {
+                val message = "Success, checkoutId: ${result.checkoutId}"
+                view?.showResultSuccessMessage(message)
+            }
+
+            is PayMayaCheckoutResult.Cancel -> {
+                val message = "Canceled, checkoutId: ${result.checkoutId}"
+                view?.showResultCancelMessage(message)
+            }
+
+            is PayMayaCheckoutResult.Failure -> {
+                val message = "Failure, checkoutId: ${result.checkoutId}, exception: ${result.exception}"
+                view?.showResultFailureMessage(message, result.exception)
+            }
+        }
+    }
+
+    private fun processPayWithWithPayMayaResult(result: PayWithPayMayaResult) {
+        when (result) {
+            is SinglePaymentResult.Success -> {
+                val message = "Success, paymentId: ${result.paymentId}"
+                view?.showResultSuccessMessage(message)
+            }
+
+            is SinglePaymentResult.Cancel -> {
+                val message = "Canceled, paymentId: ${result.paymentId}"
+                view?.showResultCancelMessage(message)
+            }
+
+            is SinglePaymentResult.Failure -> {
+                val message =
+                    "Failure, paymentId: ${result.paymentId}, exception: ${result.exception}"
+                view?.showResultFailureMessage(message, result.exception)
+            }
+
+            is CreateWalletLinkResult.Success -> {
+                val message = "Success, linkId: ${result.linkId}"
+                view?.showResultSuccessMessage(message)
+            }
+
+            is CreateWalletLinkResult.Cancel -> {
+                val message = "Canceled, linkId: ${result.linkId}"
+                view?.showResultCancelMessage(message)
+            }
+
+            is CreateWalletLinkResult.Failure -> {
+                val message =
+                    "Failure, linkId: ${result.linkId}, exception: ${result.exception}"
+                view?.showResultFailureMessage(message, result.exception)
+            }
+        }
+    }
+
+    private fun processVaultResult(result: PayMayaVaultResult) {
+        when (result) {
+            is PayMayaVaultResult.Success -> {
+                val message = "Success, result: ${result.paymentTokenId}, ${result.state}"
+                view?.showResultSuccessMessage(message)
+            }
+
+            is PayMayaVaultResult.Cancel -> {
+                val message = "Canceled"
+                view?.showResultCancelMessage(message)
+            }
+        }
     }
 }

@@ -26,7 +26,7 @@ internal class CreateWalletLinkActivity : PayMayaPaymentActivity<CreateWalletLin
             .build()
 
         return PayMayaPaymentPresenter(
-            SendCreateWalletLinkRequestUseCase(
+            CreateWalletLinkUseCase(
                 json,
                 PayWithPayMayaRepository(environment, clientKey, json, httpClient)
             )

@@ -46,6 +46,10 @@ class CartPresenter(
 
     override fun createWalletLinkClicked() {
         val walletLinkRequest = createWalletLinkRequestUseCase.run()
-        walletLinkRequest?.let { view?.createWalletLink(it) }
+        view?.createWalletLink(walletLinkRequest)
+    }
+
+    override fun payMayaVaultTokenizeCardClicked() {
+        view?.payMayaVaultTokenizeCard()
     }
 }

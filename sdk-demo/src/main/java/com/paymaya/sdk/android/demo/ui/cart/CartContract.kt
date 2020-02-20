@@ -14,6 +14,7 @@ interface CartContract {
         fun payWithCheckout(checkoutRequest: CheckoutRequest)
         fun payWithPayMaya(singlePaymentRequest: SinglePaymentRequest)
         fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest)
+        fun payMayaVaultTokenizeCard()
     }
 
     interface Presenter {
@@ -22,5 +23,6 @@ interface CartContract {
         fun payWithCheckoutClicked()
         fun payWithPayMayaClicked()
         fun createWalletLinkClicked()
+        fun payMayaVaultTokenizeCardClicked()
     }
 }

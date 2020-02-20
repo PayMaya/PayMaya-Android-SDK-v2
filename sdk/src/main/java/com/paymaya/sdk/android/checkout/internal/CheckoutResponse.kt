@@ -1,4 +1,4 @@
-package com.paymaya.sdk.android.checkout.models
+package com.paymaya.sdk.android.checkout.internal
 
 import kotlinx.serialization.Serializable
 

@@ -1,21 +1,28 @@
-<manifest package="com.paymaya.sdk.android"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.paymaya.sdk.android">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
-        <activity
-            android:configChanges="orientation|screenSize"
-            android:name=".checkout.internal.CheckoutActivity" />
 
         <activity
-            android:configChanges="orientation|screenSize"
-            android:name=".paywithpaymaya.internal.SinglePaymentActivity" />
+            android:name=".checkout.internal.CheckoutActivity"
+            android:configChanges="orientation|screenSize" />
 
         <activity
-            android:configChanges="orientation|screenSize"
-            android:name=".paywithpaymaya.internal.CreateWalletLinkActivity" />
+            android:name=".paywithpaymaya.internal.SinglePaymentActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name=".paywithpaymaya.internal.CreateWalletLinkActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name=".vault.internal.screen.TokenizeCardActivity"
+            android:configChanges="orientation|screenSize" />
+
     </application>
 
 </manifest>

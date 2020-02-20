@@ -4,12 +4,12 @@
     android:layout_height="match_parent">
 
     <WebView
-        android:id="@+id/paymayaPaymentActivityWebView"
+        android:id="@+id/payMayaPaymentActivityWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <ProgressBar
-        android:id="@+id/paymayaPaymentActivityProgressBar"
+        android:id="@+id/payMayaPaymentActivityProgressBar"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"/>

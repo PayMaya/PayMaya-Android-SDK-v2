@@ -1,9 +1,9 @@
 package com.paymaya.sdk.android.demo.ui.cart
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.common.PayMayaEnvironment
@@ -18,13 +18,15 @@ import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.vault.PayMayaVault
 import com.paymaya.sdk.android.demo.model.CartProduct
+import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.android.synthetic.main.activity_cart.*
 import java.math.BigDecimal
 
 typealias OnRemoveFromCartRequestListener = (shopProduct: CartProduct) -> Unit
 
-class CartActivity : AppCompatActivity(), CartContract.View {
+class CartActivity : Activity(), CartContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private val presenter: CartContract.Presenter = PresenterModuleProvider.cartPresenter
@@ -44,6 +46,12 @@ class CartActivity : AppCompatActivity(), CartContract.View {
         .logLevel(Log.VERBOSE)
         .build()
 
+    private val payMayaVaultClient = PayMayaVault.Builder()
+        .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
+        .environment(PayMayaEnvironment.SANDBOX)
+        .logLevel(Log.VERBOSE)
+        .build()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -56,12 +64,15 @@ class CartActivity : AppCompatActivity(), CartContract.View {
         linearLayoutManager = LinearLayoutManager(this)
         cart_products_list.layoutManager = linearLayoutManager
         cart_products_list.adapter = adapter
-        // TODO hide counter
 
         pay_with_checkout_button.setOnClickListener { presenter.payWithCheckoutClicked() }
         pay_with_paymaya_button.setOnClickListener { presenter.payWithPayMayaClicked() }
         create_wallet_link_button.setOnClickListener { presenter.createWalletLinkClicked() }
+        pay_maya_vault_tokenize_card_button.setOnClickListener { presenter.payMayaVaultTokenizeCardClicked() }
+    }
 
+    override fun payMayaVaultTokenizeCard() {
+        payMayaVaultClient.execute(this)
     }
 
     override fun setTotalAmount(totalAmount: BigDecimal) {
@@ -96,6 +107,12 @@ class CartActivity : AppCompatActivity(), CartContract.View {
             payWithPayMayaClient.onActivityResult(requestCode, resultCode, data)
         payWithPayMayaResult?.let {
             processPayWithWithPayMayaResult(it)
+            return
+        }
+
+        val vaultResult = payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
+        vaultResult?.let {
+            processVaultResult(it)
             return
         }
     }
@@ -160,6 +177,20 @@ class CartActivity : AppCompatActivity(), CartContract.View {
                 if (result.exception is BadRequestException) {
                     Log.d(TAG, (result.exception as BadRequestException).error.toString())
                 }
+            }
+        }
+    }
+
+    private fun processVaultResult(result: PayMayaVaultResult) {
+        when (result) {
+            is PayMayaVaultResult.Success -> {
+                val message = "Success, result: ${result.paymentTokenId}, ${result.state}"
+                Log.i(TAG, message)
+            }
+
+            is PayMayaVaultResult.Cancel -> {
+                val message = "Canceled"
+                Log.w(TAG, message)
             }
         }
     }

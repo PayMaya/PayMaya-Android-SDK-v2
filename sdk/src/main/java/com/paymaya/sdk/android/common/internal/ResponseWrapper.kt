@@ -1,14 +1,14 @@
 package com.paymaya.sdk.android.common.internal
 
-import java.lang.Exception
+internal open class ResponseWrapper
 
-internal sealed class ResponseWrapper
+internal open class SuccessResponseWrapper : ResponseWrapper()
 
-internal class SuccessResponse(
-    val responseId: String,
+internal class RedirectSuccessResponseWrapper(
+    val resultId: String,
     val redirectUrl: String
-) : ResponseWrapper()
+) : SuccessResponseWrapper()
 
-internal class ErrorResponse(
+internal class ErrorResponseWrapper(
     val exception: Exception
 ) : ResponseWrapper()

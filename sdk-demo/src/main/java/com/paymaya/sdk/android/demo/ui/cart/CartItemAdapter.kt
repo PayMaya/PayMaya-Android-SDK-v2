@@ -4,15 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.paymaya.sdk.android.demo.Constants.DECIMALS
 import com.paymaya.sdk.android.demo.R
-import com.paymaya.sdk.android.demo.model.CartProduct
+import com.paymaya.sdk.android.demo.model.CartItem
 import kotlinx.android.synthetic.main.holder_cart_product.view.*
 
 class CartItemAdapter(
     private val onRemoveFromCartRequestListener: OnRemoveFromCartRequestListener
 ) : RecyclerView.Adapter<CartItemAdapter.ItemViewHolder>() {
 
-    private val items: MutableList<CartProduct> = mutableListOf()
+    private val items: MutableList<CartItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder =
         ItemViewHolder(
@@ -27,17 +28,17 @@ class CartItemAdapter(
         holder.setData(items[position])
     }
 
-    fun setItems(items: List<CartProduct>) {
+    fun setItems(items: List<CartItem>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun setData(product: CartProduct) {
+        fun setData(product: CartItem) {
             itemView.product_name.text = product.name
             itemView.product_total_amount.text =
-                "${product.totalAmount} ${product.currency}"
+                "${product.totalAmount.setScale(DECIMALS)} ${product.currency}"
             itemView.cart_product_container.setBackgroundResource(R.drawable.rectangle)
             itemView.product_count.text = product.quantity.toString()
             itemView.add_to_cart_button.setOnClickListener {

@@ -31,39 +31,49 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cart_products_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/payment_label"
-        android:layout_margin="10dp"/>
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@id/payment_label" />
 
-    <Button
-        android:id="@+id/pay_with_checkout_button"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pay with Checkout"
-        android:padding="10dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/round_button"
-        app:layout_constraintBottom_toTopOf="@+id/pay_with_paymaya_button"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/create_wallet_link_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <Button
-        android:id="@+id/pay_with_paymaya_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pay with PayMaya"
-        android:padding="10dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/round_button"
-        app:layout_constraintBottom_toTopOf="@id/create_wallet_link_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <Button
+            android:id="@+id/pay_with_checkout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/round_button"
+            android:padding="10dp"
+            android:text="Pay with Checkout"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/pay_with_paymaya_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/round_button"
+            android:padding="10dp"
+            android:text="Pay with PayMaya"
+            android:textAllCaps="false" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/create_wallet_link_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Wallet Link"
+        android:textAllCaps="false"
         android:padding="10dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/round_button"
@@ -76,8 +86,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PayMaya Vault - tokenize card"
+        android:textAllCaps="false"
         android:padding="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/round_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

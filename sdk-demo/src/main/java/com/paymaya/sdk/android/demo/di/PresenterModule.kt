@@ -6,20 +6,20 @@ import com.paymaya.sdk.android.demo.ui.shop.ShopContract
 import com.paymaya.sdk.android.demo.ui.shop.ShopPresenter
 
 internal object PresenterModuleProvider {
-    val shopPresenter: ShopContract.Presenter by lazy {
+
+    fun getShopPresenter(): ShopContract.Presenter =
         ShopPresenter(
-            UseCaseModuleProvider.fetchShopDataUseCase,
-            UseCaseModuleProvider.saveProductInCartUseCase,
-            UseCaseModuleProvider.fetchProductsFromCartUseCase
+            UseCaseModuleProvider.getFetchShopDataUseCase(),
+            UseCaseModuleProvider.getSaveProductInCartUseCase(),
+            UseCaseModuleProvider.getFetchProductsFromCartUseCase()
         )
-    }
-    val cartPresenter: CartContract.Presenter by lazy {
+
+    fun getCartPresenter(): CartContract.Presenter =
         CartPresenter(
-            UseCaseModuleProvider.fetchProductsFromCartUseCase,
-            UseCaseModuleProvider.removeProductFromCartUseCase,
-            UseCaseModuleProvider.createCheckoutRequestUseCase,
-            UseCaseModuleProvider.createSinglePaymentsRequestUseCase,
-            UseCaseModuleProvider.createWalletLinkRequestUseCase
+            UseCaseModuleProvider.getFetchProductsFromCartUseCase(),
+            UseCaseModuleProvider.getRemoveProductFromCartUseCase(),
+            UseCaseModuleProvider.getCreateCheckoutRequestUseCase(),
+            UseCaseModuleProvider.getCreateSinglePaymentsRequestUseCase(),
+            UseCaseModuleProvider.getCreateWalletLinkRequestUseCase()
         )
-    }
 }

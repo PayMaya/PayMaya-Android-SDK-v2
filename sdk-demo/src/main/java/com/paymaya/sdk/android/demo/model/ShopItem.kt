@@ -2,7 +2,7 @@ package com.paymaya.sdk.android.demo.model
 
 import com.paymaya.sdk.android.checkout.models.ItemAmount
 
-data class ShopProduct(
+data class ShopItem(
     val name: String,
     val code: String? = null,
     val description: String? = null,

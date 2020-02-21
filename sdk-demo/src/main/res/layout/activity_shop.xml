@@ -31,7 +31,7 @@
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="5dp"
+        android:layout_margin="20dp"
         android:background="@drawable/round_button"
         android:text="Go to Cart" />
 

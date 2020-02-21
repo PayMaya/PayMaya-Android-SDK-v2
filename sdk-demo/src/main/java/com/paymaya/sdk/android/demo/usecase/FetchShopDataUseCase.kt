@@ -2,32 +2,33 @@ package com.paymaya.sdk.android.demo.usecase
 
 import com.paymaya.sdk.android.checkout.models.ItemAmount
 import com.paymaya.sdk.android.common.models.AmountDetails
-import com.paymaya.sdk.android.demo.model.ShopProduct
+import com.paymaya.sdk.android.demo.Constants.CURRENCY
+import com.paymaya.sdk.android.demo.model.ShopItem
 import java.math.BigDecimal
 
 class FetchShopDataUseCase {
-    fun run(): List<ShopProduct> =
+    fun run(): List<ShopItem> =
         listOf(
-            ShopProduct(
-                "Shoes",
-                null,
-                null,
-                ItemAmount(BigDecimal(99.0), AmountDetails()),
-                "PHP"
+            ShopItem(
+                name = "Shoes",
+                code = null,
+                description = null,
+                amount = ItemAmount(BigDecimal(99.0), AmountDetails()),
+                currency = CURRENCY
             ),
-            ShopProduct(
-                "Shirt",
-                null,
-                null,
-                ItemAmount(BigDecimal.valueOf(20.0)),
-                "PHP"
+            ShopItem(
+                name = "Shirt",
+                code = null,
+                description = null,
+                amount = ItemAmount(BigDecimal.valueOf(20.0)),
+                currency = CURRENCY
             ),
-            ShopProduct(
-                "Pants",
-                null,
-                null,
-                ItemAmount(BigDecimal.valueOf(10.0)),
-                "PHP"
+            ShopItem(
+                name = "Pants",
+                code = null,
+                description = null,
+                amount = ItemAmount(BigDecimal.valueOf(10.0)),
+                currency = CURRENCY
             )
         )
 }

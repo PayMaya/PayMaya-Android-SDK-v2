@@ -9,7 +9,7 @@ import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.Constants.CURRENCY
 import com.paymaya.sdk.android.demo.data.CartProductsRepository
-import com.paymaya.sdk.android.demo.model.CartProduct
+import com.paymaya.sdk.android.demo.model.CartItem
 import java.math.BigDecimal
 
 class CreateCheckoutRequestUseCase(
@@ -29,14 +29,14 @@ class CreateCheckoutRequestUseCase(
             ) else null
     }
 
-    private fun getTotalAmounts(products: List<CartProduct>): TotalAmount =
+    private fun getTotalAmounts(products: List<CartItem>): TotalAmount =
         TotalAmount(
             getProductsAmountValue(products),
             CURRENCY,
             AmountDetails()
         )
 
-    private fun getProductsAmountValue(products: List<CartProduct>): BigDecimal {
+    private fun getProductsAmountValue(products: List<CartItem>): BigDecimal {
         var totalAmount = BigDecimal(0)
         products.forEach {
             totalAmount += it.totalAmount
@@ -44,17 +44,14 @@ class CreateCheckoutRequestUseCase(
         return totalAmount
     }
 
-    private fun getItems(products: List<CartProduct>): List<Item> =
+    private fun getItems(products: List<CartItem>): List<Item> =
         products.map {
             Item(
                 it.name,
                 it.quantity,
                 it.code,
                 it.description,
-                ItemAmount(
-                    it.amount.value,
-                    it.amount.details
-                ),
+                it.amount,
                 TotalAmount(
                     it.totalAmount,
                     CURRENCY,

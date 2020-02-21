@@ -11,9 +11,10 @@ import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.demo.Constants.DECIMALS
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
-import com.paymaya.sdk.android.demo.model.CartProduct
+import com.paymaya.sdk.android.demo.model.CartItem
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
@@ -23,14 +24,14 @@ import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.android.synthetic.main.activity_cart.*
 import java.math.BigDecimal
 
-typealias OnRemoveFromCartRequestListener = (shopProduct: CartProduct) -> Unit
+typealias OnRemoveFromCartRequestListener = (cartItem: CartItem) -> Unit
 
 class CartActivity : Activity(), CartContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private val presenter: CartContract.Presenter = PresenterModuleProvider.cartPresenter
+    private val presenter: CartContract.Presenter = PresenterModuleProvider.getCartPresenter()
     private var adapter = CartItemAdapter(
-        onRemoveFromCartRequestListener = { presenter.removeFromCartClicked(it) }
+        onRemoveFromCartRequestListener = { presenter.removeFromCartButtonClicked(it) }
     )
 
     private val payMayaCheckoutClient = PayMayaCheckout.Builder()
@@ -71,10 +72,10 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun setTotalAmount(totalAmount: BigDecimal) {
-        payment_amount.text = totalAmount.toString()
+        payment_amount.text = totalAmount.setScale(DECIMALS).toString()
     }
 
-    override fun populateView(productsList: List<CartProduct>) {
+    override fun populateView(productsList: List<CartItem>) {
         adapter.setItems(productsList)
     }
 
@@ -132,6 +133,11 @@ class CartActivity : Activity(), CartContract.View {
         if (exception is BadRequestException) {
             Log.d(TAG, exception.error.toString())
         }
+    }
+
+    override fun onDestroy() {
+        presenter.viewDestroyed()
+        super.onDestroy()
     }
 
     companion object {

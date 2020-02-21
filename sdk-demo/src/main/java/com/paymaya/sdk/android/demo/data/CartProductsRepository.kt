@@ -1,53 +1,52 @@
 package com.paymaya.sdk.android.demo.data
 
-import com.paymaya.sdk.android.demo.model.CartProduct
-import com.paymaya.sdk.android.demo.model.ShopProduct
-import java.math.BigDecimal
+import com.paymaya.sdk.android.demo.model.CartItem
+import com.paymaya.sdk.android.demo.model.ShopItem
 
 class CartProductsRepository {
 
-    private var cartProducts: MutableList<CartProduct> = mutableListOf()
+    private var cartItems: MutableList<CartItem> = mutableListOf()
 
-    fun addProduct(shopProduct: ShopProduct) {
-        val product = cartProducts.firstOrNull { it.name == shopProduct.name }
+    fun addProduct(shopItem: ShopItem) {
+        val product = cartItems.firstOrNull { it.name == shopItem.name }
         if (product == null) {
-            addNewCartProduct(shopProduct)
+            addNewCartProduct(shopItem)
         } else {
             updateCartProduct(product)
         }
     }
 
-    private fun updateCartProduct(product: CartProduct) {
+    private fun updateCartProduct(product: CartItem) {
         product.apply {
             quantity++
             totalAmount += this.amount.value
         }
     }
 
-    private fun addNewCartProduct(shopProduct: ShopProduct) {
-        cartProducts.add(
-            CartProduct(
+    private fun addNewCartProduct(shopItem: ShopItem) {
+        cartItems.add(
+            CartItem(
                 quantity = 1,
-                totalAmount = shopProduct.amount.value,
-                name = shopProduct.name,
-                currency = shopProduct.currency,
-                amount = shopProduct.amount,
-                description = shopProduct.description,
-                code = shopProduct.code
+                totalAmount = shopItem.amount.value,
+                name = shopItem.name,
+                currency = shopItem.currency,
+                amount = shopItem.amount,
+                description = shopItem.description,
+                code = shopItem.code
             )
         )
     }
 
-    fun removeProduct(product: CartProduct) {
-        val cartProduct = cartProducts.first { it.name == product.name }
+    fun removeProduct(product: CartItem) {
+        val cartProduct = cartItems.first { it.name == product.name }
         with(cartProduct) {
             totalAmount -= amount.value
-            quantity --
-            if (quantity == 0) cartProducts.remove(this)
+            quantity--
+            if (quantity == 0) cartItems.remove(this)
         }
     }
 
-    fun fetchProducts(): List<CartProduct> =
-        cartProducts
+    fun fetchProducts(): List<CartItem> =
+        cartItems
 
 }

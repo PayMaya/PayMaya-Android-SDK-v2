@@ -6,20 +6,20 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
-import com.paymaya.sdk.android.demo.model.ShopProduct
+import com.paymaya.sdk.android.demo.model.ShopItem
 import com.paymaya.sdk.android.demo.ui.cart.CartActivity
 import kotlinx.android.synthetic.main.activity_shop.*
 
-typealias OnAddToCartRequestListener = (shopProduct: ShopProduct) -> Unit
+typealias OnAddToCartRequestListener = (shopItem: ShopItem) -> Unit
 
 class ShopActivity : Activity(), ShopContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private val presenter: ShopContract.Presenter by lazy { PresenterModuleProvider.shopPresenter }
+    private val presenter: ShopContract.Presenter by lazy { PresenterModuleProvider.getShopPresenter() }
     private var adapter =
         ShopItemAdapter(
             onAddToCartRequestListener = {
-                presenter.addToCartClicked(it)
+                presenter.addToCartButtonClicked(it)
             }
         )
 
@@ -36,7 +36,7 @@ class ShopActivity : Activity(), ShopContract.View {
         presenter.viewResumed()
     }
 
-    override fun populateView(productsList: List<ShopProduct>) {
+    override fun populateView(productsList: List<ShopItem>) {
         adapter.setItems(productsList)
     }
 
@@ -51,6 +51,11 @@ class ShopActivity : Activity(), ShopContract.View {
     }
 
     override fun updateBadgeCounter(value: Int) {
-        go_to_cart_button.text = if (value > 0) "Go to Cart($value)" else "Go to Cart"
+        go_to_cart_button.text = if (value > 0) "Go to Cart ($value)" else "Go to Cart"
+    }
+
+    override fun onDestroy() {
+        presenter.viewDestroyed()
+        super.onDestroy()
     }
 }

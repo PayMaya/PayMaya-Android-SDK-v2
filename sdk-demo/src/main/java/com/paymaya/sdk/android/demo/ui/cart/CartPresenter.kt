@@ -1,7 +1,7 @@
 package com.paymaya.sdk.android.demo.ui.cart
 
 import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
-import com.paymaya.sdk.android.demo.model.CartProduct
+import com.paymaya.sdk.android.demo.model.CartItem
 import com.paymaya.sdk.android.demo.usecase.*
 import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
@@ -21,22 +21,26 @@ class CartPresenter(
 
     override fun viewCreated(view: CartContract.View) {
         this.view = view
-        view.populateView(fetchProductsFromCartUseCase.run())
-        view.setTotalAmount(getTotalAmount())
+        updateProductsList()
     }
 
-    private fun getTotalAmount(): BigDecimal {
+    private fun updateProductsList() {
+        val products = fetchProductsFromCartUseCase.run()
+        view?.populateView(products)
+        view?.setTotalAmount(getTotalAmount(products))
+    }
+
+    private fun getTotalAmount(products: List<CartItem>): BigDecimal {
         var totalAmount = BigDecimal(0)
-        fetchProductsFromCartUseCase.run().forEach {
+        products.forEach {
             totalAmount += it.totalAmount
         }
         return totalAmount
     }
 
-    override fun removeFromCartClicked(product: CartProduct) {
+    override fun removeFromCartButtonClicked(product: CartItem) {
         removeProductFromCartUseCase.run(product)
-        view?.populateView(fetchProductsFromCartUseCase.run())
-        view?.setTotalAmount(getTotalAmount())
+        updateProductsList()
     }
 
     override fun payWithCheckoutClicked() {
@@ -137,5 +141,9 @@ class CartPresenter(
                 view?.showResultCancelMessage(message)
             }
         }
+    }
+
+    override fun viewDestroyed() {
+        this.view = null
     }
 }

@@ -1,6 +1,6 @@
 package com.paymaya.sdk.android.demo.ui.shop
 
-import com.paymaya.sdk.android.demo.model.ShopProduct
+import com.paymaya.sdk.android.demo.model.ShopItem
 import com.paymaya.sdk.android.demo.usecase.FetchProductsFromCartUseCase
 import com.paymaya.sdk.android.demo.usecase.FetchShopDataUseCase
 import com.paymaya.sdk.android.demo.usecase.SaveProductInCartUseCase
@@ -23,7 +23,7 @@ class ShopPresenter(
         view?.updateBadgeCounter(getProductsInCartCount())
     }
 
-    override fun addToCartClicked(product: ShopProduct) {
+    override fun addToCartButtonClicked(product: ShopItem) {
         saveProductInCartUseCase.run(product)
         productsInCartCount++
         view?.updateBadgeCounter(productsInCartCount)
@@ -35,5 +35,9 @@ class ShopPresenter(
             productsInCartCount += it.quantity
         }
         return productsInCartCount
+    }
+
+    override fun viewDestroyed() {
+        this.view = null
     }
 }

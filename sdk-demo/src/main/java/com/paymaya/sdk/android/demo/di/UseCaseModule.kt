@@ -3,31 +3,36 @@ package com.paymaya.sdk.android.demo.di
 import com.paymaya.sdk.android.demo.usecase.*
 
 internal object UseCaseModuleProvider {
-    val fetchShopDataUseCase: FetchShopDataUseCase = FetchShopDataUseCase()
-    val saveProductInCartUseCase: SaveProductInCartUseCase = SaveProductInCartUseCase(
-        RepositoryModuleProvider.cartProductsRepository
-    )
-    val fetchProductsFromCartUseCase: FetchProductsFromCartUseCase by lazy {
+
+    fun getFetchShopDataUseCase(): FetchShopDataUseCase =
+        FetchShopDataUseCase()
+
+    fun getSaveProductInCartUseCase(): SaveProductInCartUseCase =
+        SaveProductInCartUseCase(
+            RepositoryModuleProvider.cartProductsRepository
+        )
+
+    fun getFetchProductsFromCartUseCase(): FetchProductsFromCartUseCase =
         FetchProductsFromCartUseCase(
             RepositoryModuleProvider.cartProductsRepository
         )
-    }
-    val removeProductFromCartUseCase: RemoveProductFromCartUseCase by lazy {
+
+    fun getRemoveProductFromCartUseCase(): RemoveProductFromCartUseCase =
         RemoveProductFromCartUseCase(
             RepositoryModuleProvider.cartProductsRepository
         )
-    }
-    val createCheckoutRequestUseCase: CreateCheckoutRequestUseCase by lazy {
+
+    fun getCreateCheckoutRequestUseCase(): CreateCheckoutRequestUseCase =
         CreateCheckoutRequestUseCase(
             RepositoryModuleProvider.cartProductsRepository
         )
-    }
-    val createSinglePaymentsRequestUseCase: CreateSinglePaymentsRequestUseCase by lazy {
+
+    fun getCreateSinglePaymentsRequestUseCase(): CreateSinglePaymentsRequestUseCase =
         CreateSinglePaymentsRequestUseCase(
             RepositoryModuleProvider.cartProductsRepository
         )
-    }
-    val createWalletLinkRequestUseCase: CreateWalletLinkRequestUseCase by lazy {
+
+    fun getCreateWalletLinkRequestUseCase(): CreateWalletLinkRequestUseCase =
         CreateWalletLinkRequestUseCase()
-    }
+
 }

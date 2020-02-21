@@ -62,15 +62,15 @@ class CartPresenter(
         view?.payMayaVaultTokenizeCard()
     }
 
-    override fun onCheckoutResult(checkoutResult: PayMayaCheckoutResult) {
+    override fun checkoutCompleted(checkoutResult: PayMayaCheckoutResult) {
         processCheckoutResult(checkoutResult)
     }
 
-    override fun onPayWithPayMayaResult(payWithPayMayaResult: PayWithPayMayaResult) {
+    override fun payWithPayMayaCompleted(payWithPayMayaResult: PayWithPayMayaResult) {
         processPayWithWithPayMayaResult(payWithPayMayaResult)
     }
 
-    override fun onVaultResult(vaultResult: PayMayaVaultResult) {
+    override fun vaultCompleted(vaultResult: PayMayaVaultResult) {
         processVaultResult(vaultResult)
     }
 

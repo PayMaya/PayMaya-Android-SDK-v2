@@ -32,8 +32,8 @@ interface CartContract {
         fun payWithPayMayaClicked()
         fun createWalletLinkClicked()
         fun payMayaVaultTokenizeCardClicked()
-        fun onCheckoutResult(checkoutResult: PayMayaCheckoutResult)
-        fun onPayWithPayMayaResult(payWithPayMayaResult: PayWithPayMayaResult)
-        fun onVaultResult(vaultResult: PayMayaVaultResult)
+        fun checkoutCompleted(checkoutResult: PayMayaCheckoutResult)
+        fun payWithPayMayaCompleted(payWithPayMayaResult: PayWithPayMayaResult)
+        fun vaultCompleted(vaultResult: PayMayaVaultResult)
     }
 }

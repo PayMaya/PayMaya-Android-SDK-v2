@@ -2,7 +2,7 @@ package com.paymaya.sdk.android.demo.di
 
 import com.paymaya.sdk.android.demo.usecase.*
 
-internal object UseCaseModuleProvider {
+internal object UseCaseModule {
 
     fun getFetchShopDataUseCase(): FetchShopDataUseCase =
         FetchShopDataUseCase()

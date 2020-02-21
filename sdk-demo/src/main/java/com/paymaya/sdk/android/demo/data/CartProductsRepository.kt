@@ -5,7 +5,7 @@ import com.paymaya.sdk.android.demo.model.ShopItem
 
 class CartProductsRepository {
 
-    private var cartItems: MutableList<CartItem> = mutableListOf()
+    private val cartItems: MutableList<CartItem> = mutableListOf()
 
     fun addProduct(shopItem: ShopItem) {
         val product = cartItems.firstOrNull { it.name == shopItem.name }
@@ -13,13 +13,6 @@ class CartProductsRepository {
             addNewCartProduct(shopItem)
         } else {
             updateCartProduct(product)
-        }
-    }
-
-    private fun updateCartProduct(product: CartItem) {
-        product.apply {
-            quantity++
-            totalAmount += this.amount.value
         }
     }
 
@@ -37,13 +30,20 @@ class CartProductsRepository {
         )
     }
 
+    private fun updateCartProduct(product: CartItem) {
+        product.apply {
+            quantity++
+            totalAmount += this.amount.value
+        }
+    }
+
     fun removeProduct(product: CartItem) {
-        val cartProduct = cartItems.first { it.name == product.name }
-        with(cartProduct) {
+        val cartItem = cartItems.first { it.name == product.name }
+        with(cartItem) {
             totalAmount -= amount.value
             quantity--
-            if (quantity == 0) cartItems.remove(this)
         }
+        if (cartItem.quantity == 0) cartItems.remove(cartItem)
     }
 
     fun fetchProducts(): List<CartItem> =

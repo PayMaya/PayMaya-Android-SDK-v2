@@ -7,20 +7,17 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
-import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.demo.Constants.DECIMALS
 import com.paymaya.sdk.android.demo.R
-import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
+import com.paymaya.sdk.android.demo.di.PresenterModule
 import com.paymaya.sdk.android.demo.model.CartItem
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
-import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.vault.PayMayaVault
-import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.android.synthetic.main.activity_cart.*
 import java.math.BigDecimal
 
@@ -29,7 +26,7 @@ typealias OnRemoveFromCartRequestListener = (cartItem: CartItem) -> Unit
 class CartActivity : Activity(), CartContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private val presenter: CartContract.Presenter = PresenterModuleProvider.getCartPresenter()
+    private val presenter: CartContract.Presenter = PresenterModule.getCartPresenter()
     private var adapter = CartItemAdapter(
         onRemoveFromCartRequestListener = { presenter.removeFromCartButtonClicked(it) }
     )
@@ -98,23 +95,19 @@ class CartActivity : Activity(), CartContract.View {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val checkoutResult: PayMayaCheckoutResult? =
-            payMayaCheckoutClient.onActivityResult(requestCode, resultCode, data)
-        checkoutResult?.let {
-            presenter.onCheckoutResult(it)
+        payMayaCheckoutClient.onActivityResult(requestCode, resultCode, data)?.let {
+            presenter.checkoutCompleted(it)
             return
         }
 
-        val payWithPayMayaResult: PayWithPayMayaResult? =
-            payWithPayMayaClient.onActivityResult(requestCode, resultCode, data)
-        payWithPayMayaResult?.let {
-            presenter.onPayWithPayMayaResult(it)
+        payWithPayMayaClient.onActivityResult(requestCode, resultCode, data)?.let {
+            presenter.payWithPayMayaCompleted(it)
             return
         }
 
-        val vaultResult: PayMayaVaultResult? =
-            payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
-        vaultResult?.let { presenter.onVaultResult(it) }
+        payMayaVaultClient.onActivityResult(requestCode, resultCode, data)?.let {
+            presenter.vaultCompleted(it)
+        }
     }
 
     override fun showResultSuccessMessage(message: String) {
@@ -123,7 +116,7 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun showResultCancelMessage(message: String) {
-        Snackbar.make(cart_view_container, "Operation cancelled", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(cart_view_container, "Operation canceled", Snackbar.LENGTH_SHORT).show()
         Log.w(TAG, message)
     }
 

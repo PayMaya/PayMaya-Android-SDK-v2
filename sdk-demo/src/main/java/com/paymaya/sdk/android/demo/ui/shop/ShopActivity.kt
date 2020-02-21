@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paymaya.sdk.android.demo.R
-import com.paymaya.sdk.android.demo.di.PresenterModuleProvider
+import com.paymaya.sdk.android.demo.di.PresenterModule
 import com.paymaya.sdk.android.demo.model.ShopItem
 import com.paymaya.sdk.android.demo.ui.cart.CartActivity
 import kotlinx.android.synthetic.main.activity_shop.*
@@ -15,7 +15,7 @@ typealias OnAddToCartRequestListener = (shopItem: ShopItem) -> Unit
 class ShopActivity : Activity(), ShopContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private val presenter: ShopContract.Presenter by lazy { PresenterModuleProvider.getShopPresenter() }
+    private val presenter: ShopContract.Presenter by lazy { PresenterModule.getShopPresenter() }
     private var adapter =
         ShopItemAdapter(
             onAddToCartRequestListener = {

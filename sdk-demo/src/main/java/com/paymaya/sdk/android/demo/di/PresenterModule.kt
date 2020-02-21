@@ -5,21 +5,21 @@ import com.paymaya.sdk.android.demo.ui.cart.CartPresenter
 import com.paymaya.sdk.android.demo.ui.shop.ShopContract
 import com.paymaya.sdk.android.demo.ui.shop.ShopPresenter
 
-internal object PresenterModuleProvider {
+internal object PresenterModule {
 
     fun getShopPresenter(): ShopContract.Presenter =
         ShopPresenter(
-            UseCaseModuleProvider.getFetchShopDataUseCase(),
-            UseCaseModuleProvider.getSaveProductInCartUseCase(),
-            UseCaseModuleProvider.getFetchProductsFromCartUseCase()
+            UseCaseModule.getFetchShopDataUseCase(),
+            UseCaseModule.getSaveProductInCartUseCase(),
+            UseCaseModule.getFetchProductsFromCartUseCase()
         )
 
     fun getCartPresenter(): CartContract.Presenter =
         CartPresenter(
-            UseCaseModuleProvider.getFetchProductsFromCartUseCase(),
-            UseCaseModuleProvider.getRemoveProductFromCartUseCase(),
-            UseCaseModuleProvider.getCreateCheckoutRequestUseCase(),
-            UseCaseModuleProvider.getCreateSinglePaymentsRequestUseCase(),
-            UseCaseModuleProvider.getCreateWalletLinkRequestUseCase()
+            UseCaseModule.getFetchProductsFromCartUseCase(),
+            UseCaseModule.getRemoveProductFromCartUseCase(),
+            UseCaseModule.getCreateCheckoutRequestUseCase(),
+            UseCaseModule.getCreateSinglePaymentsRequestUseCase(),
+            UseCaseModule.getCreateWalletLinkRequestUseCase()
         )
 }

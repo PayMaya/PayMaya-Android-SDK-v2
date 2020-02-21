@@ -3,35 +3,21 @@ package com.paymaya.sdk.android.paywithpaymaya.internal
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
-import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
+import com.paymaya.sdk.android.paywithpaymaya.internal.di.PayWithPayMayaModule
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 internal class CreateWalletLinkActivity : PayMayaPaymentActivity<CreateWalletLinkRequest>() {
 
     override fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String
-    ): PayMayaPaymentContract.Presenter<CreateWalletLinkRequest> {
-        val json = Json(JsonConfiguration.Stable)
-        // TODO JIRA PS-16 http logging level
-        val httpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .build()
-
-        return PayMayaPaymentPresenter(
-            CreateWalletLinkUseCase(
-                json,
-                PayWithPayMayaRepository(environment, clientKey, json, httpClient)
-            )
-        )
-    }
+        clientKey: String,
+        logLevel: LogLevel
+    ): PayMayaPaymentContract.Presenter<CreateWalletLinkRequest> =
+        PayWithPayMayaModule.getCreateWalletLinkPresenter(environment, clientKey, logLevel)
 
     companion object {
         fun newIntent(

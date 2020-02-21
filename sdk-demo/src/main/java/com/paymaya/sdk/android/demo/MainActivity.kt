@@ -5,20 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
-import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
-import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.checkout.models.Buyer
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.checkout.models.Item
-import com.paymaya.sdk.android.common.models.*
+import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.common.models.RedirectUrl
+import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
-import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.vault.PayMayaVault
 import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,19 +31,19 @@ class MainActivity : Activity() {
     private val payMayaCheckoutClient = PayMayaCheckout.Builder()
         .clientKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(Log.VERBOSE)
+        .logLevel(LogLevel.VERBOSE)
         .build()
 
     private val payWityPayMayaClient = PayWithPayMaya.Builder()
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(Log.VERBOSE)
+        .logLevel(LogLevel.VERBOSE)
         .build()
 
     private val payMayaVaultClient = PayMayaVault.Builder()
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(Log.VERBOSE)
+        .logLevel(LogLevel.VERBOSE)
         .logo(R.drawable.custom_logo)
         .build()
 

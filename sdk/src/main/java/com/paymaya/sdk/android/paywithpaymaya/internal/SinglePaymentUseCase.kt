@@ -1,17 +1,19 @@
 package com.paymaya.sdk.android.paywithpaymaya.internal
 
+import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.SendRequestBaseUseCase
-import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.paywithpaymaya.internal.models.SinglePaymentResponse
+import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import kotlinx.serialization.json.Json
 import okhttp3.Response
 import okhttp3.ResponseBody
 
 internal class SinglePaymentUseCase(
     json: Json,
-    private val repository: PayWithPayMayaRepository
-) : SendRequestBaseUseCase<SinglePaymentRequest>(json) {
+    private val repository: PayWithPayMayaRepository,
+    logger: Logger
+) : SendRequestBaseUseCase<SinglePaymentRequest>(json, logger) {
 
     override suspend fun sendRequest(request: SinglePaymentRequest): Response =
         repository.singlePayment(request)

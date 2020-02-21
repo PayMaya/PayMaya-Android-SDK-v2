@@ -8,13 +8,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Resource
-import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 import com.paymaya.sdk.android.vault.internal.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.VaultRepository
@@ -38,11 +38,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
 
         val intent = requireNotNull(intent)
         val environment =
-            requireNotNull(intent.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
-        val clientKey = requireNotNull(intent.getStringExtra(PayMayaPaymentActivity.EXTRAS_CLIENT_KEY))
+            requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
+        val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
+        val logoResId = intent.getIntExtra(EXTRAS_LOGO_RES_ID, UNDEFINED_RES_ID)
         presenter = buildPresenter(environment, clientKey)
 
-        initializeView()
+        initializeView(logoResId)
 
         presenter.viewCreated(this)
     }
@@ -56,7 +57,11 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         presenter.backButtonPressed()
     }
 
-    private fun initializeView() {
+    private fun initializeView(@DrawableRes logoResId: Int) {
+        if (logoResId != UNDEFINED_RES_ID) {
+            payMayaVaultLogo.setImageDrawable(getDrawable(logoResId))
+        }
+
         payMayaVaultPayButton.setOnClickListener {
             presenter.payButtonClicked(
                 payMayaVaultCardNumberEditText.text.toString(),
@@ -215,6 +220,8 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     companion object {
         private const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
         private const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
+        private const val EXTRAS_LOGO_RES_ID = "EXTRAS_LOGO_RES_ID"
+        private const val UNDEFINED_RES_ID = -1
 
         const val EXTRAS_RESULT = "EXTRAS_RESULT"
         const val EXTRAS_BUNDLE = "EXTRAS_BUNDLE"
@@ -222,11 +229,13 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         fun newIntent(
             activity: Activity,
             clientKey: String,
-            environment: PayMayaEnvironment
+            environment: PayMayaEnvironment,
+            @DrawableRes logoResId: Int?
         ): Intent {
             val intent = Intent(activity, TokenizeCardActivity::class.java)
             intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
+            logoResId?.let { intent.putExtra(EXTRAS_LOGO_RES_ID, it) }
             return intent
         }
     }

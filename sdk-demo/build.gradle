@@ -45,6 +45,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "style"
+    productFlavors {
+        defaultstyle {
+            applicationIdSuffix ".defaultstyle"
+            versionNameSuffix "-defaultstyle"
+        }
+        customstyle {
+            applicationIdSuffix ".customstyle"
+            versionNameSuffix "-customstyle"
+        }
+    }
 }
 
 dependencies {

@@ -42,6 +42,7 @@ class MainActivity : Activity() {
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
         .logLevel(Log.VERBOSE)
+        .logo(R.drawable.custom_logo)
         .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,7 +144,6 @@ class MainActivity : Activity() {
         val vaultResult = payMayaVaultClient.onActivityResult(requestCode, resultCode, data)
         vaultResult?.let {
             processVaultResult(it)
-            return
         }
     }
 

@@ -7,7 +7,7 @@ internal class CardInfoValidator(
 ) {
 
     fun validateNumber(value: String): Boolean =
-        value.length in 12..19 && checkLuhnChecksum(value)
+        value.length in 16..19 && checkLuhnChecksum(value)
 
     fun validateMonth(value: String): Boolean =
         value.length in 1..2 &&

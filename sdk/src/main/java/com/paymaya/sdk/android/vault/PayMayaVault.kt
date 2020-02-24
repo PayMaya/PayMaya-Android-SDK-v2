@@ -3,16 +3,18 @@ package com.paymaya.sdk.android.vault
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import androidx.annotation.DrawableRes
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Constants
 import com.paymaya.sdk.android.common.internal.Logger
-import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardActivity
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
+import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardActivity
 
 class PayMayaVault private constructor(
     private val clientKey: String,
     private val environment: PayMayaEnvironment,
-    logLevel: Int
+    logLevel: Int,
+    @DrawableRes private val logoResId: Int?
 ) {
 
     init {
@@ -24,7 +26,8 @@ class PayMayaVault private constructor(
         val intent = TokenizeCardActivity.newIntent(
             activity,
             clientKey,
-            environment
+            environment,
+            logoResId
         )
         activity.startActivityForResult(intent, Constants.VAULT_CARD_FORM_REQUEST_CODE)
     }
@@ -61,7 +64,8 @@ class PayMayaVault private constructor(
     class Builder(
         var clientKey: String? = null,
         var environment: PayMayaEnvironment? = null,
-        var logLevel: Int = Log.WARN
+        var logLevel: Int = Log.WARN,
+        var logoResId: Int? = null
     ) {
         fun clientKey(value: String) =
             apply { this.clientKey = value }
@@ -76,8 +80,12 @@ class PayMayaVault private constructor(
             PayMayaVault(
                 requireNotNull(clientKey),
                 requireNotNull(environment),
-                logLevel
+                logLevel,
+                logoResId
             )
+
+        fun logo(@DrawableRes value: Int) =
+            apply { this.logoResId = value }
     }
 
     companion object {

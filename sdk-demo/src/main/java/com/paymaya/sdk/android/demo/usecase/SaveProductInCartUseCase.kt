@@ -7,6 +7,6 @@ class SaveProductInCartUseCase(
     private val cartProductsRepository: CartProductsRepository
 ) {
     fun run(shopItem: ShopItem) {
-        cartProductsRepository.addProduct(shopItem)
+        cartProductsRepository.addItem(shopItem)
     }
 }

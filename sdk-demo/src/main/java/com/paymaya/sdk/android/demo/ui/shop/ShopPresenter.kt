@@ -16,7 +16,8 @@ class ShopPresenter(
 
     override fun viewCreated(view: ShopContract.View) {
         this.view = view
-        view.populateView(fetchShopDataUseCase.run())
+        val products = fetchShopDataUseCase.run()//.sortedBy { it.name }
+        view.populateView(products)
     }
 
     override fun viewResumed() {
@@ -32,7 +33,7 @@ class ShopPresenter(
     private fun getProductsInCartCount(): Int {
         var productsInCartCount = 0
         fetchProductsFromCartUseCase.run().forEach {
-            productsInCartCount += it.quantity
+            productsInCartCount += it.quantity ?: 0
         }
         return productsInCartCount
     }

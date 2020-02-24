@@ -1,52 +1,77 @@
 package com.paymaya.sdk.android.demo.data
 
-import com.paymaya.sdk.android.demo.model.CartItem
+import com.paymaya.sdk.android.checkout.models.Item
+import com.paymaya.sdk.android.checkout.models.ItemAmount
+import com.paymaya.sdk.android.common.models.AmountDetails
+import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.model.ShopItem
 
 class CartProductsRepository {
 
-    private val cartItems: MutableList<CartItem> = mutableListOf()
+    private val items: MutableList<Item> = mutableListOf()
 
-    fun addProduct(shopItem: ShopItem) {
-        val product = cartItems.firstOrNull { it.name == shopItem.name }
-        if (product == null) {
-            addNewCartProduct(shopItem)
+    fun addItem(shopItem: ShopItem) {
+        val index = items.indexOfFirst { it.name == shopItem.name }
+
+        if (index == -1) {
+            val newItem = createItem(shopItem)
+            items.add(newItem)
         } else {
-            updateCartProduct(product)
+            val updatedItem = increaseQuantity(items[index])
+            items[index] = updatedItem
         }
     }
 
-    private fun addNewCartProduct(shopItem: ShopItem) {
-        cartItems.add(
-            CartItem(
-                quantity = 1,
-                totalAmount = shopItem.amount.value,
-                name = shopItem.name,
-                currency = shopItem.currency,
-                amount = shopItem.amount,
-                description = shopItem.description,
-                code = shopItem.code
-            )
+    private fun createItem(shopItem: ShopItem): Item =
+        Item(
+            quantity = 1,
+            totalAmount = TotalAmount(
+                shopItem.value,
+                shopItem.currency,
+                AmountDetails(shopItem.discount)
+            ),
+            name = shopItem.name,
+            amount = ItemAmount(
+                shopItem.value,
+                AmountDetails(shopItem.discount)
+            ),
+            description = shopItem.description,
+            code = shopItem.code
+        )
+
+    private fun increaseQuantity(item: Item): Item {
+        val amount = item.amount
+        require(amount != null)
+
+        return item.copy(
+            quantity = item.quantity?.plus(1),
+            totalAmount = item.totalAmount
+                .copy(value = item.totalAmount.value + amount.value)
         )
     }
 
-    private fun updateCartProduct(product: CartItem) {
-        product.apply {
-            quantity++
-            totalAmount += this.amount.value
+    fun removeItem(item: Item) {
+        val index = items.indexOf(item)
+        require(index != -1)
+
+        val updatedItem = decreaseQuantity(item)
+        items[index] = updatedItem
+        if (updatedItem.quantity == 0) {
+            items.remove(updatedItem)
         }
     }
 
-    fun removeProduct(product: CartItem) {
-        val cartItem = cartItems.first { it.name == product.name }
-        with(cartItem) {
-            totalAmount -= amount.value
-            quantity--
-        }
-        if (cartItem.quantity == 0) cartItems.remove(cartItem)
+    private fun decreaseQuantity(item: Item): Item {
+        val amount = item.amount
+        require(amount != null)
+
+        return item.copy(
+            quantity = item.quantity?.minus(1),
+            totalAmount = item.totalAmount
+                .copy(value = item.totalAmount.value - amount.value)
+        )
     }
 
-    fun fetchProducts(): List<CartItem> =
-        cartItems
-
+    fun fetchItems(): List<Item> =
+        items
 }

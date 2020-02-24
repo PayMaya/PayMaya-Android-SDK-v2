@@ -1,11 +1,11 @@
 package com.paymaya.sdk.android.demo.usecase
 
+import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.common.models.AmountDetails
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.Constants.CURRENCY
 import com.paymaya.sdk.android.demo.data.CartProductsRepository
-import com.paymaya.sdk.android.demo.model.CartItem
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import java.math.BigDecimal
 
@@ -13,7 +13,7 @@ class CreateSinglePaymentsRequestUseCase(
     private val repository: CartProductsRepository
 ) {
     fun run(): SinglePaymentRequest? {
-        val products = repository.fetchProducts()
+        val products = repository.fetchItems()
 
         return if (products.isNotEmpty())
             SinglePaymentRequest(
@@ -23,17 +23,17 @@ class CreateSinglePaymentsRequestUseCase(
             ) else null
     }
 
-    private fun getTotalAmounts(products: List<CartItem>): TotalAmount =
+    private fun getTotalAmounts(products: List<Item>): TotalAmount =
         TotalAmount(
             getProductsAmountValue(products),
             CURRENCY,
             AmountDetails()
         )
 
-    private fun getProductsAmountValue(products: List<CartItem>): BigDecimal {
+    private fun getProductsAmountValue(products: List<Item>): BigDecimal {
         var totalAmount = BigDecimal(0)
         products.forEach {
-            totalAmount += it.totalAmount
+            totalAmount += it.totalAmount.value
         }
         return totalAmount
     }

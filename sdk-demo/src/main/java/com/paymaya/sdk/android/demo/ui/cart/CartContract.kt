@@ -2,7 +2,7 @@ package com.paymaya.sdk.android.demo.ui.cart
 
 import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
-import com.paymaya.sdk.android.demo.model.CartItem
+import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
@@ -13,7 +13,7 @@ import java.math.BigDecimal
 interface CartContract {
 
     interface View {
-        fun populateView(productsList: List<CartItem>)
+        fun populateView(productsList: List<Item>)
         fun setTotalAmount(totalAmount: BigDecimal)
         fun payWithCheckout(checkoutRequest: CheckoutRequest)
         fun payWithPayMaya(singlePaymentRequest: SinglePaymentRequest)
@@ -27,7 +27,7 @@ interface CartContract {
     interface Presenter {
         fun viewCreated(view: View)
         fun viewDestroyed()
-        fun removeFromCartButtonClicked(product: CartItem)
+        fun removeFromCartButtonClicked(product: Item)
         fun payWithCheckoutClicked()
         fun payWithPayMayaClicked()
         fun createWalletLinkClicked()

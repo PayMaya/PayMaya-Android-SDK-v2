@@ -1,7 +1,7 @@
 package com.paymaya.sdk.android.demo.ui.cart
 
 import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
-import com.paymaya.sdk.android.demo.model.CartItem
+import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.demo.usecase.*
 import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
@@ -25,20 +25,20 @@ class CartPresenter(
     }
 
     private fun updateProductsList() {
-        val products = fetchProductsFromCartUseCase.run()
+        val products = fetchProductsFromCartUseCase.run()//.sortedBy { it.name }
         view?.populateView(products)
         view?.setTotalAmount(getTotalAmount(products))
     }
 
-    private fun getTotalAmount(products: List<CartItem>): BigDecimal {
+    private fun getTotalAmount(products: List<Item>): BigDecimal {
         var totalAmount = BigDecimal(0)
         products.forEach {
-            totalAmount += it.totalAmount
+            totalAmount += it.totalAmount.value
         }
         return totalAmount
     }
 
-    override fun removeFromCartButtonClicked(product: CartItem) {
+    override fun removeFromCartButtonClicked(product: Item) {
         removeProductFromCartUseCase.run(product)
         updateProductsList()
     }

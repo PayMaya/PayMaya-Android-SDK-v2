@@ -8,6 +8,7 @@ import com.paymaya.sdk.android.demo.Constants.DECIMALS
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.model.ShopItem
 import kotlinx.android.synthetic.main.holder_shop_product.view.*
+import java.math.BigDecimal
 
 class ShopItemAdapter(
     private val onAddToCartRequestListener: OnAddToCartRequestListener
@@ -38,7 +39,7 @@ class ShopItemAdapter(
         fun setData(product: ShopItem) {
             itemView.product_name.text = product.name
             itemView.product_amount.text =
-                product.amount?.value.setScale(DECIMALS).toString() + " ${product.currency}"
+                product.value?.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN).toString() + " ${product.currency}"
             itemView.shop_product_container.setBackgroundResource(R.drawable.rectangle)
             itemView.add_to_cart_button.setOnClickListener {
                 onAddToCartRequestListener.invoke(product)

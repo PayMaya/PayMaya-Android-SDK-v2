@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.demo.Constants.DECIMALS
 import com.paymaya.sdk.android.demo.R
 import com.paymaya.sdk.android.demo.di.PresenterModule
-import com.paymaya.sdk.android.demo.model.CartItem
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
@@ -21,7 +21,7 @@ import com.paymaya.sdk.android.vault.PayMayaVault
 import kotlinx.android.synthetic.main.activity_cart.*
 import java.math.BigDecimal
 
-typealias OnRemoveFromCartRequestListener = (cartItem: CartItem) -> Unit
+typealias OnRemoveFromCartRequestListener = (cartItem: Item) -> Unit
 
 class CartActivity : Activity(), CartContract.View {
 
@@ -69,10 +69,10 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun setTotalAmount(totalAmount: BigDecimal) {
-        payment_amount.text = totalAmount.setScale(DECIMALS).toString()
+        payment_amount.text = totalAmount.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN).toString()
     }
 
-    override fun populateView(productsList: List<CartItem>) {
+    override fun populateView(productsList: List<Item>) {
         adapter.setItems(productsList)
     }
 

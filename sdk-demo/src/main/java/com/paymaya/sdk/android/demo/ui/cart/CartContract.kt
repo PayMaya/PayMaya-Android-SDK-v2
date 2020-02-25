@@ -1,0 +1,39 @@
+package com.paymaya.sdk.android.demo.ui.cart
+
+import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
+import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.checkout.models.Item
+import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
+import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
+import com.paymaya.sdk.android.vault.PayMayaVaultResult
+import java.lang.Exception
+import java.math.BigDecimal
+
+interface CartContract {
+
+    interface View {
+        fun populateView(productsList: List<Item>)
+        fun setTotalAmount(totalAmount: BigDecimal)
+        fun payWithCheckout(checkoutRequest: CheckoutRequest)
+        fun payWithSinglePayment(singlePaymentRequest: SinglePaymentRequest)
+        fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest)
+        fun payMayaVaultTokenizeCard()
+        fun showResultSuccessMessage(message: String)
+        fun showResultCancelMessage(message: String)
+        fun showResultFailureMessage(message: String, exception: Exception)
+    }
+
+    interface Presenter {
+        fun viewCreated(view: View)
+        fun viewDestroyed()
+        fun removeFromCartButtonClicked(product: Item)
+        fun payWithCheckoutButtonClicked()
+        fun payWithSinglePaymentButtonClicked()
+        fun createWalletLinkButtonClicked()
+        fun payMayaVaultButtonClicked()
+        fun checkoutCompleted(checkoutResult: PayMayaCheckoutResult)
+        fun payWithPayMayaCompleted(payWithPayMayaResult: PayWithPayMayaResult)
+        fun vaultCompleted(vaultResult: PayMayaVaultResult)
+    }
+}

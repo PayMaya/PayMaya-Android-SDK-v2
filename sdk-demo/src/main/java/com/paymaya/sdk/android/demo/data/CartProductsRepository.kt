@@ -41,10 +41,12 @@ class CartProductsRepository {
 
     private fun increaseQuantity(item: Item): Item {
         val amount = item.amount
+        val quantity = item.quantity
         require(amount != null)
+        require(quantity != null)
 
         return item.copy(
-            quantity = item.quantity?.plus(1),
+            quantity = quantity.plus(1),
             totalAmount = item.totalAmount
                 .copy(value = item.totalAmount.value + amount.value)
         )
@@ -63,10 +65,12 @@ class CartProductsRepository {
 
     private fun decreaseQuantity(item: Item): Item {
         val amount = item.amount
+        val quantity = item.quantity
         require(amount != null)
+        require(quantity != null)
 
         return item.copy(
-            quantity = item.quantity?.minus(1),
+            quantity = quantity.minus(1),
             totalAmount = item.totalAmount
                 .copy(value = item.totalAmount.value - amount.value)
         )

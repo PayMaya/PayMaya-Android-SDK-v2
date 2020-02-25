@@ -43,22 +43,22 @@ class CartPresenter(
         updateProductsList()
     }
 
-    override fun payWithCheckoutClicked() {
+    override fun payWithCheckoutButtonClicked() {
         val checkoutRequest = createCheckoutRequestUseCase.run()
         checkoutRequest?.let { view?.payWithCheckout(it) }
     }
 
-    override fun payWithPayMayaClicked() {
+    override fun payWithSinglePaymentButtonClicked() {
         val singlePaymentRequest = createSinglePaymentsRequestUseCase.run()
-        singlePaymentRequest?.let { view?.payWithPayMaya(it) }
+        singlePaymentRequest?.let { view?.payWithSinglePayment(it) }
     }
 
-    override fun createWalletLinkClicked() {
+    override fun createWalletLinkButtonClicked() {
         val walletLinkRequest = createWalletLinkRequestUseCase.run()
         view?.createWalletLink(walletLinkRequest)
     }
 
-    override fun payMayaVaultTokenizeCardClicked() {
+    override fun payMayaVaultButtonClicked() {
         view?.payMayaVaultTokenizeCard()
     }
 

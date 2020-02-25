@@ -62,10 +62,10 @@ class CartActivity : Activity(), CartContract.View {
         cart_products_list.layoutManager = linearLayoutManager
         cart_products_list.adapter = adapter
 
-        pay_with_checkout_button.setOnClickListener { presenter.payWithCheckoutClicked() }
-        pay_with_paymaya_button.setOnClickListener { presenter.payWithPayMayaClicked() }
-        create_wallet_link_button.setOnClickListener { presenter.createWalletLinkClicked() }
-        pay_maya_vault_tokenize_card_button.setOnClickListener { presenter.payMayaVaultTokenizeCardClicked() }
+        pay_with_checkout_button.setOnClickListener { presenter.payWithCheckoutButtonClicked() }
+        pay_with_single_payment_button.setOnClickListener { presenter.payWithSinglePaymentButtonClicked() }
+        create_wallet_link_button.setOnClickListener { presenter.createWalletLinkButtonClicked() }
+        pay_maya_vault_button.setOnClickListener { presenter.payMayaVaultButtonClicked() }
     }
 
     override fun setTotalAmount(totalAmount: BigDecimal) {
@@ -80,7 +80,7 @@ class CartActivity : Activity(), CartContract.View {
         payMayaCheckoutClient.execute(this, checkoutRequest)
     }
 
-    override fun payWithPayMaya(singlePaymentRequest: SinglePaymentRequest) {
+    override fun payWithSinglePayment(singlePaymentRequest: SinglePaymentRequest) {
         payWithPayMayaClient.executeSinglePayment(this, singlePaymentRequest)
     }
 

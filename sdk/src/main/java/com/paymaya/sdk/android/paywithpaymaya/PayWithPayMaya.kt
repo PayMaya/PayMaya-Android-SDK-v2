@@ -38,7 +38,8 @@ class PayWithPayMaya(
             activity,
             requestData,
             clientKey,
-            environment
+            environment,
+            logLevel
         )
         activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE)
     }

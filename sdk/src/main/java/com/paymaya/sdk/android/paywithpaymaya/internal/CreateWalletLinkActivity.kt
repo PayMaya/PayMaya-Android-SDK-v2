@@ -24,7 +24,8 @@ internal class CreateWalletLinkActivity : PayMayaPaymentActivity<CreateWalletLin
             activity: Activity,
             requestData: CreateWalletLinkRequest,
             clientKey: String,
-            environment: PayMayaEnvironment
+            environment: PayMayaEnvironment,
+            logLevel: LogLevel
         ): Intent {
             val bundle = Bundle()
             bundle.putParcelable(EXTRAS_REQUEST_DATA, requestData)
@@ -32,6 +33,7 @@ internal class CreateWalletLinkActivity : PayMayaPaymentActivity<CreateWalletLin
             intent.putExtra(EXTRAS_BUNDLE, bundle)
             intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
+            intent.putExtra(EXTRAS_LOG_LEVEL, logLevel)
             return intent
         }
     }

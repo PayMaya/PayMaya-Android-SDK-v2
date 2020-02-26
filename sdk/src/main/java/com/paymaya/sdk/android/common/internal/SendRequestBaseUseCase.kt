@@ -3,6 +3,7 @@ package com.paymaya.sdk.android.common.internal
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.common.exceptions.HttpException
 import com.paymaya.sdk.android.common.exceptions.InternalException
+import com.paymaya.sdk.android.common.internal.Constants.TAG
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
 import kotlinx.serialization.SerializationException
@@ -12,7 +13,8 @@ import okhttp3.ResponseBody
 import java.net.HttpURLConnection
 
 internal abstract class SendRequestBaseUseCase<T>(
-    protected val json: Json
+    protected val json: Json,
+    private val logger: Logger
 ) {
 
     suspend fun run(request: T): ResponseWrapper =
@@ -76,12 +78,12 @@ internal abstract class SendRequestBaseUseCase<T>(
     private fun handleEmptyBody(httpResponse: Response): ErrorResponseWrapper {
         val message = "Backend response with empty body. HTTP response: " +
                 "${httpResponse.code}, $httpResponse.message"
-        Logger.e(TAG, message)
+        logger.e(TAG, message)
         return ErrorResponseWrapper(InternalException(message))
     }
 
     private fun processOtherHttpErrorResponse(httpResponse: Response): ResponseWrapper {
-        Logger.e(TAG, "HTTP response: ${httpResponse.code}, ${httpResponse.message}")
+        logger.e(TAG, "HTTP response: ${httpResponse.code}, ${httpResponse.message}")
         return ErrorResponseWrapper(
             HttpException(
                 httpResponse.code,
@@ -94,11 +96,7 @@ internal abstract class SendRequestBaseUseCase<T>(
         val message =
             "Backend response deserialization problem. Backend response: " +
                     "${httpResponse.code}, ${httpResponse.message}"
-        Logger.e(TAG, message, e)
+        logger.e(TAG, message, e)
         return ErrorResponseWrapper(InternalException(message, e))
-    }
-
-    companion object {
-        private const val TAG = "SendRequestBaseUseCase"
     }
 }

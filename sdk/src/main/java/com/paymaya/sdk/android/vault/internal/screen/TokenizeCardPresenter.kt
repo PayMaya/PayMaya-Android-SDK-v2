@@ -2,7 +2,9 @@ package com.paymaya.sdk.android.vault.internal.screen
 
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.common.internal.Constants.TAG
 import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
+import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.Resource
 import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
@@ -19,12 +21,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 internal class TokenizeCardPresenter(
     private val tokenizeCardUseCase: TokenizeCardUseCase,
-    private val cardInfoValidator: CardInfoValidator
+    private val cardInfoValidator: CardInfoValidator,
+    private val logger: Logger
 ) : TokenizeCardContract.Presenter, CoroutineScope {
 
     private val job: Job = Job()
@@ -216,14 +218,20 @@ internal class TokenizeCardPresenter(
         when (exception) {
             is BadRequestException -> getMessageBadRequestMessage(exception.error)
             is UnknownHostException -> Resource(R.string.paymaya_connection_error)
-            else -> Resource(R.string.paymaya_unknown_error)
+            else -> {
+                logger.e(TAG, "Unknown error: ${exception.javaClass.simpleName}")
+                Resource(R.string.paymaya_unknown_error)
+            }
         }
 
     private fun getMessageBadRequestMessage(baseError: BaseError): Resource =
         when (baseError) {
             is GenericError -> Resource(baseError.error)
             is PaymentError -> Resource(getPaymentErrorMessage(baseError))
-            else -> Resource(R.string.paymaya_unknown_error)
+            else -> {
+                logger.e(TAG, "Unknown error: ${baseError.javaClass.simpleName}")
+                Resource(R.string.paymaya_unknown_error)
+            }
         }
 
     private fun getPaymentErrorMessage(paymentError: PaymentError): String {

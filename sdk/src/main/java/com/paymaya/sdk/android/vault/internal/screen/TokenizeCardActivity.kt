@@ -13,17 +13,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.paymaya.sdk.android.R
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Resource
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
-import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
-import com.paymaya.sdk.android.vault.internal.VaultRepository
+import com.paymaya.sdk.android.vault.internal.di.VaultModule
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 import kotlinx.android.synthetic.main.activity_paymaya_vault_tokenize_card.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.util.*
 
 internal class TokenizeCardActivity : AppCompatActivity(),
@@ -40,8 +35,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         val environment =
             requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
         val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
+        val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
         val logoResId = intent.getIntExtra(EXTRAS_LOGO_RES_ID, UNDEFINED_RES_ID)
-        presenter = buildPresenter(environment, clientKey)
+
+        presenter = buildPresenter(environment, clientKey, logLevel)
 
         initializeView(logoResId)
 
@@ -98,29 +95,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
 
     private fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String
-    ): TokenizeCardContract.Presenter {
-        val json = Json(JsonConfiguration.Stable)
-        // TODO JIRA PS-16 http logging level
-        val httpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .build()
-        val sendTokenizeCardRequestUseCase =
-            TokenizeCardUseCase(
-                json,
-                VaultRepository(
-                    environment,
-                    clientKey,
-                    json,
-                    httpClient
-                )
-            )
-        val cardInfoValidator = CardInfoValidator(Calendar.getInstance())
-        return TokenizeCardPresenter(
-            sendTokenizeCardRequestUseCase,
-            cardInfoValidator
-        )
-    }
+        clientKey: String,
+        logLevel: LogLevel
+    ): TokenizeCardContract.Presenter =
+        VaultModule.getTokenizeCardPresenter(environment, clientKey, logLevel, Calendar.getInstance())
 
     override fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse) {
         val bundle = Bundle()
@@ -220,6 +198,7 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     companion object {
         private const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
         private const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
+        private const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"
         private const val EXTRAS_LOGO_RES_ID = "EXTRAS_LOGO_RES_ID"
         private const val UNDEFINED_RES_ID = -1
 
@@ -230,11 +209,13 @@ internal class TokenizeCardActivity : AppCompatActivity(),
             activity: Activity,
             clientKey: String,
             environment: PayMayaEnvironment,
+            logLevel: LogLevel,
             @DrawableRes logoResId: Int?
         ): Intent {
             val intent = Intent(activity, TokenizeCardActivity::class.java)
             intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
+            intent.putExtra(EXTRAS_LOG_LEVEL, logLevel)
             logoResId?.let { intent.putExtra(EXTRAS_LOGO_RES_ID, it) }
             return intent
         }

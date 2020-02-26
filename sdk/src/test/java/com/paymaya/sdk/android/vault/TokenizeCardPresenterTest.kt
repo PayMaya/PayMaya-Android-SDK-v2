@@ -3,6 +3,8 @@ package com.paymaya.sdk.android.vault
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.vault.internal.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
@@ -39,7 +41,11 @@ class TokenizeCardPresenterTest {
         val someDate = Calendar.getInstance().apply {
             set(Calendar.YEAR, YEAR_CURRENT)
         }
-        presenter = TokenizeCardPresenter(tokenizeCardUseCase, CardInfoValidator(someDate))
+        presenter = TokenizeCardPresenter(
+            tokenizeCardUseCase,
+            CardInfoValidator(someDate),
+            Logger(LogLevel.WARN)
+        )
     }
 
     @Test

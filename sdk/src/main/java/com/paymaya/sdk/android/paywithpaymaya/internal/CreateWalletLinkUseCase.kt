@@ -1,5 +1,6 @@
 package com.paymaya.sdk.android.paywithpaymaya.internal
 
+import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.SendRequestBaseUseCase
 import com.paymaya.sdk.android.paywithpaymaya.internal.models.CreateWalletLinkResponse
@@ -10,8 +11,9 @@ import okhttp3.ResponseBody
 
 internal class CreateWalletLinkUseCase(
     json: Json,
-    private val repository: PayWithPayMayaRepository
-) : SendRequestBaseUseCase<CreateWalletLinkRequest>(json) {
+    private val repository: PayWithPayMayaRepository,
+    logger: Logger
+) : SendRequestBaseUseCase<CreateWalletLinkRequest>(json, logger) {
 
     override suspend fun sendRequest(request: CreateWalletLinkRequest): Response =
         repository.createWalletLink(request)

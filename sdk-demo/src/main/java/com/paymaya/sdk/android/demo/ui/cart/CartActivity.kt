@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.checkout.models.Item
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.demo.Constants.DECIMALS
@@ -34,19 +35,19 @@ class CartActivity : Activity(), CartContract.View {
     private val payMayaCheckoutClient = PayMayaCheckout.Builder()
         .clientKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(Log.VERBOSE)
+        .logLevel(LogLevel.VERBOSE)
         .build()
 
     private val payWithPayMayaClient = PayWithPayMaya.Builder()
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(Log.VERBOSE)
+        .logLevel(LogLevel.VERBOSE)
         .build()
 
     private val payMayaVaultClient = PayMayaVault.Builder()
         .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(Log.VERBOSE)
+        .logLevel(LogLevel.VERBOSE)
         .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {

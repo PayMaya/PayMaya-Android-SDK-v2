@@ -2,34 +2,33 @@ package com.paymaya.sdk.android.paywithpaymaya
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.common.internal.Constants
-import com.paymaya.sdk.android.common.internal.Logger
+import com.paymaya.sdk.android.common.internal.Constants.TAG
+import com.paymaya.sdk.android.common.internal.di.CommonModule
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
-import com.paymaya.sdk.android.paywithpaymaya.internal.SinglePaymentActivity
 import com.paymaya.sdk.android.paywithpaymaya.internal.CreateWalletLinkActivity
+import com.paymaya.sdk.android.paywithpaymaya.internal.SinglePaymentActivity
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 
 class PayWithPayMaya(
     private val clientKey: String,
     private val environment: PayMayaEnvironment,
-    logLevel: Int
+    private val logLevel: LogLevel
 ) {
 
-    init {
-        // TODO JIRA PS-16
-        Logger.level = logLevel
-    }
+    private val logger = CommonModule.getLogger(logLevel)
 
     fun executeSinglePayment(activity: Activity, requestData: SinglePaymentRequest) {
         val intent = SinglePaymentActivity.newIntent(
             activity,
             requestData,
             clientKey,
-            environment
+            environment,
+            logLevel
         )
         activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE)
     }
@@ -39,7 +38,8 @@ class PayWithPayMaya(
             activity,
             requestData,
             clientKey,
-            environment
+            environment,
+            logLevel
         )
         activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE)
     }
@@ -55,18 +55,23 @@ class PayWithPayMaya(
                 val resultId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
                 return when (resultCode) {
-                    Activity.RESULT_OK ->
+                    Activity.RESULT_OK -> {
+                        logger.i(TAG, "Pay With PayMaya result: OK")
                         SinglePaymentResult.Success(resultId)
+                    }
 
-                    Activity.RESULT_CANCELED ->
+                    Activity.RESULT_CANCELED -> {
+                        logger.i(TAG, "Pay With PayMaya result: CANCELED")
                         SinglePaymentResult.Cancel(resultId)
+                    }
 
                     PayMayaPaymentActivity.RESULT_FAILURE -> {
+                        logger.e(TAG, "Pay With PayMaya result: FAILURE")
                         val exception =
                             data.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_FAILURE_EXCEPTION) as Exception
 
                         if (exception is BadRequestException) {
-                            Logger.e(TAG, exception.error.toString())
+                            logger.e(TAG, exception.error.toString())
                         }
 
                         SinglePaymentResult.Failure(resultId, exception)
@@ -80,18 +85,24 @@ class PayWithPayMaya(
                 val resultId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
                 return when (resultCode) {
-                    Activity.RESULT_OK ->
+                    Activity.RESULT_OK -> {
+                        logger.i(TAG, "Pay With PayMaya result: OK")
                         CreateWalletLinkResult.Success(resultId)
+                    }
 
-                    Activity.RESULT_CANCELED ->
+                    Activity.RESULT_CANCELED -> {
+                        logger.i(TAG, "Pay With PayMaya result: CANCELED")
                         CreateWalletLinkResult.Cancel(resultId)
+                    }
 
                     PayMayaPaymentActivity.RESULT_FAILURE -> {
+                        logger.e(TAG, "Pay With PayMaya result: FAILURE")
+
                         val exception =
                             data.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_FAILURE_EXCEPTION) as Exception
 
                         if (exception is BadRequestException) {
-                            Logger.e(TAG, exception.error.toString())
+                            logger.e(TAG, exception.error.toString())
                         }
 
                         CreateWalletLinkResult.Failure(resultId, exception)
@@ -107,7 +118,7 @@ class PayWithPayMaya(
     data class Builder(
         var clientKey: String? = null,
         var environment: PayMayaEnvironment? = null,
-        var logLevel: Int = Log.WARN
+        var logLevel: LogLevel = LogLevel.WARN
     ) {
         fun clientKey(value: String) =
             apply { this.clientKey = value }
@@ -115,7 +126,7 @@ class PayWithPayMaya(
         fun environment(value: PayMayaEnvironment) =
             apply { this.environment = value }
 
-        fun logLevel(value: Int) =
+        fun logLevel(value: LogLevel) =
             apply { this.logLevel = value }
 
         fun build() =
@@ -124,9 +135,5 @@ class PayWithPayMaya(
                 requireNotNull(environment),
                 logLevel
             )
-    }
-
-    companion object {
-        private const val TAG = "PayWithPayMaya"
     }
 }

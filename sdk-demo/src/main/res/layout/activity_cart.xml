@@ -54,7 +54,7 @@
         android:layout_marginEnd="5dp"
         android:background="@drawable/round_button"
         android:padding="10dp"
-        android:text="Pay with card"
+        android:text="Pay by card"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@id/pay_with_paymaya_label"
         app:layout_constraintStart_toStartOf="@+id/paymaya_payments_container" />
@@ -77,7 +77,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/round_button"
         android:padding="10dp"
-        android:text="Pay with card"
+        android:text="Pay by card"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@+id/pay_with_paymaya_label"
         app:layout_constraintEnd_toEndOf="@+id/paymaya_payments_container"/>

@@ -82,7 +82,10 @@ appcenter {
     // Send mail to testers
     notifyTesters = true
     apps {
-        release {
+        defaultstyleRelease {
+            appName = getAppCenterAppName()
+        }
+        customstyleRelease {
             appName = getAppCenterAppName()
         }
     }

@@ -6,6 +6,15 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
+/**
+ * Amount details model. Contains all information about amount
+ *
+ * @property discount Discount.
+ * @property serviceCharge Service charge.
+ * @property shippingFee Shipping fee.
+ * @property tax Tax.
+ * @property subtotal Subtotal.
+ */
 @Parcelize
 @Serializable
 class AmountDetails(

@@ -11,6 +11,12 @@ import com.paymaya.sdk.android.common.internal.Constants
 import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 
+/**
+ * Main class to Checkout Payment process. Allows to execute checkout request with all data.
+ *
+ * @property clientKey Client key.
+ * @property environment Property defining environment type.
+ */
 class PayMayaCheckout private constructor(
     private val clientKey: String,
     private val environment: PayMayaEnvironment,
@@ -22,6 +28,12 @@ class PayMayaCheckout private constructor(
         Logger.level = logLevel
     }
 
+    /**
+     * Function allowing to execute payment with checkout request data.
+     *
+     * @param activity Activity.
+     * @param requestData Checkout request containing all information about checkout payment.
+     */
     fun execute(activity: Activity, requestData: CheckoutRequest) {
         val intent = CheckoutActivity.newIntent(
             activity,
@@ -32,6 +44,12 @@ class PayMayaCheckout private constructor(
         activity.startActivityForResult(intent, Constants.CHECKOUT_REQUEST_CODE)
     }
 
+    /**
+     * Function checking which the request code should be answered. This function also extras checkout id and for
+     * appropriate result status return checkout results class.
+     *
+     * @return appropriate CheckoutResult class object for success, cancel or failure status
+     */
     fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -66,20 +84,49 @@ class PayMayaCheckout private constructor(
         return null
     }
 
+    /**
+     * Main checkout builder class. Allows to set clients key, environment type, log level and
+     * create new object of PayMayaCheckout class.
+     *
+     * @property clientKey Client key.
+     * @property environment Property defining environment type.
+     * @property logLevel Log type.
+     */
     data class Builder(
         var clientKey: String? = null,
         var environment: PayMayaEnvironment? = null,
         var logLevel: Int = Log.WARN
     ) {
+
+        /**
+         * Function allowing to set client key
+         *
+         * @param value New client key.
+         */
         fun clientKey(value: String) =
             apply { this.clientKey = value }
 
+        /**
+         * Function allowing to set environment type.
+         *
+         * @param value New environment type.
+         */
         fun environment(value: PayMayaEnvironment) =
             apply { this.environment = value }
 
+        /**
+         * Function allowing to set log level.
+         *
+         * @param value New log level.
+         */
         fun logLevel(value: Int) =
             apply { this.logLevel = value }
 
+        /**
+         * Function allowing to build new PayMayaCheckout object.
+         *
+         * @return new PayMayaCheckout object.
+         */
         fun build() =
             PayMayaCheckout(
                 requireNotNull(clientKey),

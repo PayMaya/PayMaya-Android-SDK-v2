@@ -7,6 +7,12 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
+/**
+ * Item amount model. Contains detail information about each item's amount
+ *
+ * @property value Item's amount value
+ * @property details Item's amount details model
+ */
 @Parcelize
 @Serializable
 data class ItemAmount(

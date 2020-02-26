@@ -13,6 +13,13 @@ import com.paymaya.sdk.android.paywithpaymaya.internal.CreateWalletLinkActivity
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 
+/**
+ * Main class to Pay With PayMaya Payment process. Allows to execute requests such as create wallet link
+ * and single payment. PayWithPayMaya class takes client key and environments properties.
+ *
+ * @property clientKey Client key.
+ * @property environment Property defining environment type.
+ */
 class PayWithPayMaya(
     private val clientKey: String,
     private val environment: PayMayaEnvironment,
@@ -24,6 +31,12 @@ class PayWithPayMaya(
         Logger.level = logLevel
     }
 
+    /**
+     * Function allowing to execute single payment request with unnecessary data.
+     *
+     * @param activity Activity.
+     * @param requestData Model of single payment request which contains all information about single payment.
+     */
     fun executeSinglePayment(activity: Activity, requestData: SinglePaymentRequest) {
         val intent = SinglePaymentActivity.newIntent(
             activity,
@@ -34,6 +47,12 @@ class PayWithPayMaya(
         activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_SINGLE_PAYMENT_REQUEST_CODE)
     }
 
+    /**
+     * Function allowing to execute create wallet link request with unnecessary data.
+     *
+     * @param activity Activity.
+     * @param requestData Model of create wallet link which contains all unnecessary information.
+     */
     fun executeCreateWalletLink(activity: Activity, requestData: CreateWalletLinkRequest) {
         val intent = CreateWalletLinkActivity.newIntent(
             activity,
@@ -44,6 +63,12 @@ class PayWithPayMaya(
         activity.startActivityForResult(intent, Constants.PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_REQUEST_CODE)
     }
 
+    /**
+     * Function checking which the request code should be answered. This function also extras result id and for
+     * appropriate result status return pay with paymaya result class.
+     *
+     * @return appropriate PayWithPayMayaResult class object for success, cancel or failure status
+     */
     fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -104,20 +129,46 @@ class PayWithPayMaya(
         }
     }
 
+    /**
+     * Main class to Pay With PayMaya Payment process. Allows to execute pay with paymaya request with all data.
+     *
+     * @property clientKey Client key.
+     * @property environment Property defining environment type.
+     */
     data class Builder(
         var clientKey: String? = null,
         var environment: PayMayaEnvironment? = null,
         var logLevel: Int = Log.WARN
     ) {
+        /**
+         * Function allowing to set client key
+         *
+         * @param value New client key.
+         */
         fun clientKey(value: String) =
             apply { this.clientKey = value }
 
+        /**
+         * Function allowing to set environment type.
+         *
+         * @param value New environment type.
+         */
         fun environment(value: PayMayaEnvironment) =
             apply { this.environment = value }
 
+        /**
+         * Function allowing to set log level.
+         *
+         * @param value New log level.
+         */
         fun logLevel(value: Int) =
             apply { this.logLevel = value }
 
+        /**
+         * Function allowing to build new PayWithPayMaya object.
+         *
+         * @return new PayWithPayMaya object.
+         */
         fun build() =
             PayWithPayMaya(
                 requireNotNull(clientKey),

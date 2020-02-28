@@ -19,6 +19,11 @@ internal interface TokenizeCardContract {
         fun showProgressBar()
         fun hideProgressBar()
         fun hideKeyboard()
+        fun showVisaMark()
+        fun showMcMark()
+        fun showJcbMark()
+        fun showAmexMark()
+        fun hideCardMark()
     }
 
     interface Presenter {
@@ -39,5 +44,6 @@ internal interface TokenizeCardContract {
             cardExpirationYear: String,
             cardCvc: String
         )
+        fun cardNumberChanged(cardNumber: String)
     }
 }

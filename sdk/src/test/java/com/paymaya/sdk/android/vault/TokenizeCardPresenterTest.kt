@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.vault.internal.CardInfoValidator
+import com.paymaya.sdk.android.vault.internal.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
@@ -19,6 +20,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import java.util.*
 
@@ -44,6 +46,7 @@ class TokenizeCardPresenterTest {
         presenter = TokenizeCardPresenter(
             tokenizeCardUseCase,
             CardInfoValidator(someDate),
+            CardTypeDetector(),
             Logger(LogLevel.WARN)
         )
     }
@@ -112,6 +115,28 @@ class TokenizeCardPresenterTest {
             verify(view).hideProgressBar()
             verify(view).finishSuccess(any())
         }
+    }
+
+    @Test
+    fun `correct card detection after card number changed`(){
+        val order = Mockito.inOrder(view)
+        presenter.viewCreated(view)
+
+        presenter.cardNumberChanged("3")
+        presenter.cardNumberChanged("37")
+        presenter.cardNumberChanged("3")
+        presenter.cardNumberChanged("")
+        presenter.cardNumberChanged("2")
+        presenter.cardNumberChanged("21")
+        presenter.cardNumberChanged("222")
+
+        order.verify(view).showJcbMark()
+        order.verify(view).showAmexMark()
+        order.verify(view).showJcbMark()
+        order.verify(view).hideCardMark()
+        order.verify(view).showMcMark()
+        order.verify(view).hideCardMark()
+        order.verify(view).showMcMark()
     }
 
     companion object {

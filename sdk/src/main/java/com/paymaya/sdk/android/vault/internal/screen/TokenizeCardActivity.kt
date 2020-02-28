@@ -71,7 +71,11 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardNumberEditText.onFocusChangeListener =
             SimpleFocusLostListener { presenter.cardNumberFocusLost(it) }
         payMayaVaultCardNumberEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardNumberChanged() }
+            CardNumberWatcher({
+                presenter.cardNumberChanged()
+            },{
+                presenter.cardNumberChanged(it)
+            })
         )
 
         payMayaVaultCardExpirationMonthEditText.onFocusChangeListener =
@@ -193,6 +197,48 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             // no-op
         }
+    }
+
+    class CardNumberWatcher(
+        private val callback: () -> Unit,
+        private val textChanged: (text: String) -> Unit
+    ) : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            callback.invoke()
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // no-op
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            textChanged.invoke(s.toString())
+        }
+    }
+
+    override fun showVisaMark() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.visa, 0)
+    }
+
+    override fun showMcMark() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.mastercard, 0)
+    }
+
+    override fun showJcbMark() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jcb, 0)
+    }
+
+    override fun showAmexMark() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.amex, 0)
+    }
+
+    override fun hideCardMark() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }
 
     companion object {

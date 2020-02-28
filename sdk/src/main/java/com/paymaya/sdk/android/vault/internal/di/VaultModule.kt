@@ -4,6 +4,7 @@ import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.di.CommonModule
 import com.paymaya.sdk.android.vault.internal.CardInfoValidator
+import com.paymaya.sdk.android.vault.internal.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.VaultRepository
 import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardPresenter
@@ -37,6 +38,9 @@ internal object VaultModule {
     fun getCardInfoValidator(date: Calendar) =
         CardInfoValidator(date)
 
+    fun getCardTypeDetector() =
+        CardTypeDetector()
+
     fun getTokenizeCardPresenter(
         environment: PayMayaEnvironment,
         clientKey: String,
@@ -46,6 +50,7 @@ internal object VaultModule {
         TokenizeCardPresenter(
             getTokenizeCardUseCase(environment, clientKey, logLevel),
             getCardInfoValidator(date),
+            getCardTypeDetector(),
             CommonModule.getLogger(logLevel)
         )
 }

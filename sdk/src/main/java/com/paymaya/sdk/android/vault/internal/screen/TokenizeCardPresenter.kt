@@ -10,6 +10,7 @@ import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
+import com.paymaya.sdk.android.vault.internal.*
 import com.paymaya.sdk.android.vault.internal.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
@@ -26,6 +27,7 @@ import kotlin.coroutines.CoroutineContext
 internal class TokenizeCardPresenter(
     private val tokenizeCardUseCase: TokenizeCardUseCase,
     private val cardInfoValidator: CardInfoValidator,
+    private val cardTypeDetector: CardTypeDetector,
     private val logger: Logger
 ) : TokenizeCardContract.Presenter, CoroutineScope {
 
@@ -138,6 +140,21 @@ internal class TokenizeCardPresenter(
 
     override fun cardNumberChanged() {
         view?.hideCardNumberError()
+    }
+
+    override fun cardNumberChanged(cardNumber: String) {
+        val cardType = cardTypeDetector.detectType(cardNumber)
+        showCardMark(cardType)
+    }
+
+    private fun showCardMark(value: CardType) {
+        when (value) {
+            CardType.VISA -> view?.showVisaMark()
+            CardType.MASTER_CARD -> view?.showMcMark()
+            CardType.JCB -> view?.showJcbMark()
+            CardType.AMEX -> view?.showAmexMark()
+            CardType.UNKNOWN -> view?.hideCardMark()
+        }
     }
 
     override fun cardExpirationMonthChanged() {

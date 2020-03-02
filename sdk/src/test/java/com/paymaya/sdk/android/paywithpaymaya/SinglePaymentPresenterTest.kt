@@ -4,10 +4,11 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
-import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
+import com.paymaya.sdk.android.common.internal.*
+import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl
@@ -37,6 +38,9 @@ class SinglePaymentPresenterTest {
     private lateinit var singlePaymentUseCase: SinglePaymentUseCase
 
     @Mock
+    private lateinit var checkStatusUseCase: CheckStatusUseCase
+
+    @Mock
     private lateinit var view: PayMayaPaymentContract.View
 
     @ExperimentalCoroutinesApi
@@ -46,7 +50,7 @@ class SinglePaymentPresenterTest {
         MockitoAnnotations.initMocks(this)
 
         json = Json(JsonConfiguration.Stable)
-        presenter = PayMayaPaymentPresenter(singlePaymentUseCase)
+        presenter = PayMayaPaymentPresenter(singlePaymentUseCase, checkStatusUseCase, Logger(LogLevel.DEBUG))
     }
 
     @Test
@@ -85,10 +89,83 @@ class SinglePaymentPresenterTest {
                     redirectUrl = REDIRECT_CHECKOUT_URL
                 )
             )
+            whenever(checkStatusUseCase.run(any())).thenReturn(
+                StatusSuccessResponseWrapper(
+                    id = PAYMENT_ID,
+                    status = PaymentStatus.PAYMENT_EXPIRED
+                )
+            )
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.backButtonPressed()
 
             verify(view).finishCanceled(PAYMENT_ID)
+        }
+    }
+
+
+    @Test
+    fun `canceled but succeeded`() {
+        runBlocking {
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
+                    redirectUrl = REDIRECT_CHECKOUT_URL
+                )
+            )
+            whenever(checkStatusUseCase.run(any())).thenReturn(
+                StatusSuccessResponseWrapper(
+                    id = PAYMENT_ID,
+                    status = PaymentStatus.PAYMENT_SUCCESS
+                )
+            )
+            presenter.viewCreated(view, prepareSinglePaymentRequest())
+            presenter.backButtonPressed()
+
+            verify(view).finishSuccess(PAYMENT_ID)
+        }
+    }
+
+    @Test
+    fun `canceled but failed`() {
+        runBlocking {
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
+                    redirectUrl = REDIRECT_CHECKOUT_URL
+                )
+            )
+            whenever(checkStatusUseCase.run(any())).thenReturn(
+                StatusSuccessResponseWrapper(
+                    id = PAYMENT_ID,
+                    status = PaymentStatus.PAYMENT_FAILED
+                )
+            )
+            presenter.viewCreated(view, prepareSinglePaymentRequest())
+            presenter.backButtonPressed()
+
+            verify(view).finishFailure(PAYMENT_ID, PaymentFailedException)
+        }
+    }
+
+    @Test
+    fun `canceled but failed (auth)`() {
+        runBlocking {
+            whenever(singlePaymentUseCase.run(any())).thenReturn(
+                RedirectSuccessResponseWrapper(
+                    resultId = PAYMENT_ID,
+                    redirectUrl = REDIRECT_CHECKOUT_URL
+                )
+            )
+            whenever(checkStatusUseCase.run(any())).thenReturn(
+                StatusSuccessResponseWrapper(
+                    id = PAYMENT_ID,
+                    status = PaymentStatus.AUTH_FAILED
+                )
+            )
+            presenter.viewCreated(view, prepareSinglePaymentRequest())
+            presenter.backButtonPressed()
+
+            verify(view).finishFailure(PAYMENT_ID, PaymentFailedException)
         }
     }
 

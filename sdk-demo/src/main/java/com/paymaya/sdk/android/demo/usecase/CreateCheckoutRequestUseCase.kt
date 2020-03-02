@@ -6,20 +6,19 @@ import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.common.models.AmountDetails
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
-import com.paymaya.sdk.android.demo.Constants.CURRENCY
+import com.paymaya.sdk.android.demo.Constants
 import com.paymaya.sdk.android.demo.data.CartProductsRepository
-import java.math.BigDecimal
 
 class CreateCheckoutRequestUseCase(
     private val repository: CartProductsRepository
 ) {
 
     fun run(): CheckoutRequest? {
-        val products = repository.fetchItems()
+        val products = repository.getItems()
 
         return if (products.isNotEmpty())
             CheckoutRequest(
-                getTotalAmounts(products),
+                getTotalAmount(),
                 getBuyerDetails(),
                 getItems(products),
                 getRequestReferenceNumber(),
@@ -27,20 +26,12 @@ class CreateCheckoutRequestUseCase(
             ) else null
     }
 
-    private fun getTotalAmounts(products: List<Item>): TotalAmount =
+    private fun getTotalAmount(): TotalAmount =
         TotalAmount(
-            getProductsAmountValue(products),
-            CURRENCY,
+            repository.getTotalAmount(),
+            Constants.CURRENCY,
             AmountDetails()
         )
-
-    private fun getProductsAmountValue(products: List<Item>): BigDecimal {
-        var totalAmount = BigDecimal(0)
-        products.forEach {
-            totalAmount += it.totalAmount.value
-        }
-        return totalAmount
-    }
 
     private fun getItems(products: List<Item>): List<Item> =
         products.map {
@@ -52,7 +43,7 @@ class CreateCheckoutRequestUseCase(
                 it.amount,
                 TotalAmount(
                     it.totalAmount.value,
-                    CURRENCY,
+                    Constants.CURRENCY,
                     it.amount?.details
                 )
             )
@@ -75,8 +66,8 @@ class CreateCheckoutRequestUseCase(
 
     private fun getRedirectUrl(): RedirectUrl =
         RedirectUrl(
-            success = "http://success.com",
-            failure = "http://failure.com",
-            cancel = "http://cancel.com"
+            success = Constants.REDIRECT_URL_SUCCESS,
+            failure = Constants.REDIRECT_URL_FAILURE,
+            cancel = Constants.REDIRECT_URL_CANCEL
         )
 }

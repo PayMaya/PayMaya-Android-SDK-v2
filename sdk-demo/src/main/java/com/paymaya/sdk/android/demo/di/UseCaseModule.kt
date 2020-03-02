@@ -9,30 +9,39 @@ internal object UseCaseModule {
 
     fun getSaveProductInCartUseCase(): SaveProductInCartUseCase =
         SaveProductInCartUseCase(
-            RepositoryModuleProvider.cartProductsRepository
+            RepositoryModule.cartProductsRepository
         )
 
     fun getFetchProductsFromCartUseCase(): FetchProductsFromCartUseCase =
         FetchProductsFromCartUseCase(
-            RepositoryModuleProvider.cartProductsRepository
+            RepositoryModule.cartProductsRepository
+        )
+
+    fun getFetchTotalAmountFromCartUseCase(): FetchTotalAmountFromCartUseCase =
+        FetchTotalAmountFromCartUseCase(
+            RepositoryModule.cartProductsRepository
+        )
+
+    fun getFetchTotalCountFromCartUseCase(): FetchTotalCountFromCartUseCase =
+        FetchTotalCountFromCartUseCase(
+            RepositoryModule.cartProductsRepository
         )
 
     fun getRemoveProductFromCartUseCase(): RemoveProductFromCartUseCase =
         RemoveProductFromCartUseCase(
-            RepositoryModuleProvider.cartProductsRepository
+            RepositoryModule.cartProductsRepository
         )
 
     fun getCreateCheckoutRequestUseCase(): CreateCheckoutRequestUseCase =
         CreateCheckoutRequestUseCase(
-            RepositoryModuleProvider.cartProductsRepository
+            RepositoryModule.cartProductsRepository
         )
 
     fun getCreateSinglePaymentsRequestUseCase(): CreateSinglePaymentsRequestUseCase =
         CreateSinglePaymentsRequestUseCase(
-            RepositoryModuleProvider.cartProductsRepository
+            RepositoryModule.cartProductsRepository
         )
 
     fun getCreateWalletLinkRequestUseCase(): CreateWalletLinkRequestUseCase =
         CreateWalletLinkRequestUseCase()
-
 }

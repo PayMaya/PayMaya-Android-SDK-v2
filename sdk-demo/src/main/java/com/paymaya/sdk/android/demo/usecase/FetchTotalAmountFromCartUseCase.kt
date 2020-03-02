@@ -1,11 +1,11 @@
 package com.paymaya.sdk.android.demo.usecase
 
-import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.demo.data.CartProductsRepository
+import java.math.BigDecimal
 
-class FetchProductsFromCartUseCase(
+class FetchTotalAmountFromCartUseCase(
     private val cartProductsRepository: CartProductsRepository
 ) {
-    fun run(): List<Item> =
-        cartProductsRepository.getItems()
+    fun run(): BigDecimal =
+        cartProductsRepository.getTotalAmount()
 }

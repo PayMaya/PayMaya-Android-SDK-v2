@@ -1,6 +1,7 @@
 package com.paymaya.sdk.android.demo.usecase
 
 import com.paymaya.sdk.android.common.models.RedirectUrl
+import com.paymaya.sdk.android.demo.Constants
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 
 class CreateWalletLinkRequestUseCase {
@@ -16,8 +17,8 @@ class CreateWalletLinkRequestUseCase {
 
     private fun getRedirectUrl(): RedirectUrl =
         RedirectUrl(
-            success = "http://success.com",
-            failure = "http://failure.com",
-            cancel = "http://cancel.com"
+            success = Constants.REDIRECT_URL_SUCCESS,
+            failure = Constants.REDIRECT_URL_FAILURE,
+            cancel = Constants.REDIRECT_URL_CANCEL
         )
 }

@@ -58,4 +58,3 @@ internal class Logger(
             }
     }
 }
-

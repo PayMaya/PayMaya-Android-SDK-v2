@@ -88,8 +88,22 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         finish()
     }
 
-    private fun hideProgress() {
+    override fun showProgressBar() {
+        payMayaPaymentActivityProgressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideProgressBar() {
         payMayaPaymentActivityProgressBar.visibility = View.GONE
+    }
+
+    override fun hideWebView() {
+        payMayaPaymentActivityWebView.visibility = View.GONE
+        payMayaPaymentActivityWebView.webViewClient = NoOpWebViewClientImpl()
+        payMayaPaymentActivityWebView.stopLoading()
+    }
+
+    override fun showCheckingPaymentStatusLabel() {
+        payMayaCheckingPaymentStatusLabel.visibility = View.VISIBLE
     }
 
     inner class WebViewClientImpl : WebViewClient() {
@@ -97,8 +111,15 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
             presenter.urlBeingLoaded(url)
 
         override fun onPageFinished(view: WebView, url: String) {
-            hideProgress()
+            hideProgressBar()
             super.onPageFinished(view, url)
+        }
+    }
+
+    class NoOpWebViewClientImpl : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            // no-op
+            return true
         }
     }
 

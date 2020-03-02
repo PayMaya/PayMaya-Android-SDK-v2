@@ -11,12 +11,13 @@ internal object PresenterModule {
         ShopPresenter(
             UseCaseModule.getFetchShopDataUseCase(),
             UseCaseModule.getSaveProductInCartUseCase(),
-            UseCaseModule.getFetchProductsFromCartUseCase()
+            UseCaseModule.getFetchTotalCountFromCartUseCase()
         )
 
     fun getCartPresenter(): CartContract.Presenter =
         CartPresenter(
             UseCaseModule.getFetchProductsFromCartUseCase(),
+            UseCaseModule.getFetchTotalAmountFromCartUseCase(),
             UseCaseModule.getRemoveProductFromCartUseCase(),
             UseCaseModule.getCreateCheckoutRequestUseCase(),
             UseCaseModule.getCreateSinglePaymentsRequestUseCase(),

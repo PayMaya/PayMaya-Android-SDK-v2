@@ -1,41 +1,33 @@
 package com.paymaya.sdk.android.demo.ui.shop
 
 import com.paymaya.sdk.android.demo.model.ShopItem
-import com.paymaya.sdk.android.demo.usecase.FetchProductsFromCartUseCase
 import com.paymaya.sdk.android.demo.usecase.FetchShopDataUseCase
+import com.paymaya.sdk.android.demo.usecase.FetchTotalCountFromCartUseCase
 import com.paymaya.sdk.android.demo.usecase.SaveProductInCartUseCase
 
 class ShopPresenter(
     private val fetchShopDataUseCase: FetchShopDataUseCase,
     private val saveProductInCartUseCase: SaveProductInCartUseCase,
-    private val fetchProductsFromCartUseCase: FetchProductsFromCartUseCase
+    private val fetchTotalCountFromCartUseCase: FetchTotalCountFromCartUseCase
 ) : ShopContract.Presenter {
 
     private var view: ShopContract.View? = null
-    private var productsInCartCount = 0
 
     override fun viewCreated(view: ShopContract.View) {
         this.view = view
-        val products = fetchShopDataUseCase.run()//.sortedBy { it.name }
+        val products = fetchShopDataUseCase.run()
         view.populateView(products)
     }
 
     override fun viewResumed() {
-        view?.updateBadgeCounter(getProductsInCartCount())
+        val totalCount = fetchTotalCountFromCartUseCase.run()
+        view?.updateBadgeCounter(totalCount)
     }
 
     override fun addToCartButtonClicked(product: ShopItem) {
         saveProductInCartUseCase.run(product)
-        productsInCartCount++
-        view?.updateBadgeCounter(productsInCartCount)
-    }
-
-    private fun getProductsInCartCount(): Int {
-        var productsInCartCount = 0
-        fetchProductsFromCartUseCase.run().forEach {
-            productsInCartCount += it.quantity ?: 0
-        }
-        return productsInCartCount
+        val totalCount = fetchTotalCountFromCartUseCase.run()
+        view?.updateBadgeCounter(totalCount)
     }
 
     override fun viewDestroyed() {

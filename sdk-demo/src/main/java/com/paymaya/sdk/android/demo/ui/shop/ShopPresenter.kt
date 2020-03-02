@@ -1,32 +1,30 @@
 package com.paymaya.sdk.android.demo.ui.shop
 
+import com.paymaya.sdk.android.demo.data.BackendRepository
+import com.paymaya.sdk.android.demo.data.CartRepository
 import com.paymaya.sdk.android.demo.model.ShopItem
-import com.paymaya.sdk.android.demo.usecase.FetchShopDataUseCase
-import com.paymaya.sdk.android.demo.usecase.FetchTotalCountFromCartUseCase
-import com.paymaya.sdk.android.demo.usecase.SaveProductInCartUseCase
 
 class ShopPresenter(
-    private val fetchShopDataUseCase: FetchShopDataUseCase,
-    private val saveProductInCartUseCase: SaveProductInCartUseCase,
-    private val fetchTotalCountFromCartUseCase: FetchTotalCountFromCartUseCase
+    private val backendRepository: BackendRepository,
+    private val cartRepository: CartRepository
 ) : ShopContract.Presenter {
 
     private var view: ShopContract.View? = null
 
     override fun viewCreated(view: ShopContract.View) {
         this.view = view
-        val products = fetchShopDataUseCase.run()
+        val products = backendRepository.getShopItems()
         view.populateView(products)
     }
 
     override fun viewResumed() {
-        val totalCount = fetchTotalCountFromCartUseCase.run()
+        val totalCount = cartRepository.getTotalCount()
         view?.updateBadgeCounter(totalCount)
     }
 
     override fun addToCartButtonClicked(product: ShopItem) {
-        saveProductInCartUseCase.run(product)
-        val totalCount = fetchTotalCountFromCartUseCase.run()
+        cartRepository.addItem(product)
+        val totalCount = cartRepository.getTotalCount()
         view?.updateBadgeCounter(totalCount)
     }
 

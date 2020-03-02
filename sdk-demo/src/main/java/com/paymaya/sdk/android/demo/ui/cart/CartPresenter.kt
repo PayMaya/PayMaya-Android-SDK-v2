@@ -2,25 +2,27 @@ package com.paymaya.sdk.android.demo.ui.cart
 
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
 import com.paymaya.sdk.android.checkout.PayMayaCheckoutResult
+import com.paymaya.sdk.android.checkout.models.Buyer
+import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.common.CheckPaymentStatusResult
+import com.paymaya.sdk.android.common.models.AmountDetails
+import com.paymaya.sdk.android.common.models.RedirectUrl
+import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.Constants
-import com.paymaya.sdk.android.demo.usecase.*
+import com.paymaya.sdk.android.demo.data.CartRepository
 import com.paymaya.sdk.android.paywithpaymaya.CreateWalletLinkResult
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMayaResult
 import com.paymaya.sdk.android.paywithpaymaya.SinglePaymentResult
+import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
+import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class CartPresenter(
-    private val fetchProductsFromCartUseCase: FetchProductsFromCartUseCase,
-    private val fetchTotalAmountFromCartUseCase: FetchTotalAmountFromCartUseCase,
-    private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
-    private val createCheckoutRequestUseCase: CreateCheckoutRequestUseCase,
-    private val createSinglePaymentsRequestUseCase: CreateSinglePaymentsRequestUseCase,
-    private val createWalletLinkRequestUseCase: CreateWalletLinkRequestUseCase
+    private val cartRepository: CartRepository
 ) : CartContract.Presenter, CoroutineScope {
 
     private lateinit var payMayaCheckoutClient: PayMayaCheckout
@@ -50,37 +52,79 @@ class CartPresenter(
     }
 
     private fun updateProductsList() {
-        val products = fetchProductsFromCartUseCase.run()
-        val totalAmount = fetchTotalAmountFromCartUseCase.run()
+        val products = cartRepository.getItems()
+        val totalAmount = cartRepository.getTotalAmount()
         view?.populateView(products)
         view?.setTotalAmount(totalAmount, Constants.CURRENCY)
     }
 
     override fun removeFromCartButtonClicked(product: Item) {
-        removeProductFromCartUseCase.run(product)
+        cartRepository.removeItem(product)
         updateProductsList()
     }
 
     override fun payWithCheckoutButtonClicked() {
         paymentMethod = PaymentMethod.CHECKOUT
         resultId = null
-        val checkoutRequest = createCheckoutRequestUseCase.run()
-        checkoutRequest?.let { view?.payWithCheckout(it) }
+        if (cartRepository.getItems().isNotEmpty()) {
+            val checkoutRequest = buildCheckoutRequest()
+            checkoutRequest?.let { view?.payWithCheckout(it) }
+        }
     }
+
+    private fun buildCheckoutRequest() =
+        CheckoutRequest(
+            TotalAmount(
+                cartRepository.getTotalAmount(),
+                Constants.CURRENCY,
+                AmountDetails()
+            ),
+            Buyer(
+                firstName = "John",
+                middleName = "Thomas",
+                lastName = "Smith",
+                contact = null,
+                shippingAddress = null,
+                billingAddress = null,
+                ipAddress = null
+            ),
+            cartRepository.getItems(),
+            getRequestReferenceNumber(),
+            REDIRECT_URL
+        )
 
     override fun payWithSinglePaymentButtonClicked() {
         paymentMethod = PaymentMethod.PAY_WITH_PAYMAYA_SINGLE_PAYMENT
         resultId = null
-        val singlePaymentRequest = createSinglePaymentsRequestUseCase.run()
-        singlePaymentRequest?.let { view?.payWithSinglePayment(it) }
+        if (cartRepository.getItems().isNotEmpty()) {
+            val singlePaymentRequest = buildSinglePaymentRequest()
+            singlePaymentRequest?.let { view?.payWithSinglePayment(it) }
+        }
     }
+
+    private fun buildSinglePaymentRequest() =
+        SinglePaymentRequest(
+            TotalAmount(
+                cartRepository.getTotalAmount(),
+                Constants.CURRENCY,
+                AmountDetails()
+            ),
+            getRequestReferenceNumber(),
+            REDIRECT_URL
+        )
 
     override fun createWalletLinkButtonClicked() {
         paymentMethod = null
         resultId = null
-        val walletLinkRequest = createWalletLinkRequestUseCase.run()
+        val walletLinkRequest = buildCreateWalletLinkRequest()
         view?.createWalletLink(walletLinkRequest)
     }
+
+    private fun buildCreateWalletLinkRequest() =
+        CreateWalletLinkRequest(
+            getRequestReferenceNumber(),
+            REDIRECT_URL
+        )
 
     override fun payMayaVaultButtonClicked() {
         paymentMethod = null
@@ -214,12 +258,20 @@ class CartPresenter(
         }
     }
 
-    enum class PaymentMethod {
+    private fun getRequestReferenceNumber() =
+        (++REQUEST_REFERENCE_NUMBER).toString()
+
+    private enum class PaymentMethod {
         CHECKOUT,
         PAY_WITH_PAYMAYA_SINGLE_PAYMENT
     }
 
     companion object {
-        private const val TAG = "CartPresenter"
+        private var REQUEST_REFERENCE_NUMBER = 0
+        private val REDIRECT_URL = RedirectUrl(
+            success = Constants.REDIRECT_URL_SUCCESS,
+            failure = Constants.REDIRECT_URL_FAILURE,
+            cancel = Constants.REDIRECT_URL_CANCEL
+        )
     }
 }

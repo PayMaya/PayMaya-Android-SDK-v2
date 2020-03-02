@@ -7,7 +7,7 @@ import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.model.ShopItem
 import java.math.BigDecimal
 
-class CartProductsRepository {
+class CartRepository {
 
     private val items: MutableList<Item> = mutableListOf()
     private var totalAmount: BigDecimal = BigDecimal(0)

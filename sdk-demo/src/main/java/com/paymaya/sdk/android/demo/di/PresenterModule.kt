@@ -9,18 +9,12 @@ internal object PresenterModule {
 
     fun getShopPresenter(): ShopContract.Presenter =
         ShopPresenter(
-            UseCaseModule.getFetchShopDataUseCase(),
-            UseCaseModule.getSaveProductInCartUseCase(),
-            UseCaseModule.getFetchTotalCountFromCartUseCase()
+            RepositoryModule.backendRepository,
+            RepositoryModule.cartRepository
         )
 
     fun getCartPresenter(): CartContract.Presenter =
         CartPresenter(
-            UseCaseModule.getFetchProductsFromCartUseCase(),
-            UseCaseModule.getFetchTotalAmountFromCartUseCase(),
-            UseCaseModule.getRemoveProductFromCartUseCase(),
-            UseCaseModule.getCreateCheckoutRequestUseCase(),
-            UseCaseModule.getCreateSinglePaymentsRequestUseCase(),
-            UseCaseModule.getCreateWalletLinkRequestUseCase()
+            RepositoryModule.cartRepository
         )
 }

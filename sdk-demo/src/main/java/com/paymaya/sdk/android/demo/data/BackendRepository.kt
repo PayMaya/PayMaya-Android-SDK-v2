@@ -1,15 +1,15 @@
-package com.paymaya.sdk.android.demo.usecase
+package com.paymaya.sdk.android.demo.data
 
-import com.paymaya.sdk.android.demo.Constants.CURRENCY
+import com.paymaya.sdk.android.demo.Constants
 import com.paymaya.sdk.android.demo.model.ShopItem
 import java.math.BigDecimal
 
-class FetchShopDataUseCase {
-    fun run(): List<ShopItem> =
+class BackendRepository {
+    fun getShopItems(): List<ShopItem> =
         listOf(
             ShopItem(
                 name = "Shoes",
-                currency = CURRENCY,
+                currency = Constants.CURRENCY,
                 value = BigDecimal(99.0),
                 code = null,
                 description = null,
@@ -17,7 +17,7 @@ class FetchShopDataUseCase {
             ),
             ShopItem(
                 name = "Shirt",
-                currency = CURRENCY,
+                currency = Constants.CURRENCY,
                 value = BigDecimal(19.99),
                 code = null,
                 description = null,
@@ -25,7 +25,7 @@ class FetchShopDataUseCase {
             ),
             ShopItem(
                 name = "Pants",
-                currency = CURRENCY,
+                currency = Constants.CURRENCY,
                 value = BigDecimal(20.9),
                 code = null,
                 description = null,

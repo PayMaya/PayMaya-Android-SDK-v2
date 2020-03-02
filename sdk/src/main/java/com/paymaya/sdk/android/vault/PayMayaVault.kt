@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaClientBase
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Constants
 import com.paymaya.sdk.android.common.internal.Constants.TAG
@@ -12,10 +13,15 @@ import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardActivity
 
 class PayMayaVault private constructor(
-    private val clientKey: String,
-    private val environment: PayMayaEnvironment,
-    private val logLevel: LogLevel,
+    clientKey: String,
+    environment: PayMayaEnvironment,
+    logLevel: LogLevel,
     @DrawableRes private val logoResId: Int?
+) : PayMayaClientBase(
+    clientKey,
+    environment,
+    logLevel,
+    CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel)
 ) {
 
     private val logger = CommonModule.getLogger(logLevel)

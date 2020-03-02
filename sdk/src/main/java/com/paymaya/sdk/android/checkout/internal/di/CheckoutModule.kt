@@ -37,5 +37,9 @@ internal object CheckoutModule {
         clientKey: String,
         logLevel: LogLevel
     ) =
-        PayMayaPaymentPresenter(getCheckoutUseCase(environment, clientKey, logLevel))
+        PayMayaPaymentPresenter(
+            getCheckoutUseCase(environment, clientKey, logLevel),
+            CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel),
+            CommonModule.getLogger(logLevel)
+        )
 }

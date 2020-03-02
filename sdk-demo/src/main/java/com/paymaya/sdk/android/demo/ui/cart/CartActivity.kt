@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.paymaya.sdk.android.checkout.PayMayaCheckout
@@ -55,7 +57,11 @@ class CartActivity : Activity(), CartContract.View {
         setContentView(R.layout.activity_cart)
 
         initView()
-        presenter.viewCreated(this)
+        presenter.viewCreated(
+            this,
+            payMayaCheckoutClient,
+            payWithPayMayaClient
+        )
     }
 
     private fun initView() {
@@ -67,10 +73,11 @@ class CartActivity : Activity(), CartContract.View {
         pay_with_single_payment_button.setOnClickListener { presenter.payWithSinglePaymentButtonClicked() }
         create_wallet_link_button.setOnClickListener { presenter.createWalletLinkButtonClicked() }
         pay_maya_vault_button.setOnClickListener { presenter.payMayaVaultButtonClicked() }
+        check_recent_payment_status.setOnClickListener { presenter.payMayaCheckRecentPaymentStatusClicked() }
     }
 
-    override fun setTotalAmount(totalAmount: BigDecimal) {
-        payment_amount.text = totalAmount.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN).toString()
+    override fun setTotalAmount(totalAmount: BigDecimal, currency: String) {
+        payment_amount.text = "${totalAmount.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN)} $currency"
     }
 
     override fun populateView(productsList: List<Item>) {
@@ -127,6 +134,22 @@ class CartActivity : Activity(), CartContract.View {
         if (exception is BadRequestException) {
             Log.d(TAG, exception.error.toString())
         }
+    }
+
+    override fun showPaymentIdNotAvailableMessage() {
+        Snackbar.make(cart_view_container, "Payment ID not available", Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showPaymentDetailedStatus(message: String) {
+        Snackbar.make(cart_view_container, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showProgressBar() {
+        cart_progress_bar.visibility = VISIBLE
+    }
+
+    override fun hideProgressBar() {
+        cart_progress_bar.visibility = GONE
     }
 
     override fun onDestroy() {

@@ -15,4 +15,5 @@
     <string name="paymaya_invalid_year">Invalid year</string>
     <string name="paymaya_invalid_cvc">Invalid CVV</string>
     <string name="paymaya_vault_card_details">Card Details</string>
+    <string name="paymaya_checking_payment_status">Checking payment status</string>
 </resources>

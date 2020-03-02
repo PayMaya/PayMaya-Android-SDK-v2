@@ -5,6 +5,7 @@ import android.content.Intent
 import com.paymaya.sdk.android.checkout.internal.CheckoutActivity
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaClientBase
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.common.internal.Constants
@@ -13,9 +14,14 @@ import com.paymaya.sdk.android.common.internal.di.CommonModule
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 
 class PayMayaCheckout private constructor(
-    private val clientKey: String,
-    private val environment: PayMayaEnvironment,
-    private val logLevel: LogLevel
+    clientKey: String,
+    environment: PayMayaEnvironment,
+    logLevel: LogLevel
+) : PayMayaClientBase(
+    clientKey,
+    environment,
+    logLevel,
+    CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel)
 ) {
 
     private val logger = CommonModule.getLogger(logLevel)

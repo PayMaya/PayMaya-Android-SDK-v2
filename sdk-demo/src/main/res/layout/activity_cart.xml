@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cart_view_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.cart.CartActivity">
 
@@ -12,7 +12,7 @@
         android:id="@+id/payment_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="16dp"
         android:text="Payment amount: "
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,10 +22,9 @@
         android:id="@+id/payment_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="16dp"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/payment_label"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -40,8 +39,8 @@
         android:id="@+id/checkout_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Checkout"
         android:layout_marginBottom="2dp"
+        android:text="Checkout"
         app:layout_constraintBottom_toTopOf="@+id/pay_with_checkout_button"
         app:layout_constraintEnd_toEndOf="@+id/pay_with_checkout_button"
         app:layout_constraintStart_toStartOf="@+id/pay_with_checkout_button" />
@@ -50,10 +49,11 @@
         android:id="@+id/pay_with_checkout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/round_button"
-        android:padding="10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="Pay by card"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@id/pay_with_paymaya_label"
@@ -63,8 +63,8 @@
         android:id="@+id/vault_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vault"
         android:layout_marginBottom="2dp"
+        android:text="Vault"
         app:layout_constraintBottom_toTopOf="@+id/pay_maya_vault_button"
         app:layout_constraintEnd_toEndOf="@+id/pay_maya_vault_button"
         app:layout_constraintStart_toStartOf="@+id/pay_maya_vault_button" />
@@ -73,21 +73,21 @@
         android:id="@+id/pay_maya_vault_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/round_button"
-        android:padding="10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="Pay by card"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@+id/pay_with_paymaya_label"
-        app:layout_constraintEnd_toEndOf="@+id/paymaya_payments_container"/>
+        app:layout_constraintEnd_toEndOf="@+id/paymaya_payments_container" />
 
     <TextView
         android:id="@+id/pay_with_paymaya_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pay With PayMaya"
         android:layout_marginBottom="2dp"
+        android:text="Pay With PayMaya"
         app:layout_constraintBottom_toTopOf="@+id/paymaya_payments_container"
         app:layout_constraintEnd_toEndOf="@+id/paymaya_payments_container"
         app:layout_constraintStart_toStartOf="@+id/paymaya_payments_container" />
@@ -97,8 +97,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/status_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -107,10 +107,11 @@
             android:id="@+id/pay_with_single_payment_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_button"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/round_button"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="Single payment"
             android:textAllCaps="false" />
 
@@ -118,15 +119,59 @@
             android:id="@+id/create_wallet_link_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_button"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
             android:layout_marginStart="10dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/round_button"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="Wallet Link"
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/paymaya_payments_container" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/status_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:text="Status"
+        app:layout_constraintBottom_toTopOf="@+id/check_recent_payment_status"
+        app:layout_constraintEnd_toEndOf="@+id/check_recent_payment_status"
+        app:layout_constraintStart_toStartOf="@+id/check_recent_payment_status" />
+
+    <Button
+        android:id="@+id/check_recent_payment_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_button"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Check status of the recent payment"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/cart_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/paymaya_vault_progress_bar_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:translationZ="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <ProgressBar style="@style/PayMayaVaultProgressbarBase" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

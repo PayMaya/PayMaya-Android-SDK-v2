@@ -47,6 +47,13 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="PayMayaVaultTextInputEditTextWithDrawable">
+        <item name="android:textColor">#e1e1e1</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:drawableEnd">@drawable/info_light</item>
+    </style>
+
     <!-- "PAY" button -->
     <style name="PayMayaVaultPayButton">
         <item name="android:backgroundTint">@color/paymaya_vault_button_background_color</item>

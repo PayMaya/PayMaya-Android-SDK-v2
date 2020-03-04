@@ -91,6 +91,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardCvcEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardCvcChanged() }
         )
+        payMayaVaultScreenSpaceMask.setOnClickListener {
+            presenter.screenSpaceMaskClicked()
+        }
+        payMayaVaultCardCvcInfoImageSpace.setOnClickListener {
+            presenter.cardCvcInfoClicked()
+        }
     }
 
     private fun buildPresenter(
@@ -169,6 +175,16 @@ internal class TokenizeCardActivity : AppCompatActivity(),
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(v.windowToken, 0)
         }
+    }
+
+    override fun hideCardCvcHint() {
+        payMayaVaultCardCvcHintImage.visibility = View.GONE
+        payMayaVaultScreenSpaceMask.visibility = View.GONE
+    }
+
+    override fun showCardCvcHint() {
+        payMayaVaultCardCvcHintImage.visibility = View.VISIBLE
+        payMayaVaultScreenSpaceMask.visibility = View.VISIBLE
     }
 
     class SimpleFocusLostListener(

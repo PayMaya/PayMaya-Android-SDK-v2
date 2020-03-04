@@ -9,102 +9,135 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical">
+            android:focusableInTouchMode="true">
 
             <ImageView
                 android:id="@+id/payMayaVaultLogo"
                 style="@style/PayMayaVaultLogoBase"
-                android:contentDescription="@string/paymaya_vault_logo_content_description" />
+                android:contentDescription="@string/paymaya_vault_logo_content_description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/payMayaVaultCardDetailsLabel"
                 style="@style/PayMayaVaultCardDetailsLabelBase"
-                android:text="@string/paymaya_vault_card_details" />
+                android:text="@string/paymaya_vault_card_details"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/payMayaVaultLogo" />
 
-            <LinearLayout style="@style/PayMayaVaultFormBackgroundBase">
+            <View
+                android:id="@+id/payMayaVaultFormBackground"
+                style="@style/PayMayaVaultFormBackgroundBase"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/payMayaVaultCardCvcTextInputLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/payMayaVaultCardNumberTextInputLayout" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/payMayaVaultCardNumberTextInputLayout"
-                    style="@style/PayMayaVaultTextInputLayout"
-                    android:hint="@string/paymaya_vault_card_number"
-                    app:errorEnabled="true">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/payMayaVaultCardNumberTextInputLayout"
+                style="@style/PayMayaVaultTextInputLayout"
+                android:layout_width="0dp"
+                android:hint="@string/paymaya_vault_card_number"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/payMayaVaultCardDetailsLabel">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/payMayaVaultCardNumberEditText"
-                        style="@style/PayMayaVaultTextInputEditTextBase"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLength="19" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/payMayaVaultCardNumberEditText"
+                    style="@style/PayMayaVaultTextInputEditTextBase"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:maxLength="19" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/payMayaVaultCardExpirationMonthTextInputLayout"
-                        style="@style/PayMayaVaultTextInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_weight="3"
-                        android:hint="@string/paymaya_vault_card_exp_month"
-                        app:errorEnabled="true">
+            </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/payMayaVaultCardExpirationMonthEditText"
-                            style="@style/PayMayaVaultTextInputEditTextBase"
-                            android:maxLength="2" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/payMayaVaultCardExpirationMonthTextInputLayout"
+                style="@style/PayMayaVaultTextInputLayout"
+                android:layout_width="0dp"
+                android:hint="@string/paymaya_vault_card_exp_month"
+                app:errorEnabled="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/payMayaVaultCardNumberTextInputLayout"
+                app:layout_constraintWidth_percent="0.4">
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/payMayaVaultCardExpirationMonthEditText"
+                    style="@style/PayMayaVaultTextInputEditTextBase"
+                    android:maxLength="2" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/payMayaVaultCardExpirationYearTextInputLayout"
-                        style="@style/PayMayaVaultTextInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_weight="3"
-                        android:hint="@string/paymaya_vault_card_exp_year"
-                        app:errorEnabled="true">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/payMayaVaultCardExpirationYearTextInputLayout"
+                style="@style/PayMayaVaultTextInputLayout"
+                android:layout_width="0dp"
+                android:hint="@string/paymaya_vault_card_exp_year"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/payMayaVaultCardNumberTextInputLayout"
+                app:layout_constraintWidth_percent="0.4">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/payMayaVaultCardExpirationYearEditText"
-                            style="@style/PayMayaVaultTextInputEditTextBase"
-                            android:maxLength="2" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/payMayaVaultCardExpirationYearEditText"
+                    style="@style/PayMayaVaultTextInputEditTextBase"
+                    android:maxLength="2" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </LinearLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/payMayaVaultCardCvcTextInputLayout"
+                style="@style/PayMayaVaultTextInputLayout"
+                android:layout_width="0dp"
+                android:hint="@string/paymaya_vault_card_cvc"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/payMayaVaultCardExpirationMonthTextInputLayout">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/payMayaVaultCardCvcTextInputLayout"
-                    style="@style/PayMayaVaultTextInputLayout"
-                    android:hint="@string/paymaya_vault_card_cvc"
-                    app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/payMayaVaultCardCvcEditText"
+                    style="@style/PayMayaVaultTextInputEditTextWithDrawableBase"
+                    android:inputType="numberPassword"
+                    android:maxLength="4" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/payMayaVaultCardCvcEditText"
-                        style="@style/PayMayaVaultTextInputEditTextBase"
-                        android:inputType="numberPassword"
-                        android:maxLength="4" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <ImageView
+                android:id="@+id/payMayaVaultCardCvcHintImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:src="@drawable/cvv"
+                android:visibility="gone"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toTopOf="@id/payMayaVaultCardCvcInfoImageSpace"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            </LinearLayout>
+            <View
+                android:id="@+id/payMayaVaultCardCvcInfoImageSpace"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintTop_toTopOf="@+id/payMayaVaultCardCvcTextInputLayout"
+                app:layout_constraintBottom_toBottomOf="@+id/payMayaVaultCardCvcTextInputLayout"
+                app:layout_constraintEnd_toEndOf="@id/payMayaVaultCardCvcTextInputLayout" />
 
             <Button
                 android:id="@+id/payMayaVaultPayButton"
                 style="@style/PayMayaVaultPayButtonBase"
-                android:text="@string/paymaya_vault_pay_button" />
+                android:text="@string/paymaya_vault_pay_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/payMayaVaultCardCvcTextInputLayout" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
@@ -121,5 +154,10 @@
         <ProgressBar style="@style/PayMayaVaultProgressbarBase" />
 
     </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/payMayaVaultScreenSpaceMask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

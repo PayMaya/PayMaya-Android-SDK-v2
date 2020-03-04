@@ -138,18 +138,22 @@ internal class TokenizeCardPresenter(
 
     override fun cardNumberChanged() {
         view?.hideCardNumberError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardExpirationMonthChanged() {
         view?.hideCardExpirationMonthError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardExpirationYearChanged() {
         view?.hideCardExpirationYearError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardCvcChanged() {
         view?.hideCardCvcError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardNumberFocusLost(value: String) {
@@ -243,6 +247,14 @@ internal class TokenizeCardPresenter(
             }
         }
         return result
+    }
+
+    override fun cardCvcInfoClicked() {
+        view?.showCardCvcHint()
+    }
+
+    override fun screenSpaceMaskClicked() {
+        view?.hideCardCvcHint()
     }
 
     companion object {

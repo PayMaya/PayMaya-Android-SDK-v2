@@ -68,6 +68,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:theme">@style/PayMayaVaultTextInputLayoutTheme</item>
     </style>
 
@@ -80,6 +82,18 @@
 
     <style name="PayMayaVaultTextInputEditText">
         <item name="android:textColor">@color/paymaya_vault_input_text_color</item>
+    </style>
+
+    <style name="PayMayaVaultTextInputEditTextWithDrawableBase" parent="PayMayaVaultTextInputEditTextWithDrawable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:digits">0123456789</item>
+        <item name="android:inputType">textNoSuggestions|number</item>
+    </style>
+
+    <style name="PayMayaVaultTextInputEditTextWithDrawable">
+        <item name="android:textColor">@color/paymaya_vault_input_text_color</item>
+        <item name="android:drawableEnd">@drawable/info_dark</item>
     </style>
 
     <!-- "PAY" button -->
@@ -107,6 +121,11 @@
 
     <style name="PayMayaVaultProgressbar">
         <item name="android:indeterminateTint">@color/paymaya_vault_progress_bar_color</item>
+    </style>
+
+    <!-- "Info" image -->
+    <style name="PayMayaVaultInfo">
+        <item name="android:src">@drawable/info_dark</item>
     </style>
 
 </resources>

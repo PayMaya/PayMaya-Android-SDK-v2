@@ -19,6 +19,8 @@ internal interface TokenizeCardContract {
         fun showProgressBar()
         fun hideProgressBar()
         fun hideKeyboard()
+        fun hideCardCvcHint()
+        fun showCardCvcHint()
     }
 
     interface Presenter {
@@ -39,5 +41,7 @@ internal interface TokenizeCardContract {
             cardExpirationYear: String,
             cardCvc: String
         )
+        fun screenSpaceMaskClicked()
+        fun cardCvcInfoClicked()
     }
 }

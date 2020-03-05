@@ -12,48 +12,45 @@ enum class CardType {
 
 class CardTypeDetector {
     fun detectType(cardNumber: String): CardType {
-        val cardPrefix = cardNumber.takeFirst(SCHEME_IDENTIFICATION_LENGTH)
+        val cardPrefix = cardNumber.takeFirst(SCHEME_PREFIX_LENGTH)
         if (cardPrefix.isEmpty()) return CardType.UNKNOWN
 
         return when {
-            compareCardPrefixWithIdentifier(cardPrefix, VISA_IDENTIFIER) -> CardType.VISA
-            compareCardPrefixWithIdentifier(cardPrefix, AMEX_IDENTIFIER) -> CardType.AMEX
-            compareCardPrefixWithIdentifier(cardPrefix, JCB_IDENTIFIER) -> CardType.JCB
-            compareCardPrefixWithIdentifier(cardPrefix, MASTER_CARD_IDENTIFIER) -> CardType.MASTER_CARD
+            matchPrefixWithPrefixesRanges(cardPrefix, VISA_PREFIXES_RANGES) -> CardType.VISA
+            matchPrefixWithPrefixesRanges(cardPrefix, AMEX_PREFIXES_RANGES) -> CardType.AMEX
+            matchPrefixWithPrefixesRanges(cardPrefix, JCB_PREFIXES_RANGES) -> CardType.JCB
+            matchPrefixWithPrefixesRanges(cardPrefix, MASTER_CARD_PREFIXES_RANGES) -> CardType.MASTER_CARD
             else -> CardType.UNKNOWN
         }
     }
 
-    private fun compareCardPrefixWithIdentifier(
-        cardPrefix: String,
-        cardIdentifierRange: Array<IntRange>
+    private fun matchPrefixWithPrefixesRanges(
+        prefix: String,
+        prefixesRanges: Array<IntRange>
     ): Boolean {
-        cardIdentifierRange.forEach { identifierRange ->
-            if (identifierRange.contains(cardPrefix.toInt())) {
-                return true
-            }
-            if (checkPrefixMatchesCardIdentifier(cardPrefix, identifierRange)) {
+        prefixesRanges.forEach { prefixesRange ->
+            if (matchPrefixWithPrefixesRange(prefix, prefixesRange)) {
                 return true
             }
         }
         return false
     }
 
-    private fun checkPrefixMatchesCardIdentifier(
-        prefixNumber: String,
-        identifierRange: IntRange
+    private fun matchPrefixWithPrefixesRange(
+        prefix: String,
+        prefixesRange: IntRange
     ): Boolean =
-        identifierRange
+        prefixesRange
             .map { it.toString() }
             .firstOrNull {
-                it.startsWith(prefixNumber) || prefixNumber.startsWith(it)
+                it.startsWith(prefix) || prefix.startsWith(it)
             } != null
 
     companion object {
-        private const val SCHEME_IDENTIFICATION_LENGTH = 4
-        private val VISA_IDENTIFIER = arrayOf(4..4)
-        private val AMEX_IDENTIFIER = arrayOf(34..34, 37..37)
-        private val JCB_IDENTIFIER = arrayOf(3528..3589)
-        private val MASTER_CARD_IDENTIFIER = arrayOf(51..55, 2221..2720)
+        private const val SCHEME_PREFIX_LENGTH = 4
+        private val VISA_PREFIXES_RANGES = arrayOf(4..4)
+        private val AMEX_PREFIXES_RANGES = arrayOf(34..34, 37..37)
+        private val JCB_PREFIXES_RANGES = arrayOf(3528..3589)
+        private val MASTER_CARD_PREFIXES_RANGES = arrayOf(51..55, 2221..2720)
     }
 }

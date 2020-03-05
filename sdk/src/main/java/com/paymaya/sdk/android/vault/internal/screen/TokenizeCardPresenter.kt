@@ -143,9 +143,9 @@ internal class TokenizeCardPresenter(
     }
 
     override fun cardNumberChanged(cardNumber: String) {
+        view?.hideCardNumberError()
         val cardType = cardTypeDetector.detectType(cardNumber)
         showCardIcon(cardType)
-        view?.hideCardNumberError()
     }
 
     private fun showCardIcon(value: CardType) {

@@ -144,16 +144,17 @@ internal class TokenizeCardPresenter(
 
     override fun cardNumberChanged(cardNumber: String) {
         val cardType = cardTypeDetector.detectType(cardNumber)
-        showCardMark(cardType)
+        showCardIcon(cardType)
+        view?.hideCardNumberError()
     }
 
-    private fun showCardMark(value: CardType) {
+    private fun showCardIcon(value: CardType) {
         when (value) {
-            CardType.VISA -> view?.showVisaMark()
-            CardType.MASTER_CARD -> view?.showMcMark()
-            CardType.JCB -> view?.showJcbMark()
-            CardType.AMEX -> view?.showAmexMark()
-            CardType.UNKNOWN -> view?.hideCardMark()
+            CardType.VISA -> view?.showCardIcon(R.drawable.visa)
+            CardType.MASTER_CARD -> view?.showCardIcon(R.drawable.mastercard)
+            CardType.JCB -> view?.showCardIcon(R.drawable.jcb)
+            CardType.AMEX -> view?.showCardIcon(R.drawable.amex)
+            CardType.UNKNOWN -> view?.hideCardIcon()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.paymaya.sdk.android.vault.internal.screen
 
+import androidx.annotation.DrawableRes
 import com.paymaya.sdk.android.common.internal.Resource
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 
@@ -19,11 +20,8 @@ internal interface TokenizeCardContract {
         fun showProgressBar()
         fun hideProgressBar()
         fun hideKeyboard()
-        fun showVisaMark()
-        fun showMcMark()
-        fun showJcbMark()
-        fun showAmexMark()
-        fun hideCardMark()
+        fun showCardIcon(@DrawableRes iconRes: Int)
+        fun hideCardIcon()
     }
 
     interface Presenter {

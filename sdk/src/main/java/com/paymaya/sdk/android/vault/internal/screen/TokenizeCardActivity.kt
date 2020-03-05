@@ -71,11 +71,7 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardNumberEditText.onFocusChangeListener =
             SimpleFocusLostListener { presenter.cardNumberFocusLost(it) }
         payMayaVaultCardNumberEditText.addTextChangedListener(
-            CardNumberWatcher({
-                presenter.cardNumberChanged()
-            },{
-                presenter.cardNumberChanged(it)
-            })
+            CardNumberWatcher { presenter.cardNumberChanged(it) }
         )
 
         payMayaVaultCardExpirationMonthEditText.onFocusChangeListener =
@@ -200,11 +196,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     class CardNumberWatcher(
-        private val callback: () -> Unit,
-        private val textChanged: (text: String) -> Unit
+        private val callback: (text: String) -> Unit
     ) : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
-            callback.invoke()
+            // no-op
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -212,31 +207,16 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            textChanged.invoke(s.toString())
+            callback.invoke(s.toString())
         }
     }
 
-    override fun showVisaMark() {
+    override fun showCardIcon(@DrawableRes iconRes: Int) {
         payMayaVaultCardNumberEditText
-            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.visa, 0)
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, iconRes, 0)
     }
 
-    override fun showMcMark() {
-        payMayaVaultCardNumberEditText
-            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.mastercard, 0)
-    }
-
-    override fun showJcbMark() {
-        payMayaVaultCardNumberEditText
-            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jcb, 0)
-    }
-
-    override fun showAmexMark() {
-        payMayaVaultCardNumberEditText
-            .setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.amex, 0)
-    }
-
-    override fun hideCardMark() {
+    override fun hideCardIcon() {
         payMayaVaultCardNumberEditText
             .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }

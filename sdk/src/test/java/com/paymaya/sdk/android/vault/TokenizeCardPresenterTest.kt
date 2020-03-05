@@ -3,6 +3,7 @@ package com.paymaya.sdk.android.vault
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.vault.internal.CardInfoValidator
@@ -123,20 +124,20 @@ class TokenizeCardPresenterTest {
         presenter.viewCreated(view)
 
         presenter.cardNumberChanged("3")
+        presenter.cardNumberChanged("35")
         presenter.cardNumberChanged("37")
-        presenter.cardNumberChanged("3")
         presenter.cardNumberChanged("")
         presenter.cardNumberChanged("2")
-        presenter.cardNumberChanged("21")
-        presenter.cardNumberChanged("222")
+        presenter.cardNumberChanged("")
+        presenter.cardNumberChanged("2620")
 
-        order.verify(view).showJcbMark()
-        order.verify(view).showAmexMark()
-        order.verify(view).showJcbMark()
-        order.verify(view).hideCardMark()
-        order.verify(view).showMcMark()
-        order.verify(view).hideCardMark()
-        order.verify(view).showMcMark()
+        order.verify(view).showCardIcon(R.drawable.amex)
+        order.verify(view).showCardIcon(R.drawable.jcb)
+        order.verify(view).showCardIcon(R.drawable.amex)
+        order.verify(view).hideCardIcon()
+        order.verify(view).showCardIcon(R.drawable.mastercard)
+        order.verify(view).hideCardIcon()
+        order.verify(view).showCardIcon(R.drawable.mastercard)
     }
 
     companion object {

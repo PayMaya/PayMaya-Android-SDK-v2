@@ -5,9 +5,9 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.internal.Logger
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
+import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardContract
 import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardPresenter
@@ -54,14 +54,12 @@ class TokenizeCardPresenterTest {
 
         runBlocking {
             presenter.payButtonClicked(
-                cardNumber = "1234",
-                cardExpirationMonth = "44",
-                cardExpirationYear = "1",
+                cardNumberWithSpaces = "1234",
+                cardExpirationDate = "44/1",
                 cardCvc = "12"
             )
             verify(view).showCardNumberError()
-            verify(view).showCardExpirationMonthError()
-            verify(view).showCardExpirationYearError()
+            verify(view).showCardExpirationDateError()
             verify(view).showCardCvcError()
         }
     }
@@ -72,14 +70,12 @@ class TokenizeCardPresenterTest {
 
         runBlocking {
             presenter.payButtonClicked(
-                cardNumber = "",
-                cardExpirationMonth = "",
-                cardExpirationYear = "",
+                cardNumberWithSpaces = "",
+                cardExpirationDate = "",
                 cardCvc = ""
             )
             verify(view).showCardNumberError()
-            verify(view).showCardExpirationMonthError()
-            verify(view).showCardExpirationYearError()
+            verify(view).showCardExpirationDateError()
             verify(view).showCardCvcError()
         }
     }
@@ -103,7 +99,9 @@ class TokenizeCardPresenterTest {
             )
 
             presenter.payButtonClicked(
-                CARD_NUMBER_VALID, "12", YEAR_FUTURE_NO_PREFIX, "123"
+                cardNumberWithSpaces = CARD_NUMBER_VALID,
+                cardExpirationDate = "12/$YEAR_FUTURE_NO_PREFIX",
+                cardCvc = "123"
             )
 
             // just check, if progress bar is displayed and request is sent

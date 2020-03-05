@@ -10,7 +10,7 @@ import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
+import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.models.Card
@@ -50,23 +50,24 @@ internal class TokenizeCardPresenter(
     }
 
     override fun payButtonClicked(
-        cardNumber: String,
-        cardExpirationMonth: String,
-        cardExpirationYear: String,
+        cardNumberWithSpaces: String,
+        cardExpirationDate: String,
         cardCvc: String
     ) {
         view?.hideKeyboard()
 
         if (!validateCardInfo(
-                cardNumber = cardNumber,
-                cardExpirationMonth = cardExpirationMonth,
-                cardExpirationYear = cardExpirationYear,
+                cardNumberWithSpaces = cardNumberWithSpaces,
+                cardExpirationDate = cardExpirationDate,
                 cardCvc = cardCvc
             )
         ) return
 
+        val cardExpirationMonth = getMonth(cardExpirationDate)
+        val cardExpirationYear = getYear(cardExpirationDate)
+
         val card = prepareCardModel(
-            cardNumber = cardNumber,
+            cardNumberWithSpaces = cardNumberWithSpaces,
             cardExpirationMonth = cardExpirationMonth,
             cardExpirationYear = cardExpirationYear,
             cardCvc = cardCvc
@@ -83,43 +84,69 @@ internal class TokenizeCardPresenter(
     }
 
     private fun validateCardInfo(
-        cardNumber: String,
-        cardExpirationMonth: String,
-        cardExpirationYear: String,
+        cardNumberWithSpaces: String,
+        cardExpirationDate: String,
         cardCvc: String
     ): Boolean {
         var valid = true
-        valid = checkCardNumber(cardNumber) && valid
-        valid = checkCardExpirationMonth(cardExpirationMonth) && valid
-        valid = checkCardExpirationYear(cardExpirationYear) && valid
+        valid = checkCardNumber(cardNumberWithSpaces) && valid
+        valid = checkCardExpirationDate(cardExpirationDate) && valid
         valid = checkCardCvc(cardCvc) && valid
-
-        if (valid) {
-            valid = checkCardExpirationDate(cardExpirationMonth, cardExpirationYear) && valid
-        }
 
         return valid
     }
 
     private fun checkCardNumber(value: String): Boolean =
         cardInfoValidator
-            .validateNumber(value)
+            .validateNumber(removeSpaces(value))
             .also { valid ->
                 if (valid) view?.hideCardNumberError() else view?.showCardNumberError()
+            }
+
+    private fun checkCardExpirationDate(cardExpirationDate: String): Boolean {
+        if (!checkDateFormat(cardExpirationDate)) {
+            return false
+        }
+
+        val cardExpirationMonth = getMonth(cardExpirationDate)
+        if (!checkCardExpirationMonth(cardExpirationMonth)) {
+            return false
+        }
+
+        val cardExpirationYear = getYear(cardExpirationDate)
+        if (!checkCardExpirationYear(cardExpirationYear)) {
+            return false
+        }
+
+        return checkDateIsInFuture(cardExpirationMonth, cardExpirationYear)
+    }
+
+    private fun checkDateFormat(cardExpirationDate: String) =
+        cardInfoValidator
+            .validateDateFormat(cardExpirationDate)
+            .also { valid ->
+                if (!valid) view?.showCardExpirationDateError()
             }
 
     private fun checkCardExpirationMonth(value: String): Boolean =
         cardInfoValidator
             .validateMonth(value)
             .also { valid ->
-                if (valid) view?.hideCardExpirationMonthError() else view?.showCardExpirationMonthError()
+                if (!valid) view?.showCardExpirationDateError()
             }
 
     private fun checkCardExpirationYear(value: String): Boolean =
         cardInfoValidator
             .validateYear(value)
             .also { valid ->
-                if (valid) view?.hideCardExpirationYearError() else view?.showCardExpirationYearError()
+                if (!valid) view?.showCardExpirationDateError()
+            }
+
+    private fun checkDateIsInFuture(cardExpirationMonth: String, cardExpirationYear: String): Boolean =
+        cardInfoValidator
+            .validateFutureDate(cardExpirationMonth, formatYear(cardExpirationYear))
+            .also { valid ->
+                if (valid) view?.hideCardExpirationDateError() else view?.showCardExpirationDateError()
             }
 
     private fun checkCardCvc(value: String): Boolean =
@@ -129,23 +156,12 @@ internal class TokenizeCardPresenter(
                 if (valid) view?.hideCardCvcError() else view?.showCardCvcError()
             }
 
-    private fun checkCardExpirationDate(cardExpirationMonth: String, cardExpirationYear: String): Boolean =
-        cardInfoValidator
-            .validateFutureDate(cardExpirationMonth, formatYear(cardExpirationYear))
-            .also { valid ->
-                if (!valid) view?.showErrorPopup(Resource(R.string.paymaya_card_expired_error))
-            }
-
     override fun cardNumberChanged() {
         view?.hideCardNumberError()
     }
 
-    override fun cardExpirationMonthChanged() {
-        view?.hideCardExpirationMonthError()
-    }
-
-    override fun cardExpirationYearChanged() {
-        view?.hideCardExpirationYearError()
+    override fun cardExpirationDateChanged() {
+        view?.hideCardExpirationDateError()
     }
 
     override fun cardCvcChanged() {
@@ -156,12 +172,12 @@ internal class TokenizeCardPresenter(
         checkCardNumber(value)
     }
 
-    override fun cardExpirationMonthFocusLost(value: String) {
-        checkCardExpirationMonth(value)
+    override fun cardExpirationDateFocusReceived() {
+        view?.showExpirationDateHint()
     }
 
-    override fun cardExpirationYearFocusLost(value: String) {
-        checkCardExpirationYear(value)
+    override fun cardExpirationDateFocusLost(value: String) {
+        checkCardExpirationDate(value)
     }
 
     override fun cardCvcFocusLost(value: String) {
@@ -169,20 +185,29 @@ internal class TokenizeCardPresenter(
     }
 
     private fun prepareCardModel(
-        cardNumber: String,
+        cardNumberWithSpaces: String,
         cardExpirationMonth: String,
         cardExpirationYear: String,
         cardCvc: String
     ): Card =
         Card(
-            number = cardNumber,
-            expMonth = cardExpirationMonth.padStart(length = 2, padChar = '0'),
+            number = removeSpaces(cardNumberWithSpaces),
+            expMonth = cardExpirationMonth,
             expYear = formatYear(cardExpirationYear),
             cvc = cardCvc
         )
 
-    private fun formatYear(cardExpirationYear: String) =
+    private fun removeSpaces(text: String): String =
+        text.replace(oldValue = " ", newValue = "")
+
+    private fun formatYear(cardExpirationYear: String): String =
         "$YEAR_PREFIX$cardExpirationYear"
+
+    private fun getMonth(cardExpirationDate: String): String =
+        cardExpirationDate.substring(0..1)
+
+    private fun getYear(cardExpirationDate: String): String =
+        cardExpirationDate.substring(3..4)
 
     private fun processResponse(responseWrapper: ResponseWrapper) {
         when (responseWrapper) {

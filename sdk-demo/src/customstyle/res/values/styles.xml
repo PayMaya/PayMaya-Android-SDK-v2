@@ -35,7 +35,6 @@
     <!-- Text input fields -->
     <style name="PayMayaVaultTextInputLayoutTheme">
         <item name="android:textColorHint">#aaa</item>
-        <item name="android:textSize">16sp</item>
         <!-- <item name="colorAccent">#0f0</item>-->
         <item name="colorControlNormal">@android:color/darker_gray</item>
         <item name="colorControlActivated">@color/paymaya_vault_input_text_accent</item>

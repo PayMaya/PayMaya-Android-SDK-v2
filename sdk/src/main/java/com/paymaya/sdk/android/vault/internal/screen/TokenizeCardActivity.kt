@@ -91,10 +91,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardCvcEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardCvcChanged() }
         )
-        payMayaVaultScreenSpaceMask.setOnClickListener {
-            presenter.screenSpaceMaskClicked()
+        payMayaVaultScreenMask.setOnClickListener {
+            presenter.screenMaskClicked()
         }
-        payMayaVaultCardCvcInfoImageSpace.setOnClickListener {
+        payMayaVaultCardCvcHintButtonMask.setOnClickListener {
             presenter.cardCvcInfoClicked()
         }
     }
@@ -179,12 +179,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
 
     override fun hideCardCvcHint() {
         payMayaVaultCardCvcHintImage.visibility = View.GONE
-        payMayaVaultScreenSpaceMask.visibility = View.GONE
+        payMayaVaultScreenMask.visibility = View.GONE
     }
 
     override fun showCardCvcHint() {
         payMayaVaultCardCvcHintImage.visibility = View.VISIBLE
-        payMayaVaultScreenSpaceMask.visibility = View.VISIBLE
+        payMayaVaultScreenMask.visibility = View.VISIBLE
     }
 
     class SimpleFocusLostListener(

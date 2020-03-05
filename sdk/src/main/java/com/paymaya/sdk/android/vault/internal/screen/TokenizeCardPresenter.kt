@@ -253,7 +253,7 @@ internal class TokenizeCardPresenter(
         view?.showCardCvcHint()
     }
 
-    override fun screenSpaceMaskClicked() {
+    override fun screenMaskClicked() {
         view?.hideCardCvcHint()
     }
 

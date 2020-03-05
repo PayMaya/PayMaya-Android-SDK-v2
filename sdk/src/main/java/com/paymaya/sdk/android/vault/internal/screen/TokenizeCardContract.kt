@@ -41,7 +41,7 @@ internal interface TokenizeCardContract {
             cardExpirationYear: String,
             cardCvc: String
         )
-        fun screenSpaceMaskClicked()
+        fun screenMaskClicked()
         fun cardCvcInfoClicked()
     }
 }

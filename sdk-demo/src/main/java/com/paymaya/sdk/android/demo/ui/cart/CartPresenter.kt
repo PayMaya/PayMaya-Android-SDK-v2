@@ -68,7 +68,7 @@ class CartPresenter(
         resultId = null
         if (cartRepository.getItems().isNotEmpty()) {
             val checkoutRequest = buildCheckoutRequest()
-            checkoutRequest?.let { view?.payWithCheckout(it) }
+            view?.payWithCheckout(checkoutRequest)
         }
     }
 
@@ -98,7 +98,7 @@ class CartPresenter(
         resultId = null
         if (cartRepository.getItems().isNotEmpty()) {
             val singlePaymentRequest = buildSinglePaymentRequest()
-            singlePaymentRequest?.let { view?.payWithSinglePayment(it) }
+            view?.payWithSinglePayment(singlePaymentRequest)
         }
     }
 

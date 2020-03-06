@@ -8,10 +8,8 @@ internal interface TokenizeCardContract {
         fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse)
         fun showCardNumberError()
         fun hideCardNumberError()
-        fun hideCardExpirationYearError()
-        fun showCardExpirationYearError()
-        fun hideCardExpirationMonthError()
-        fun showCardExpirationMonthError()
+        fun hideCardExpirationDateError()
+        fun showCardExpirationDateError()
         fun hideCardCvcError()
         fun showCardCvcError()
         fun finishCanceled()
@@ -21,6 +19,7 @@ internal interface TokenizeCardContract {
         fun hideKeyboard()
         fun hideCardCvcHint()
         fun showCardCvcHint()
+        fun showCardExpirationDateHint()
     }
 
     interface Presenter {
@@ -28,17 +27,15 @@ internal interface TokenizeCardContract {
         fun viewDestroyed()
         fun backButtonPressed()
         fun cardNumberChanged()
-        fun cardExpirationMonthChanged()
-        fun cardExpirationYearChanged()
+        fun cardExpirationDateChanged()
         fun cardCvcChanged()
         fun cardNumberFocusLost(value: String)
-        fun cardExpirationMonthFocusLost(value: String)
-        fun cardExpirationYearFocusLost(value: String)
+        fun cardExpirationDateFocusReceived()
+        fun cardExpirationDateFocusLost(value: String)
         fun cardCvcFocusLost(value: String)
         fun payButtonClicked(
-            cardNumber: String,
-            cardExpirationMonth: String,
-            cardExpirationYear: String,
+            cardNumberWithSpaces: String,
+            cardExpirationDate: String,
             cardCvc: String
         )
         fun screenMaskClicked()

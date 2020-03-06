@@ -17,6 +17,9 @@ import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Resource
 import com.paymaya.sdk.android.vault.internal.di.VaultModule
+import com.paymaya.sdk.android.vault.internal.helpers.AutoFormatTextWatcher
+import com.paymaya.sdk.android.vault.internal.helpers.CardNumberFormatter
+import com.paymaya.sdk.android.vault.internal.helpers.DateFormatter
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 import kotlinx.android.synthetic.main.activity_paymaya_vault_tokenize_card.*
 import java.util.*
@@ -62,32 +65,40 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultPayButton.setOnClickListener {
             presenter.payButtonClicked(
                 payMayaVaultCardNumberEditText.text.toString(),
-                payMayaVaultCardExpirationMonthEditText.text.toString(),
-                payMayaVaultCardExpirationYearEditText.text.toString(),
+                payMayaVaultCardExpirationDateEditText.text.toString(),
                 payMayaVaultCardCvcEditText.text.toString()
             )
         }
 
         payMayaVaultCardNumberEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardNumberFocusLost(it) }
+            SimpleFocusLostListener(callbackFocusLost = { presenter.cardNumberFocusLost(it) })
         payMayaVaultCardNumberEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardNumberChanged() }
         )
-
-        payMayaVaultCardExpirationMonthEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardExpirationMonthFocusLost(it) }
-        payMayaVaultCardExpirationMonthEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardExpirationMonthChanged() }
+        payMayaVaultCardNumberEditText.addTextChangedListener(
+            AutoFormatTextWatcher(
+                payMayaVaultCardNumberEditText,
+                CardNumberFormatter()
+            )
         )
 
-        payMayaVaultCardExpirationYearEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardExpirationYearFocusLost(it) }
-        payMayaVaultCardExpirationYearEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardExpirationYearChanged() }
+        payMayaVaultCardExpirationDateEditText.onFocusChangeListener =
+            SimpleFocusLostListener(
+                callbackFocusReceived = { presenter.cardExpirationDateFocusReceived() },
+                callbackFocusLost = { presenter.cardExpirationDateFocusLost(it) }
+            )
+        payMayaVaultCardExpirationDateEditText.addTextChangedListener(
+            SimpleTextWatcher { presenter.cardExpirationDateChanged() }
+        )
+        payMayaVaultCardExpirationDateEditText.addTextChangedListener(
+            AutoFormatTextWatcher(
+                payMayaVaultCardExpirationDateEditText,
+                DateFormatter()
+            )
         )
 
         payMayaVaultCardCvcEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardCvcFocusLost(it) }
+            SimpleFocusLostListener(callbackFocusLost = { presenter.cardCvcFocusLost(it) })
         payMayaVaultCardCvcEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardCvcChanged() }
         )
@@ -145,20 +156,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardNumberTextInputLayout.error = null
     }
 
-    override fun hideCardExpirationMonthError() {
-        payMayaVaultCardExpirationMonthTextInputLayout.error = null
+    override fun hideCardExpirationDateError() {
+        payMayaVaultCardExpirationDateTextInputLayout.error = null
     }
 
-    override fun showCardExpirationMonthError() {
-        payMayaVaultCardExpirationMonthTextInputLayout.error = getString(R.string.paymaya_invalid_month)
-    }
-
-    override fun hideCardExpirationYearError() {
-        payMayaVaultCardExpirationYearTextInputLayout.error = null
-    }
-
-    override fun showCardExpirationYearError() {
-        payMayaVaultCardExpirationYearTextInputLayout.error = getString(R.string.paymaya_invalid_year)
+    override fun showCardExpirationDateError() {
+        payMayaVaultCardExpirationDateTextInputLayout.error = getString(R.string.paymaya_invalid_date)
     }
 
     override fun hideCardCvcError() {
@@ -187,11 +190,19 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultScreenMask.visibility = View.VISIBLE
     }
 
+    override fun showCardExpirationDateHint() {
+        payMayaVaultCardExpirationDateEditText.hint = getString(R.string.paymaya_vault_card_exp_date_hint)
+    }
+
     class SimpleFocusLostListener(
-        private val callback: (String) -> Unit
+        private val callbackFocusLost: ((String) -> Unit)? = null,
+        private val callbackFocusReceived: (() -> Unit)? = null
     ) : View.OnFocusChangeListener {
         override fun onFocusChange(v: View?, hasFocus: Boolean) {
-            if (!hasFocus) callback.invoke((v as TextInputEditText).text.toString())
+            if (!hasFocus)
+                callbackFocusLost?.invoke((v as TextInputEditText).text.toString())
+            else
+                callbackFocusReceived?.invoke()
         }
     }
 

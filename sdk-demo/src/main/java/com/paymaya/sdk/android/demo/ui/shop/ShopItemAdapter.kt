@@ -39,7 +39,7 @@ class ShopItemAdapter(
         fun setData(product: ShopItem) {
             itemView.product_name.text = product.name
             itemView.product_amount.text =
-                product.value?.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN).toString() + " ${product.currency}"
+                product.value.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN).toString() + " ${product.currency}"
             itemView.shop_product_container.setBackgroundResource(R.drawable.rectangle)
             itemView.add_to_cart_button.setOnClickListener {
                 onAddToCartRequestListener.invoke(product)

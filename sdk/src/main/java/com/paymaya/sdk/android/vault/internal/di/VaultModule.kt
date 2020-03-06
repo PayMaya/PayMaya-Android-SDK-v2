@@ -3,7 +3,7 @@ package com.paymaya.sdk.android.vault.internal.di
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.di.CommonModule
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
+import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.VaultRepository
 import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardPresenter

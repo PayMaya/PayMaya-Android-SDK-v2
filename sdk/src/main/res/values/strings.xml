@@ -7,7 +7,7 @@
     <string name="paymaya_vault_card_exp_date_hint">MM/YY</string>
     <string name="paymaya_vault_card_cvc">CVV</string>
     <string name="paymaya_vault_logo_content_description">Logo</string>
-    <string name="paymaya_vault_pay_button">Pay</string>
+    <string name="paymaya_vault_pay_button">Pay now</string>
     <string name="paymaya_connection_error">No internet connection</string>
     <string name="paymaya_unknown_error">Unknown error occurred</string>
     <string name="paymaya_invalid_card_number">Invalid card number</string>

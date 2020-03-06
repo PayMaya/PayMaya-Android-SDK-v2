@@ -26,7 +26,6 @@ class DateFormatterTest {
         assertEquals(cursorPosition, newSeparatorsBeforeCursorCount)
     }
 
-
     @Test
     fun `add separator after the first block, cursor at the end`() {
         val input = "12"

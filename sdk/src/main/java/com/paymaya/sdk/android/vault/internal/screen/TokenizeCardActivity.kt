@@ -73,7 +73,7 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardNumberEditText.onFocusChangeListener =
             SimpleFocusLostListener(callbackFocusLost = { presenter.cardNumberFocusLost(it) })
         payMayaVaultCardNumberEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardNumberChanged() }
+            SimpleTextWatcher { presenter.cardNumberChanged(it) }
         )
         payMayaVaultCardNumberEditText.addTextChangedListener(
             AutoFormatTextWatcher(
@@ -191,10 +191,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     class SimpleTextWatcher(
-        private val callback: () -> Unit
+        private val callback: (text: String) -> Unit
     ) : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
-            callback.invoke()
+            // no-op
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -202,8 +202,18 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            // no-op
+            callback.invoke(s.toString())
         }
+    }
+
+    override fun showCardIcon(@DrawableRes iconRes: Int) {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, iconRes, 0)
+    }
+
+    override fun hideCardIcon() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }
 
     companion object {

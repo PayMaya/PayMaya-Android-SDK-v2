@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.internal.Logger
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
@@ -118,7 +117,7 @@ class TokenizeCardPresenterTest {
     }
 
     @Test
-    fun `correct card detection after card number changed`(){
+    fun `correct card detection after card number changed`() {
         val order = Mockito.inOrder(view)
         presenter.viewCreated(view)
 

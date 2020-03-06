@@ -2,12 +2,15 @@ package com.paymaya.sdk.android.vault
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
+import androidx.annotation.DrawableRes
+import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaClientBase
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Constants
-import com.paymaya.sdk.android.common.internal.Logger
-import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardActivity
+import com.paymaya.sdk.android.common.internal.Constants.TAG
+import com.paymaya.sdk.android.common.internal.di.CommonModule
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
+import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardActivity
 
 /**
  * Main class to Pay With Vault Payment process. Allows to execute vault payment request. PayMayaVault class
@@ -17,15 +20,18 @@ import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
  * @property environment Property defining environment type.
  */
 class PayMayaVault private constructor(
-    private val clientKey: String,
-    private val environment: PayMayaEnvironment,
-    logLevel: Int
+    clientKey: String,
+    environment: PayMayaEnvironment,
+    logLevel: LogLevel,
+    @DrawableRes private val logoResId: Int?
+) : PayMayaClientBase(
+    clientKey,
+    environment,
+    logLevel,
+    CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel)
 ) {
 
-    init {
-        // TODO JIRA PS-16
-        Logger.level = logLevel
-    }
+    private val logger = CommonModule.getLogger(logLevel)
 
     /**
      * Function allowing to execute vault payment request with unnecessary data.
@@ -36,7 +42,9 @@ class PayMayaVault private constructor(
         val intent = TokenizeCardActivity.newIntent(
             activity,
             clientKey,
-            environment
+            environment,
+            logLevel,
+            logoResId
         )
         activity.startActivityForResult(intent, Constants.VAULT_CARD_FORM_REQUEST_CODE)
     }
@@ -52,6 +60,7 @@ class PayMayaVault private constructor(
 
             return when (resultCode) {
                 Activity.RESULT_OK -> {
+                    logger.i(TAG, "PayMay Vault result: OK")
                     requireNotNull(data)
                     val bundle = data.getBundleExtra(TokenizeCardActivity.EXTRAS_BUNDLE)
                     val result = bundle.getParcelable<TokenizeCardResponse>(TokenizeCardActivity.EXTRAS_RESULT)
@@ -65,8 +74,10 @@ class PayMayaVault private constructor(
                     )
                 }
 
-                Activity.RESULT_CANCELED ->
+                Activity.RESULT_CANCELED -> {
+                    logger.i(TAG, "PayMay Vault result: CANCELED")
                     PayMayaVaultResult.Cancel
+                }
 
                 else ->
                     throw IllegalStateException("Invalid result code: $resultCode")
@@ -85,7 +96,8 @@ class PayMayaVault private constructor(
     class Builder(
         var clientKey: String? = null,
         var environment: PayMayaEnvironment? = null,
-        var logLevel: Int = Log.WARN
+        var logLevel: LogLevel = LogLevel.WARN,
+        var logoResId: Int? = null
     ) {
         /**
          * Function allowing to set client key
@@ -108,7 +120,7 @@ class PayMayaVault private constructor(
          *
          * @param value New log level.
          */
-        fun logLevel(value: Int) =
+        fun logLevel(value: LogLevel) =
             apply { this.logLevel = value }
 
         /**
@@ -120,11 +132,11 @@ class PayMayaVault private constructor(
             PayMayaVault(
                 requireNotNull(clientKey),
                 requireNotNull(environment),
-                logLevel
+                logLevel,
+                logoResId
             )
-    }
 
-    companion object {
-        private const val TAG = "PayMayaVault"
+        fun logo(@DrawableRes value: Int) =
+            apply { this.logoResId = value }
     }
 }

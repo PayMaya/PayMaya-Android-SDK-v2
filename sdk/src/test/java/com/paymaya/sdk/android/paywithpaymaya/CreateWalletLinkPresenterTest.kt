@@ -4,10 +4,11 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
-import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
+import com.paymaya.sdk.android.common.internal.*
+import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl
@@ -32,6 +33,9 @@ class CreateWalletLinkPresenterTest {
     private lateinit var createWalletLinkUseCase: CreateWalletLinkUseCase
 
     @Mock
+    private lateinit var checkStatusUseCase: CheckStatusUseCase
+
+    @Mock
     private lateinit var view: PayMayaPaymentContract.View
 
     @ExperimentalCoroutinesApi
@@ -40,7 +44,7 @@ class CreateWalletLinkPresenterTest {
         Dispatchers.setMain(TestCoroutineDispatcher())
         MockitoAnnotations.initMocks(this)
 
-        presenter = PayMayaPaymentPresenter(createWalletLinkUseCase)
+        presenter = PayMayaPaymentPresenter(createWalletLinkUseCase, checkStatusUseCase, Logger(LogLevel.DEBUG))
     }
 
     @Test
@@ -77,6 +81,12 @@ class CreateWalletLinkPresenterTest {
                 RedirectSuccessResponseWrapper(
                     resultId = LINK_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
+                )
+            )
+            whenever(checkStatusUseCase.run(any())).thenReturn(
+                StatusSuccessResponseWrapper(
+                    id = LINK_ID,
+                    status = PaymentStatus.PAYMENT_EXPIRED
                 )
             )
             presenter.viewCreated(view, prepareCreateWalletLinkRequest())

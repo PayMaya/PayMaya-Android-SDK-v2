@@ -1,6 +1,7 @@
 package com.paymaya.sdk.android.checkout.internal
 
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.SendRequestBaseUseCase
 import kotlinx.serialization.json.Json
@@ -9,8 +10,9 @@ import okhttp3.ResponseBody
 
 internal class CheckoutUseCase(
     json: Json,
-    private val repository: CheckoutRepository
-) : SendRequestBaseUseCase<CheckoutRequest>(json) {
+    private val repository: CheckoutRepository,
+    logger: Logger
+) : SendRequestBaseUseCase<CheckoutRequest>(json, logger) {
 
     override suspend fun sendRequest(request: CheckoutRequest): Response =
         repository.checkout(request)

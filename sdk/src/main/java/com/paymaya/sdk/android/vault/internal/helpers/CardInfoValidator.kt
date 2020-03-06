@@ -1,4 +1,4 @@
-package com.paymaya.sdk.android.vault.internal
+package com.paymaya.sdk.android.vault.internal.helpers
 
 import java.util.*
 
@@ -7,7 +7,10 @@ internal class CardInfoValidator(
 ) {
 
     fun validateNumber(value: String): Boolean =
-        value.length in 12..19 && checkLuhnChecksum(value)
+        value.length in 16..19 && checkLuhnChecksum(value)
+
+    fun validateDateFormat(value: String): Boolean =
+        value.length == 5 && value[2] == '/' // MM/YY
 
     fun validateMonth(value: String): Boolean =
         value.length in 1..2 &&
@@ -37,12 +40,12 @@ internal class CardInfoValidator(
             set(Calendar.YEAR, year.toInt())
             set(Calendar.MONTH, month.toInt() - 1) // month numbers starts from 0
             set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR, 0)
+            set(Calendar.HOUR, 1) // set to 1, so milliseconds don't count
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
         }
 
-        return !todayAdjusted.after(expiration)
+        return todayAdjusted.before(expiration)
     }
 
     private fun checkLuhnChecksum(input: String): Boolean =
@@ -60,6 +63,6 @@ internal class CardInfoValidator(
             }
         }
 
-    private fun String.digits() =
+    private fun String.digits(): List<Int> =
         this.map(Character::getNumericValue)
 }

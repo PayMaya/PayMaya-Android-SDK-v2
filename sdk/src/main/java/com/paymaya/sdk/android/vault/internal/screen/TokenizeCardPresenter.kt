@@ -2,15 +2,19 @@ package com.paymaya.sdk.android.vault.internal.screen
 
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
+import com.paymaya.sdk.android.common.internal.Constants.TAG
 import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
+import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.Resource
 import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
+import com.paymaya.sdk.android.vault.internal.helpers.CardType
+import com.paymaya.sdk.android.vault.internal.helpers.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
+import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.models.Card
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardRequest
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
@@ -19,12 +23,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 internal class TokenizeCardPresenter(
     private val tokenizeCardUseCase: TokenizeCardUseCase,
-    private val cardInfoValidator: CardInfoValidator
+    private val cardInfoValidator: CardInfoValidator,
+    private val cardTypeDetector: CardTypeDetector,
+    private val logger: Logger
 ) : TokenizeCardContract.Presenter, CoroutineScope {
 
     private val job: Job = Job()
@@ -48,23 +53,24 @@ internal class TokenizeCardPresenter(
     }
 
     override fun payButtonClicked(
-        cardNumber: String,
-        cardExpirationMonth: String,
-        cardExpirationYear: String,
+        cardNumberWithSpaces: String,
+        cardExpirationDate: String,
         cardCvc: String
     ) {
         view?.hideKeyboard()
 
         if (!validateCardInfo(
-                cardNumber = cardNumber,
-                cardExpirationMonth = cardExpirationMonth,
-                cardExpirationYear = cardExpirationYear,
+                cardNumberWithSpaces = cardNumberWithSpaces,
+                cardExpirationDate = cardExpirationDate,
                 cardCvc = cardCvc
             )
         ) return
 
+        val cardExpirationMonth = getMonth(cardExpirationDate)
+        val cardExpirationYear = getYear(cardExpirationDate)
+
         val card = prepareCardModel(
-            cardNumber = cardNumber,
+            cardNumberWithSpaces = cardNumberWithSpaces,
             cardExpirationMonth = cardExpirationMonth,
             cardExpirationYear = cardExpirationYear,
             cardCvc = cardCvc
@@ -81,43 +87,69 @@ internal class TokenizeCardPresenter(
     }
 
     private fun validateCardInfo(
-        cardNumber: String,
-        cardExpirationMonth: String,
-        cardExpirationYear: String,
+        cardNumberWithSpaces: String,
+        cardExpirationDate: String,
         cardCvc: String
     ): Boolean {
         var valid = true
-        valid = checkCardNumber(cardNumber) && valid
-        valid = checkCardExpirationMonth(cardExpirationMonth) && valid
-        valid = checkCardExpirationYear(cardExpirationYear) && valid
+        valid = checkCardNumber(cardNumberWithSpaces) && valid
+        valid = checkCardExpirationDate(cardExpirationDate) && valid
         valid = checkCardCvc(cardCvc) && valid
-
-        if (valid) {
-            valid = checkCardExpirationDate(cardExpirationMonth, cardExpirationYear) && valid
-        }
 
         return valid
     }
 
     private fun checkCardNumber(value: String): Boolean =
         cardInfoValidator
-            .validateNumber(value)
+            .validateNumber(removeSpaces(value))
             .also { valid ->
                 if (valid) view?.hideCardNumberError() else view?.showCardNumberError()
+            }
+
+    private fun checkCardExpirationDate(cardExpirationDate: String): Boolean {
+        if (!checkDateFormat(cardExpirationDate)) {
+            return false
+        }
+
+        val cardExpirationMonth = getMonth(cardExpirationDate)
+        if (!checkCardExpirationMonth(cardExpirationMonth)) {
+            return false
+        }
+
+        val cardExpirationYear = getYear(cardExpirationDate)
+        if (!checkCardExpirationYear(cardExpirationYear)) {
+            return false
+        }
+
+        return checkDateIsInFuture(cardExpirationMonth, cardExpirationYear)
+    }
+
+    private fun checkDateFormat(cardExpirationDate: String) =
+        cardInfoValidator
+            .validateDateFormat(cardExpirationDate)
+            .also { valid ->
+                if (!valid) view?.showCardExpirationDateError()
             }
 
     private fun checkCardExpirationMonth(value: String): Boolean =
         cardInfoValidator
             .validateMonth(value)
             .also { valid ->
-                if (valid) view?.hideCardExpirationMonthError() else view?.showCardExpirationMonthError()
+                if (!valid) view?.showCardExpirationDateError()
             }
 
     private fun checkCardExpirationYear(value: String): Boolean =
         cardInfoValidator
             .validateYear(value)
             .also { valid ->
-                if (valid) view?.hideCardExpirationYearError() else view?.showCardExpirationYearError()
+                if (!valid) view?.showCardExpirationDateError()
+            }
+
+    private fun checkDateIsInFuture(cardExpirationMonth: String, cardExpirationYear: String): Boolean =
+        cardInfoValidator
+            .validateFutureDate(cardExpirationMonth, formatYear(cardExpirationYear))
+            .also { valid ->
+                if (valid) view?.hideCardExpirationDateError() else view?.showCardExpirationDateError()
             }
 
     private fun checkCardCvc(value: String): Boolean =
@@ -127,39 +159,43 @@ internal class TokenizeCardPresenter(
                 if (valid) view?.hideCardCvcError() else view?.showCardCvcError()
             }
 
-    private fun checkCardExpirationDate(cardExpirationMonth: String, cardExpirationYear: String): Boolean =
-        cardInfoValidator
-            .validateFutureDate(cardExpirationMonth, formatYear(cardExpirationYear))
-            .also { valid ->
-                if (!valid) view?.showErrorPopup(Resource(R.string.paymaya_card_expired_error))
-            }
-
-    override fun cardNumberChanged() {
+    override fun cardNumberChanged(cardNumber: String) {
         view?.hideCardNumberError()
+        view?.hideCardCvcHint()
+        val cardType = cardTypeDetector.detectType(cardNumber)
+        showCardIcon(cardType)
     }
 
-    override fun cardExpirationMonthChanged() {
-        view?.hideCardExpirationMonthError()
+    private fun showCardIcon(value: CardType) {
+        when (value) {
+            CardType.VISA -> view?.showCardIcon(R.drawable.visa)
+            CardType.MASTER_CARD -> view?.showCardIcon(R.drawable.mastercard)
+            CardType.JCB -> view?.showCardIcon(R.drawable.jcb)
+            CardType.AMEX -> view?.showCardIcon(R.drawable.amex)
+            CardType.UNKNOWN -> view?.hideCardIcon()
+        }
     }
 
-    override fun cardExpirationYearChanged() {
-        view?.hideCardExpirationYearError()
+    override fun cardExpirationDateChanged() {
+        view?.hideCardExpirationDateError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardCvcChanged() {
         view?.hideCardCvcError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardNumberFocusLost(value: String) {
         checkCardNumber(value)
     }
 
-    override fun cardExpirationMonthFocusLost(value: String) {
-        checkCardExpirationMonth(value)
+    override fun cardExpirationDateFocusReceived() {
+        view?.showCardExpirationDateHint()
     }
 
-    override fun cardExpirationYearFocusLost(value: String) {
-        checkCardExpirationYear(value)
+    override fun cardExpirationDateFocusLost(value: String) {
+        checkCardExpirationDate(value)
     }
 
     override fun cardCvcFocusLost(value: String) {
@@ -167,20 +203,29 @@ internal class TokenizeCardPresenter(
     }
 
     private fun prepareCardModel(
-        cardNumber: String,
+        cardNumberWithSpaces: String,
         cardExpirationMonth: String,
         cardExpirationYear: String,
         cardCvc: String
     ): Card =
         Card(
-            number = cardNumber,
-            expMonth = cardExpirationMonth.padStart(length = 2, padChar = '0'),
+            number = removeSpaces(cardNumberWithSpaces),
+            expMonth = cardExpirationMonth,
             expYear = formatYear(cardExpirationYear),
             cvc = cardCvc
         )
 
-    private fun formatYear(cardExpirationYear: String) =
+    private fun removeSpaces(text: String): String =
+        text.replace(oldValue = " ", newValue = "")
+
+    private fun formatYear(cardExpirationYear: String): String =
         "$YEAR_PREFIX$cardExpirationYear"
+
+    private fun getMonth(cardExpirationDate: String): String =
+        cardExpirationDate.substring(0..1)
+
+    private fun getYear(cardExpirationDate: String): String =
+        cardExpirationDate.substring(3..4)
 
     private fun processResponse(responseWrapper: ResponseWrapper) {
         when (responseWrapper) {
@@ -216,14 +261,20 @@ internal class TokenizeCardPresenter(
         when (exception) {
             is BadRequestException -> getMessageBadRequestMessage(exception.error)
             is UnknownHostException -> Resource(R.string.paymaya_connection_error)
-            else -> Resource(R.string.paymaya_unknown_error)
+            else -> {
+                logger.e(TAG, "Unknown error: ${exception.javaClass.simpleName}")
+                Resource(R.string.paymaya_unknown_error)
+            }
         }
 
     private fun getMessageBadRequestMessage(baseError: BaseError): Resource =
         when (baseError) {
             is GenericError -> Resource(baseError.error)
             is PaymentError -> Resource(getPaymentErrorMessage(baseError))
-            else -> Resource(R.string.paymaya_unknown_error)
+            else -> {
+                logger.e(TAG, "Unknown error: ${baseError.javaClass.simpleName}")
+                Resource(R.string.paymaya_unknown_error)
+            }
         }
 
     private fun getPaymentErrorMessage(paymentError: PaymentError): String {
@@ -235,6 +286,14 @@ internal class TokenizeCardPresenter(
             }
         }
         return result
+    }
+
+    override fun cardCvcInfoClicked() {
+        view?.showCardCvcHint()
+    }
+
+    override fun screenMaskClicked() {
+        view?.hideCardCvcHint()
     }
 
     companion object {

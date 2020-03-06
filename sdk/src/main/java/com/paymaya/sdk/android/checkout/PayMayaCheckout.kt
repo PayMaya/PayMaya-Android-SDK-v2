@@ -2,13 +2,15 @@ package com.paymaya.sdk.android.checkout
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
-import com.paymaya.sdk.android.common.PayMayaEnvironment
-import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.checkout.internal.CheckoutActivity
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaClientBase
+import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.common.internal.Constants
-import com.paymaya.sdk.android.common.internal.Logger
+import com.paymaya.sdk.android.common.internal.Constants.TAG
+import com.paymaya.sdk.android.common.internal.di.CommonModule
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 
 /**
@@ -18,15 +20,17 @@ import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
  * @property environment Property defining environment type.
  */
 class PayMayaCheckout private constructor(
-    private val clientKey: String,
-    private val environment: PayMayaEnvironment,
-    logLevel: Int
+    clientKey: String,
+    environment: PayMayaEnvironment,
+    logLevel: LogLevel
+) : PayMayaClientBase(
+    clientKey,
+    environment,
+    logLevel,
+    CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel)
 ) {
 
-    init {
-        // TODO JIRA PS-16
-        Logger.level = logLevel
-    }
+    private val logger = CommonModule.getLogger(logLevel)
 
     /**
      * Function allowing to execute payment with checkout request data.
@@ -39,7 +43,8 @@ class PayMayaCheckout private constructor(
             activity,
             requestData,
             clientKey,
-            environment
+            environment,
+            logLevel
         )
         activity.startActivityForResult(intent, Constants.CHECKOUT_REQUEST_CODE)
     }
@@ -60,18 +65,23 @@ class PayMayaCheckout private constructor(
             val checkoutId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
 
             return when (resultCode) {
-                Activity.RESULT_OK ->
+                Activity.RESULT_OK -> {
+                    logger.i(TAG, "PayMaya Checkout result: OK")
                     PayMayaCheckoutResult.Success(checkoutId)
+                }
 
-                Activity.RESULT_CANCELED ->
+                Activity.RESULT_CANCELED -> {
+                    logger.i(TAG, "PayMaya Checkout result: CANCELED")
                     PayMayaCheckoutResult.Cancel(checkoutId)
+                }
 
                 PayMayaPaymentActivity.RESULT_FAILURE -> {
+                    logger.e(TAG, "PayMaya Checkout result: FAILURE")
                     val exception =
                         data.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_FAILURE_EXCEPTION) as Exception
 
                     if (exception is BadRequestException) {
-                        Logger.e(TAG, exception.error.toString())
+                        logger.e(TAG, exception.error.toString())
                     }
 
                     PayMayaCheckoutResult.Failure(checkoutId, exception)
@@ -95,7 +105,7 @@ class PayMayaCheckout private constructor(
     data class Builder(
         var clientKey: String? = null,
         var environment: PayMayaEnvironment? = null,
-        var logLevel: Int = Log.WARN
+        var logLevel: LogLevel = LogLevel.WARN
     ) {
 
         /**
@@ -119,7 +129,7 @@ class PayMayaCheckout private constructor(
          *
          * @param value New log level.
          */
-        fun logLevel(value: Int) =
+        fun logLevel(value: LogLevel) =
             apply { this.logLevel = value }
 
         /**
@@ -133,9 +143,5 @@ class PayMayaCheckout private constructor(
                 requireNotNull(environment),
                 logLevel
             )
-    }
-
-    companion object {
-        private const val TAG = "PayMayaCheckout"
     }
 }

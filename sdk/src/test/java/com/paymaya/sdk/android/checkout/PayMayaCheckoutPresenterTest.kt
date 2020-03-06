@@ -8,10 +8,11 @@ import com.paymaya.sdk.android.checkout.internal.CheckoutUseCase
 import com.paymaya.sdk.android.checkout.models.Buyer
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.checkout.models.Item
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
-import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
+import com.paymaya.sdk.android.common.internal.*
+import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl
@@ -39,6 +40,9 @@ class PayMayaCheckoutPresenterTest {
     private lateinit var checkoutUseCase: CheckoutUseCase
 
     @Mock
+    private lateinit var checkStatusUseCase: CheckStatusUseCase
+
+    @Mock
     private lateinit var view: PayMayaPaymentContract.View
 
     @ExperimentalCoroutinesApi
@@ -48,7 +52,7 @@ class PayMayaCheckoutPresenterTest {
         MockitoAnnotations.initMocks(this)
 
         json = Json(JsonConfiguration.Stable)
-        presenter = PayMayaPaymentPresenter(checkoutUseCase)
+        presenter = PayMayaPaymentPresenter(checkoutUseCase, checkStatusUseCase, Logger(LogLevel.DEBUG))
     }
 
     @Test
@@ -85,6 +89,12 @@ class PayMayaCheckoutPresenterTest {
                 RedirectSuccessResponseWrapper(
                     resultId = CHECKOUT_ID,
                     redirectUrl = REDIRECT_CHECKOUT_URL
+                )
+            )
+            whenever(checkStatusUseCase.run(any())).thenReturn(
+                StatusSuccessResponseWrapper(
+                    id = CHECKOUT_ID,
+                    status = PaymentStatus.PAYMENT_EXPIRED
                 )
             )
             presenter.viewCreated(view, prepareCheckoutRequest())

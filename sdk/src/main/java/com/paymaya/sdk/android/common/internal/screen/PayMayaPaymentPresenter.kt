@@ -1,11 +1,9 @@
 package com.paymaya.sdk.android.common.internal.screen
 
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
-import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
-import com.paymaya.sdk.android.common.internal.ResponseWrapper
-import com.paymaya.sdk.android.common.internal.SendRequestBaseUseCase
+import com.paymaya.sdk.android.common.internal.*
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
+import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,33 +11,43 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUseCase<R>>(
-    private val sendRequestUseCase: U
+    private val sendRequestUseCase: U,
+    private val checkStatusUseCase: CheckStatusUseCase,
+    private val logger: Logger
 ) : PayMayaPaymentContract.Presenter<R>, CoroutineScope {
-
-    private val job: Job = Job()
 
     private lateinit var requestModel: R
     private var view: PayMayaPaymentContract.View? = null
     private var resultId: String? = null
+    private var paymentJob: Job? = null
+    private var checkStatusJob: Job? = null
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+        get() = Dispatchers.Main
 
     override fun viewCreated(view: PayMayaPaymentContract.View, request: R) {
         this.view = view
         this.requestModel = request
 
-        startPayment()
+        paymentJob = startPayment()
     }
 
     override fun viewDestroyed() {
-        job.cancel()
+        paymentJob?.cancel()
+        checkStatusJob?.cancel()
         this.view = null
     }
 
+    // On the first Back button click - stop loading page, send check payment status request
+    // On the second Back button click - close activity with 'canceled' status
     override fun backButtonPressed() {
-        job.cancel()
-        view?.finishCanceled(resultId)
+        checkStatusJob?.let {
+            it.cancel()
+            view?.finishCanceled(resultId)
+        } ?: run {
+            paymentJob?.cancel()
+            handleCancellation()
+        }
     }
 
     override fun urlBeingLoaded(url: String): Boolean {
@@ -55,19 +63,16 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
 
     private fun startPayment() =
         launch {
-            val responseWrapper = sendRequest()
+            resultId = null
+            val responseWrapper = sendRequestUseCase.run(requestModel)
             processResponse(responseWrapper)
         }
-
-    private suspend fun sendRequest(): ResponseWrapper {
-        resultId = null
-        return sendRequestUseCase.run(requestModel)
-    }
 
     private fun processResponse(responseWrapper: ResponseWrapper) {
         when (responseWrapper) {
             is RedirectSuccessResponseWrapper -> processSuccessResponse(responseWrapper)
             is ErrorResponseWrapper -> processErrorResponse(responseWrapper)
+            is StatusSuccessResponseWrapper -> processStatusSuccessResponse(responseWrapper)
             else -> throw IllegalStateException("Unexpected response wrapper: ${responseWrapper.javaClass.simpleName}")
         }
     }
@@ -81,10 +86,41 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
     private fun processErrorResponse(responseWrapper: ErrorResponseWrapper) {
         val exception = responseWrapper.exception
         if (exception is kotlinx.coroutines.CancellationException) {
-            view?.finishCanceled(resultId)
+            handleCancellation()
             return
         }
 
         view?.finishFailure(resultId, exception)
     }
+
+    private fun processStatusSuccessResponse(statusSuccessResponseWrapper: StatusSuccessResponseWrapper) {
+        val resultId = requireNotNull(resultId)
+
+        logger.i(
+            Constants.TAG,
+            "Payment status: ${statusSuccessResponseWrapper.id}, ${statusSuccessResponseWrapper.status}"
+        )
+
+        when (statusSuccessResponseWrapper.status) {
+            PaymentStatus.PAYMENT_SUCCESS -> view?.finishSuccess(resultId)
+            PaymentStatus.AUTH_FAILED,
+            PaymentStatus.PAYMENT_FAILED -> view?.finishFailure(resultId, PaymentFailedException)
+            else -> view?.finishCanceled(resultId)
+        }
+    }
+
+    private fun handleCancellation() {
+        resultId?.let { id ->
+            checkStatusJob = sendCheckStatusRequest(id)
+        } ?: view?.finishCanceled(null)
+    }
+
+    private fun sendCheckStatusRequest(id: String) =
+        launch {
+            view?.hideWebView()
+            view?.showProgressBar()
+            view?.showCheckingPaymentStatusLabel()
+            val responseWrapper = checkStatusUseCase.run(id)
+            processResponse(responseWrapper)
+        }
 }

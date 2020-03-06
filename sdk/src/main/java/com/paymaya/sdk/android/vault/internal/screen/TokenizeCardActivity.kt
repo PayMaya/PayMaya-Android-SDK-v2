@@ -8,22 +8,20 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.paymaya.sdk.android.R
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.Resource
-import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
-import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
-import com.paymaya.sdk.android.vault.internal.VaultRepository
+import com.paymaya.sdk.android.vault.internal.di.VaultModule
+import com.paymaya.sdk.android.vault.internal.helpers.AutoFormatTextWatcher
+import com.paymaya.sdk.android.vault.internal.helpers.CardNumberFormatter
+import com.paymaya.sdk.android.vault.internal.helpers.DateFormatter
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 import kotlinx.android.synthetic.main.activity_paymaya_vault_tokenize_card.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.util.*
 
 internal class TokenizeCardActivity : AppCompatActivity(),
@@ -38,11 +36,14 @@ internal class TokenizeCardActivity : AppCompatActivity(),
 
         val intent = requireNotNull(intent)
         val environment =
-            requireNotNull(intent.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
-        val clientKey = requireNotNull(intent.getStringExtra(PayMayaPaymentActivity.EXTRAS_CLIENT_KEY))
-        presenter = buildPresenter(environment, clientKey)
+            requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
+        val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
+        val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
+        val logoResId = intent.getIntExtra(EXTRAS_LOGO_RES_ID, UNDEFINED_RES_ID)
 
-        initializeView()
+        presenter = buildPresenter(environment, clientKey, logLevel)
+
+        initializeView(logoResId)
 
         presenter.viewCreated(this)
     }
@@ -56,66 +57,65 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         presenter.backButtonPressed()
     }
 
-    private fun initializeView() {
+    private fun initializeView(@DrawableRes logoResId: Int) {
+        if (logoResId != UNDEFINED_RES_ID) {
+            payMayaVaultLogo.setImageDrawable(getDrawable(logoResId))
+        }
+
         payMayaVaultPayButton.setOnClickListener {
             presenter.payButtonClicked(
                 payMayaVaultCardNumberEditText.text.toString(),
-                payMayaVaultCardExpirationMonthEditText.text.toString(),
-                payMayaVaultCardExpirationYearEditText.text.toString(),
+                payMayaVaultCardExpirationDateEditText.text.toString(),
                 payMayaVaultCardCvcEditText.text.toString()
             )
         }
 
         payMayaVaultCardNumberEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardNumberFocusLost(it) }
+            SimpleFocusLostListener(callbackFocusLost = { presenter.cardNumberFocusLost(it) })
         payMayaVaultCardNumberEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardNumberChanged() }
+            SimpleTextWatcher { presenter.cardNumberChanged(it) }
+        )
+        payMayaVaultCardNumberEditText.addTextChangedListener(
+            AutoFormatTextWatcher(
+                payMayaVaultCardNumberEditText,
+                CardNumberFormatter()
+            )
         )
 
-        payMayaVaultCardExpirationMonthEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardExpirationMonthFocusLost(it) }
-        payMayaVaultCardExpirationMonthEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardExpirationMonthChanged() }
+        payMayaVaultCardExpirationDateEditText.onFocusChangeListener =
+            SimpleFocusLostListener(
+                callbackFocusReceived = { presenter.cardExpirationDateFocusReceived() },
+                callbackFocusLost = { presenter.cardExpirationDateFocusLost(it) }
+            )
+        payMayaVaultCardExpirationDateEditText.addTextChangedListener(
+            SimpleTextWatcher { presenter.cardExpirationDateChanged() }
         )
-
-        payMayaVaultCardExpirationYearEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardExpirationYearFocusLost(it) }
-        payMayaVaultCardExpirationYearEditText.addTextChangedListener(
-            SimpleTextWatcher { presenter.cardExpirationYearChanged() }
+        payMayaVaultCardExpirationDateEditText.addTextChangedListener(
+            AutoFormatTextWatcher(
+                payMayaVaultCardExpirationDateEditText,
+                DateFormatter()
+            )
         )
 
         payMayaVaultCardCvcEditText.onFocusChangeListener =
-            SimpleFocusLostListener { presenter.cardCvcFocusLost(it) }
+            SimpleFocusLostListener(callbackFocusLost = { presenter.cardCvcFocusLost(it) })
         payMayaVaultCardCvcEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardCvcChanged() }
         )
+        payMayaVaultScreenMask.setOnClickListener {
+            presenter.screenMaskClicked()
+        }
+        payMayaVaultCardCvcHintButtonMask.setOnClickListener {
+            presenter.cardCvcInfoClicked()
+        }
     }
 
     private fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String
-    ): TokenizeCardContract.Presenter {
-        val json = Json(JsonConfiguration.Stable)
-        // TODO JIRA PS-16 http logging level
-        val httpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .build()
-        val sendTokenizeCardRequestUseCase =
-            TokenizeCardUseCase(
-                json,
-                VaultRepository(
-                    environment,
-                    clientKey,
-                    json,
-                    httpClient
-                )
-            )
-        val cardInfoValidator = CardInfoValidator(Calendar.getInstance())
-        return TokenizeCardPresenter(
-            sendTokenizeCardRequestUseCase,
-            cardInfoValidator
-        )
-    }
+        clientKey: String,
+        logLevel: LogLevel
+    ): TokenizeCardContract.Presenter =
+        VaultModule.getTokenizeCardPresenter(environment, clientKey, logLevel, Calendar.getInstance())
 
     override fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse) {
         val bundle = Bundle()
@@ -156,20 +156,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardNumberTextInputLayout.error = null
     }
 
-    override fun hideCardExpirationMonthError() {
-        payMayaVaultCardExpirationMonthTextInputLayout.error = null
+    override fun hideCardExpirationDateError() {
+        payMayaVaultCardExpirationDateTextInputLayout.error = null
     }
 
-    override fun showCardExpirationMonthError() {
-        payMayaVaultCardExpirationMonthTextInputLayout.error = getString(R.string.paymaya_invalid_month)
-    }
-
-    override fun hideCardExpirationYearError() {
-        payMayaVaultCardExpirationYearTextInputLayout.error = null
-    }
-
-    override fun showCardExpirationYearError() {
-        payMayaVaultCardExpirationYearTextInputLayout.error = getString(R.string.paymaya_invalid_year)
+    override fun showCardExpirationDateError() {
+        payMayaVaultCardExpirationDateTextInputLayout.error = getString(R.string.paymaya_invalid_date)
     }
 
     override fun hideCardCvcError() {
@@ -188,19 +180,37 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         }
     }
 
+    override fun hideCardCvcHint() {
+        payMayaVaultCardCvcHintImage.visibility = View.GONE
+        payMayaVaultScreenMask.visibility = View.GONE
+    }
+
+    override fun showCardCvcHint() {
+        payMayaVaultCardCvcHintImage.visibility = View.VISIBLE
+        payMayaVaultScreenMask.visibility = View.VISIBLE
+    }
+
+    override fun showCardExpirationDateHint() {
+        payMayaVaultCardExpirationDateEditText.hint = getString(R.string.paymaya_vault_card_exp_date_hint)
+    }
+
     class SimpleFocusLostListener(
-        private val callback: (String) -> Unit
+        private val callbackFocusLost: ((String) -> Unit)? = null,
+        private val callbackFocusReceived: (() -> Unit)? = null
     ) : View.OnFocusChangeListener {
         override fun onFocusChange(v: View?, hasFocus: Boolean) {
-            if (!hasFocus) callback.invoke((v as TextInputEditText).text.toString())
+            if (!hasFocus)
+                callbackFocusLost?.invoke((v as TextInputEditText).text.toString())
+            else
+                callbackFocusReceived?.invoke()
         }
     }
 
     class SimpleTextWatcher(
-        private val callback: () -> Unit
+        private val callback: (text: String) -> Unit
     ) : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
-            callback.invoke()
+            // no-op
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -208,13 +218,26 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            // no-op
+            callback.invoke(s.toString())
         }
+    }
+
+    override fun showCardIcon(@DrawableRes iconRes: Int) {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, iconRes, 0)
+    }
+
+    override fun hideCardIcon() {
+        payMayaVaultCardNumberEditText
+            .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }
 
     companion object {
         private const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
         private const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
+        private const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"
+        private const val EXTRAS_LOGO_RES_ID = "EXTRAS_LOGO_RES_ID"
+        private const val UNDEFINED_RES_ID = -1
 
         const val EXTRAS_RESULT = "EXTRAS_RESULT"
         const val EXTRAS_BUNDLE = "EXTRAS_BUNDLE"
@@ -222,11 +245,15 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         fun newIntent(
             activity: Activity,
             clientKey: String,
-            environment: PayMayaEnvironment
+            environment: PayMayaEnvironment,
+            logLevel: LogLevel,
+            @DrawableRes logoResId: Int?
         ): Intent {
             val intent = Intent(activity, TokenizeCardActivity::class.java)
             intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
+            intent.putExtra(EXTRAS_LOG_LEVEL, logLevel)
+            logoResId?.let { intent.putExtra(EXTRAS_LOGO_RES_ID, it) }
             return intent
         }
     }

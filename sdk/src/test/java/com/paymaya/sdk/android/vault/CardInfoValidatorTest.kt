@@ -1,6 +1,6 @@
 package com.paymaya.sdk.android.vault
 
-import com.paymaya.sdk.android.vault.internal.CardInfoValidator
+import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -13,7 +13,8 @@ class CardInfoValidatorTest {
 
     @Before
     fun setup() {
-        cardInfoValidator = CardInfoValidator(Calendar.getInstance())
+        cardInfoValidator =
+            CardInfoValidator(Calendar.getInstance())
     }
 
     @Test
@@ -106,7 +107,8 @@ class CardInfoValidatorTest {
             set(Calendar.MONTH, month - 1) // month numbers starts from 0
         }
 
-        val cardInfoValidator = CardInfoValidator(date)
+        val cardInfoValidator =
+            CardInfoValidator(date)
         assertTrue(cardInfoValidator.validateFutureDate(month.toString(), year.toString()))
     }
 
@@ -120,7 +122,8 @@ class CardInfoValidatorTest {
             set(Calendar.MONTH, month - 1) // month numbers starts from 0
         }
 
-        val cardInfoValidator = CardInfoValidator(date)
+        val cardInfoValidator =
+            CardInfoValidator(date)
         assertFalse(cardInfoValidator.validateFutureDate((month - 1).toString(), year.toString()))
     }
 }

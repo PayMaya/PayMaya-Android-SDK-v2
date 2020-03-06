@@ -9,6 +9,7 @@ import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.paymaya.sdk.android.BuildConfig
+import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
 import kotlinx.android.synthetic.main.activity_paymaya_payment.*
@@ -27,10 +28,11 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         val requestModel: R = requireNotNull(bundle.getParcelable(EXTRAS_REQUEST_DATA))
         val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
         val environment = requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
+        val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
 
         initializeView()
-        presenter = buildPresenter(environment, clientKey)
 
+        presenter = buildPresenter(environment, clientKey, logLevel)
         presenter.viewCreated(this, requestModel)
     }
 
@@ -41,7 +43,8 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
     protected abstract fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String
+        clientKey: String,
+        logLevel: LogLevel
     ): PayMayaPaymentContract.Presenter<R>
 
     override fun onBackPressed() {
@@ -85,8 +88,22 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         finish()
     }
 
-    private fun hideProgress() {
+    override fun showProgressBar() {
+        payMayaPaymentActivityProgressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideProgressBar() {
         payMayaPaymentActivityProgressBar.visibility = View.GONE
+    }
+
+    override fun hideWebView() {
+        payMayaPaymentActivityWebView.visibility = View.GONE
+        payMayaPaymentActivityWebView.webViewClient = NoOpWebViewClientImpl()
+        payMayaPaymentActivityWebView.stopLoading()
+    }
+
+    override fun showCheckingPaymentStatusLabel() {
+        payMayaCheckingPaymentStatusLabel.visibility = View.VISIBLE
     }
 
     inner class WebViewClientImpl : WebViewClient() {
@@ -94,14 +111,22 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
             presenter.urlBeingLoaded(url)
 
         override fun onPageFinished(view: WebView, url: String) {
-            hideProgress()
+            hideProgressBar()
             super.onPageFinished(view, url)
+        }
+    }
+
+    class NoOpWebViewClientImpl : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            // no-op
+            return true
         }
     }
 
     companion object {
         const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
         const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
+        const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"
         const val EXTRAS_REQUEST_DATA = "EXTRAS_REQUEST_DATA"
         const val EXTRAS_BUNDLE = "EXTRAS_BUNDLE"
 

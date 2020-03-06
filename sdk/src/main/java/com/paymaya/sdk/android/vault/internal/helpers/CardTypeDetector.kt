@@ -1,16 +1,8 @@
-package com.paymaya.sdk.android.vault.internal
+package com.paymaya.sdk.android.vault.internal.helpers
 
 import com.paymaya.sdk.android.common.internal.extension.takeFirst
 
-enum class CardType {
-    VISA,
-    MASTER_CARD,
-    JCB,
-    AMEX,
-    UNKNOWN;
-}
-
-class CardTypeDetector {
+internal class CardTypeDetector {
     fun detectType(cardNumber: String): CardType {
         val cardPrefix = cardNumber.takeFirst(SCHEME_PREFIX_LENGTH)
         if (cardPrefix.isEmpty()) return CardType.UNKNOWN

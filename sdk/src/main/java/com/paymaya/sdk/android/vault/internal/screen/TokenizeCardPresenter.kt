@@ -10,8 +10,8 @@ import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
-import com.paymaya.sdk.android.vault.internal.CardType
-import com.paymaya.sdk.android.vault.internal.CardTypeDetector
+import com.paymaya.sdk.android.vault.internal.helpers.CardType
+import com.paymaya.sdk.android.vault.internal.helpers.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator

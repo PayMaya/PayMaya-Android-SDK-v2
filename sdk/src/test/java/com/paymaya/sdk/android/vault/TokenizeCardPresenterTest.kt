@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.internal.Logger
-import com.paymaya.sdk.android.vault.internal.CardTypeDetector
+import com.paymaya.sdk.android.vault.internal.helpers.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator

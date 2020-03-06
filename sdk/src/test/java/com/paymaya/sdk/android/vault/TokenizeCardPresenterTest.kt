@@ -3,8 +3,10 @@ package com.paymaya.sdk.android.vault
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.internal.Logger
+import com.paymaya.sdk.android.vault.internal.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
@@ -19,6 +21,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import java.util.*
 
@@ -44,6 +47,7 @@ class TokenizeCardPresenterTest {
         presenter = TokenizeCardPresenter(
             tokenizeCardUseCase,
             CardInfoValidator(someDate),
+            CardTypeDetector(),
             Logger(LogLevel.WARN)
         )
     }
@@ -110,6 +114,28 @@ class TokenizeCardPresenterTest {
             verify(view).hideProgressBar()
             verify(view).finishSuccess(any())
         }
+    }
+
+    @Test
+    fun `correct card detection after card number changed`() {
+        val order = Mockito.inOrder(view)
+        presenter.viewCreated(view)
+
+        presenter.cardNumberChanged("3")
+        presenter.cardNumberChanged("35")
+        presenter.cardNumberChanged("37")
+        presenter.cardNumberChanged("")
+        presenter.cardNumberChanged("2")
+        presenter.cardNumberChanged("")
+        presenter.cardNumberChanged("2620")
+
+        order.verify(view).showCardIcon(R.drawable.amex)
+        order.verify(view).showCardIcon(R.drawable.jcb)
+        order.verify(view).showCardIcon(R.drawable.amex)
+        order.verify(view).hideCardIcon()
+        order.verify(view).showCardIcon(R.drawable.mastercard)
+        order.verify(view).hideCardIcon()
+        order.verify(view).showCardIcon(R.drawable.mastercard)
     }
 
     companion object {

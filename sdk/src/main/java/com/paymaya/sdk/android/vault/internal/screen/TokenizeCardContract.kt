@@ -1,5 +1,6 @@
 package com.paymaya.sdk.android.vault.internal.screen
 
+import androidx.annotation.DrawableRes
 import com.paymaya.sdk.android.common.internal.Resource
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 
@@ -8,25 +9,27 @@ internal interface TokenizeCardContract {
         fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse)
         fun showCardNumberError()
         fun hideCardNumberError()
-        fun hideCardExpirationDateError()
         fun showCardExpirationDateError()
-        fun hideCardCvcError()
+        fun hideCardExpirationDateError()
         fun showCardCvcError()
-        fun finishCanceled()
-        fun showErrorPopup(message: Resource)
+        fun hideCardCvcError()
+        fun showCardIcon(@DrawableRes iconRes: Int)
+        fun hideCardIcon()
+        fun showCardCvcHint()
+        fun hideCardCvcHint()
+        fun showCardExpirationDateHint()
         fun showProgressBar()
         fun hideProgressBar()
         fun hideKeyboard()
-        fun hideCardCvcHint()
-        fun showCardCvcHint()
-        fun showCardExpirationDateHint()
+        fun showErrorPopup(message: Resource)
+        fun finishCanceled()
     }
 
     interface Presenter {
         fun viewCreated(view: View)
         fun viewDestroyed()
         fun backButtonPressed()
-        fun cardNumberChanged()
+        fun cardNumberChanged(cardNumber: String)
         fun cardExpirationDateChanged()
         fun cardCvcChanged()
         fun cardNumberFocusLost(value: String)

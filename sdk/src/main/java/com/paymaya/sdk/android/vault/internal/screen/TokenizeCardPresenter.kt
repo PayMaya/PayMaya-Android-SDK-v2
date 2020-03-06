@@ -10,6 +10,8 @@ import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
+import com.paymaya.sdk.android.vault.internal.CardType
+import com.paymaya.sdk.android.vault.internal.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
@@ -26,6 +28,7 @@ import kotlin.coroutines.CoroutineContext
 internal class TokenizeCardPresenter(
     private val tokenizeCardUseCase: TokenizeCardUseCase,
     private val cardInfoValidator: CardInfoValidator,
+    private val cardTypeDetector: CardTypeDetector,
     private val logger: Logger
 ) : TokenizeCardContract.Presenter, CoroutineScope {
 
@@ -156,9 +159,21 @@ internal class TokenizeCardPresenter(
                 if (valid) view?.hideCardCvcError() else view?.showCardCvcError()
             }
 
-    override fun cardNumberChanged() {
+    override fun cardNumberChanged(cardNumber: String) {
         view?.hideCardNumberError()
         view?.hideCardCvcHint()
+        val cardType = cardTypeDetector.detectType(cardNumber)
+        showCardIcon(cardType)
+    }
+
+    private fun showCardIcon(value: CardType) {
+        when (value) {
+            CardType.VISA -> view?.showCardIcon(R.drawable.visa)
+            CardType.MASTER_CARD -> view?.showCardIcon(R.drawable.mastercard)
+            CardType.JCB -> view?.showCardIcon(R.drawable.jcb)
+            CardType.AMEX -> view?.showCardIcon(R.drawable.amex)
+            CardType.UNKNOWN -> view?.hideCardIcon()
+        }
     }
 
     override fun cardExpirationDateChanged() {

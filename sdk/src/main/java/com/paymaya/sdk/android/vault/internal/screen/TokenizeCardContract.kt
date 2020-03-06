@@ -9,18 +9,20 @@ internal interface TokenizeCardContract {
         fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse)
         fun showCardNumberError()
         fun hideCardNumberError()
-        fun hideCardExpirationDateError()
         fun showCardExpirationDateError()
-        fun hideCardCvcError()
+        fun hideCardExpirationDateError()
         fun showCardCvcError()
-        fun finishCanceled()
-        fun showErrorPopup(message: Resource)
+        fun hideCardCvcError()
+        fun showCardIcon(@DrawableRes iconRes: Int)
+        fun hideCardIcon()
+        fun showCardCvcHint()
+        fun hideCardCvcHint()
+        fun showCardExpirationDateHint()
         fun showProgressBar()
         fun hideProgressBar()
         fun hideKeyboard()
-        fun showExpirationDateHint()
-        fun showCardIcon(@DrawableRes iconRes: Int)
-        fun hideCardIcon()
+        fun showErrorPopup(message: Resource)
+        fun finishCanceled()
     }
 
     interface Presenter {
@@ -39,5 +41,7 @@ internal interface TokenizeCardContract {
             cardExpirationDate: String,
             cardCvc: String
         )
+        fun screenMaskClicked()
+        fun cardCvcInfoClicked()
     }
 }

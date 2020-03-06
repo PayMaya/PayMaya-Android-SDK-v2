@@ -102,6 +102,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultCardCvcEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardCvcChanged() }
         )
+        payMayaVaultScreenMask.setOnClickListener {
+            presenter.screenMaskClicked()
+        }
+        payMayaVaultCardCvcHintButtonMask.setOnClickListener {
+            presenter.cardCvcInfoClicked()
+        }
     }
 
     private fun buildPresenter(
@@ -174,8 +180,18 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         }
     }
 
-    override fun showExpirationDateHint() {
-        payMayaVaultCardExpirationDateEditText.hint = "MM/YY"
+    override fun hideCardCvcHint() {
+        payMayaVaultCardCvcHintImage.visibility = View.GONE
+        payMayaVaultScreenMask.visibility = View.GONE
+    }
+
+    override fun showCardCvcHint() {
+        payMayaVaultCardCvcHintImage.visibility = View.VISIBLE
+        payMayaVaultScreenMask.visibility = View.VISIBLE
+    }
+
+    override fun showCardExpirationDateHint() {
+        payMayaVaultCardExpirationDateEditText.hint = getString(R.string.paymaya_vault_card_exp_date_hint)
     }
 
     class SimpleFocusLostListener(

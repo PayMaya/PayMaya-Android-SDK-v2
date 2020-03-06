@@ -40,9 +40,9 @@ class CartItemAdapter(
             val amount = product.totalAmount.value.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN).toString()
 
             itemView.product_name.text = product.name
-            itemView.product_total_amount.text = "$amount ${product.totalAmount?.currency}"
+            itemView.product_total_amount.text = "$amount ${product.totalAmount.currency}"
             itemView.cart_product_container.setBackgroundResource(R.drawable.rectangle)
-            itemView.product_count.text = "(${product.quantity.toString()})"
+            itemView.product_count.text = "(${product.quantity})"
             itemView.add_to_cart_button.setOnClickListener {
                 onRemoveFromCartRequestListener.invoke(product)
             }

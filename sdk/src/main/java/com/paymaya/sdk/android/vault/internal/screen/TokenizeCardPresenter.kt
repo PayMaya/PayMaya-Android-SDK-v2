@@ -10,8 +10,8 @@ import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
-import com.paymaya.sdk.android.vault.internal.CardType
-import com.paymaya.sdk.android.vault.internal.CardTypeDetector
+import com.paymaya.sdk.android.vault.internal.helpers.CardType
+import com.paymaya.sdk.android.vault.internal.helpers.CardTypeDetector
 import com.paymaya.sdk.android.vault.internal.TokenizeCardSuccessResponseWrapper
 import com.paymaya.sdk.android.vault.internal.TokenizeCardUseCase
 import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
@@ -161,6 +161,7 @@ internal class TokenizeCardPresenter(
 
     override fun cardNumberChanged(cardNumber: String) {
         view?.hideCardNumberError()
+        view?.hideCardCvcHint()
         val cardType = cardTypeDetector.detectType(cardNumber)
         showCardIcon(cardType)
     }
@@ -177,10 +178,12 @@ internal class TokenizeCardPresenter(
 
     override fun cardExpirationDateChanged() {
         view?.hideCardExpirationDateError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardCvcChanged() {
         view?.hideCardCvcError()
+        view?.hideCardCvcHint()
     }
 
     override fun cardNumberFocusLost(value: String) {
@@ -188,7 +191,7 @@ internal class TokenizeCardPresenter(
     }
 
     override fun cardExpirationDateFocusReceived() {
-        view?.showExpirationDateHint()
+        view?.showCardExpirationDateHint()
     }
 
     override fun cardExpirationDateFocusLost(value: String) {
@@ -283,6 +286,14 @@ internal class TokenizeCardPresenter(
             }
         }
         return result
+    }
+
+    override fun cardCvcInfoClicked() {
+        view?.showCardCvcHint()
+    }
+
+    override fun screenMaskClicked() {
+        view?.hideCardCvcHint()
     }
 
     companion object {

@@ -8,6 +8,10 @@ internal interface PayMayaPaymentContract {
         fun loadUrl(redirectUrl: String)
         fun finishCanceled(resultId: String?)
         fun finishSuccess(resultId: String)
+        fun showProgressBar()
+        fun hideProgressBar()
+        fun hideWebView()
+        fun showCheckingPaymentStatusLabel()
     }
 
     interface Presenter<R : PayMayaRequest> {

@@ -1,7 +1,10 @@
 package com.paymaya.sdk.android.common.internal.di
 
 import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaEnvironment
+import com.paymaya.sdk.android.common.internal.CheckStatusUseCase
 import com.paymaya.sdk.android.common.internal.Logger
+import com.paymaya.sdk.android.vault.internal.di.VaultModule
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.OkHttpClient
@@ -18,4 +21,15 @@ internal object CommonModule {
 
     fun getLogger(logLevel: LogLevel): Logger =
         Logger(logLevel)
+
+    fun getCheckStatusUseCase(
+        environment: PayMayaEnvironment,
+        clientKey: String,
+        logLevel: LogLevel
+    ) =
+        CheckStatusUseCase(
+            getJson(),
+            VaultModule.getVaultRepository(environment, clientKey, logLevel),
+            getLogger(logLevel)
+        )
 }

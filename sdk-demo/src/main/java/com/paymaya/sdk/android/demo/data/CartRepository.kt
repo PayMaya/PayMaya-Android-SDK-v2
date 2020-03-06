@@ -5,19 +5,50 @@ import com.paymaya.sdk.android.checkout.models.ItemAmount
 import com.paymaya.sdk.android.common.models.AmountDetails
 import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.demo.model.ShopItem
+import java.math.BigDecimal
 
-class CartProductsRepository {
+class CartRepository {
 
     private val items: MutableList<Item> = mutableListOf()
+    private var totalAmount: BigDecimal = BigDecimal(0)
+    private var totalCount: Int = 0
+
+    fun getItems(): List<Item> =
+        items.toList()
+
+    fun getTotalAmount(): BigDecimal =
+        totalAmount
+
+    fun getTotalCount(): Int =
+        totalCount
 
     fun addItem(shopItem: ShopItem) {
         val index = items.indexOfFirst { it.name == shopItem.name }
+
+        totalAmount = totalAmount.add(shopItem.value)
+        ++totalCount
 
         if (index == -1) {
             val newItem = createItem(shopItem)
             items.add(newItem)
         } else {
             val updatedItem = increaseQuantity(items[index])
+            items[index] = updatedItem
+        }
+    }
+
+    fun removeItem(item: Item) {
+        val index = items.indexOf(item)
+        require(index != -1)
+
+        val amount = requireNotNull(item.amount)
+        totalAmount = totalAmount.subtract(amount.value)
+        --totalCount
+
+        val updatedItem = decreaseQuantity(item)
+        if (updatedItem.quantity == 0) {
+            items.removeAt(index)
+        } else {
             items[index] = updatedItem
         }
     }
@@ -40,10 +71,8 @@ class CartProductsRepository {
         )
 
     private fun increaseQuantity(item: Item): Item {
-        val amount = item.amount
-        val quantity = item.quantity
-        require(amount != null)
-        require(quantity != null)
+        val amount = requireNotNull(item.amount)
+        val quantity = requireNotNull(item.quantity)
 
         return item.copy(
             quantity = quantity.plus(1),
@@ -52,22 +81,9 @@ class CartProductsRepository {
         )
     }
 
-    fun removeItem(item: Item) {
-        val index = items.indexOf(item)
-        require(index != -1)
-
-        val updatedItem = decreaseQuantity(item)
-        items[index] = updatedItem
-        if (updatedItem.quantity == 0) {
-            items.remove(updatedItem)
-        }
-    }
-
     private fun decreaseQuantity(item: Item): Item {
-        val amount = item.amount
-        val quantity = item.quantity
-        require(amount != null)
-        require(quantity != null)
+        val amount = requireNotNull(item.amount)
+        val quantity = requireNotNull(item.quantity)
 
         return item.copy(
             quantity = quantity.minus(1),
@@ -75,7 +91,4 @@ class CartProductsRepository {
                 .copy(value = item.totalAmount.value - amount.value)
         )
     }
-
-    fun fetchItems(): List<Item> =
-        items
 }

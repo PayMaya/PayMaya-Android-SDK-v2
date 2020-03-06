@@ -38,7 +38,11 @@ internal object PayWithPayMayaModule {
         clientKey: String,
         logLevel: LogLevel
     ) =
-        PayMayaPaymentPresenter(getCreateWalletLinkUseCase(environment, clientKey, logLevel))
+        PayMayaPaymentPresenter(
+            getCreateWalletLinkUseCase(environment, clientKey, logLevel),
+            CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel),
+            CommonModule.getLogger(logLevel)
+        )
 
     fun getSinglePaymentUseCase(
         environment: PayMayaEnvironment,
@@ -56,5 +60,9 @@ internal object PayWithPayMayaModule {
         clientKey: String,
         logLevel: LogLevel
     ) =
-        PayMayaPaymentPresenter(getSinglePaymentUseCase(environment, clientKey, logLevel))
+        PayMayaPaymentPresenter(
+            getSinglePaymentUseCase(environment, clientKey, logLevel),
+            CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel),
+            CommonModule.getLogger(logLevel)
+        )
 }

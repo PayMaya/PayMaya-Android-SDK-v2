@@ -42,7 +42,26 @@ internal class VaultRepository(
         return httpClient.newCall(request).await()
     }
 
+    suspend fun status(id: String): Response {
+        val authorizationValue = prepareAuthorizationValue(clientPublicKey)
+
+        val request = Request.Builder()
+            .url("$baseUrl$PAYMENTS_ENDPOINT/$id/$STATUS_ENDPOINT")
+            .header(
+                HEADER_CONTENT_TYPE,
+                MIME_APPLICATION_JSON
+            )
+            .header(HEADER_AUTHORIZATION, authorizationValue)
+            .header(HEADER_CONTENT_LENGTH, "0")
+            .get()
+            .build()
+
+        return httpClient.newCall(request).await()
+    }
+
     companion object {
+        private const val PAYMENTS_ENDPOINT = "payments"
+        private const val STATUS_ENDPOINT = "status"
         private const val VAULT_CREATE_TOKEN = "payment-tokens"
     }
 }

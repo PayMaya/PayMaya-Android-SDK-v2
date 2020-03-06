@@ -37,51 +37,24 @@
                         style="@style/PayMayaVaultTextInputEditTextBase"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:maxLength="19" />
+                        android:maxLength="23" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/payMayaVaultCardExpirationDateTextInputLayout"
+                    style="@style/PayMayaVaultTextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_weight="3"
+                    android:hint="@string/paymaya_vault_card_exp_date"
+                    app:errorEnabled="true">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/payMayaVaultCardExpirationMonthTextInputLayout"
-                        style="@style/PayMayaVaultTextInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_weight="3"
-                        android:hint="@string/paymaya_vault_card_exp_month"
-                        app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/payMayaVaultCardExpirationDateEditText"
+                        style="@style/PayMayaVaultTextInputEditTextBase"
+                        android:maxLength="5" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/payMayaVaultCardExpirationMonthEditText"
-                            style="@style/PayMayaVaultTextInputEditTextBase"
-                            android:maxLength="2" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/payMayaVaultCardExpirationYearTextInputLayout"
-                        style="@style/PayMayaVaultTextInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_weight="3"
-                        android:hint="@string/paymaya_vault_card_exp_year"
-                        app:errorEnabled="true">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/payMayaVaultCardExpirationYearEditText"
-                            style="@style/PayMayaVaultTextInputEditTextBase"
-                            android:maxLength="2" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/payMayaVaultCardCvcTextInputLayout"

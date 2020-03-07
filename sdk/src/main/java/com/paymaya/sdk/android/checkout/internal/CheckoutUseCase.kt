@@ -1,5 +1,6 @@
 package com.paymaya.sdk.android.checkout.internal
 
+import com.paymaya.sdk.android.checkout.internal.models.CheckoutResponse
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.common.internal.Logger
 import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper

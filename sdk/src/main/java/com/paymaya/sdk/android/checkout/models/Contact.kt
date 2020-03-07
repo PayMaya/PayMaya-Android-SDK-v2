@@ -5,11 +5,11 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 /**
- * Contact model. Represents buyer's contact details. If the email field is provided, a payment receipt
+ * Buyer's contact details. If the email field is provided, a payment receipt
  * will be sent to the email address.
  *
- * @property phone Buyer's phone number
- * @property email Buyer's e-mail address
+ * @property phone Phone number of the buyer.
+ * @property email Valid email address of the buyer.
  */
 @Parcelize
 @Serializable

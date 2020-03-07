@@ -1,5 +1,8 @@
 package com.paymaya.sdk.android.common
 
+/**
+ * Logging level.
+ */
 enum class LogLevel {
     // Includes Http request and response lines, headers and bodies
     VERBOSE,

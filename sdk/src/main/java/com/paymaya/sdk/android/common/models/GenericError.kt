@@ -3,11 +3,11 @@ package com.paymaya.sdk.android.common.models
 import kotlinx.serialization.Serializable
 
 /**
- * GenericError class defines generic exceptions.
+ * Generic error returned by the PayMaya gateway.
  *
- * @property code The event code that are associated with the error.
- * @property error Error message.
- * @property reference Error reference.
+ * @property code Code.
+ * @property error Message.
+ * @property reference Reference.
  */
 @Serializable
 data class GenericError(

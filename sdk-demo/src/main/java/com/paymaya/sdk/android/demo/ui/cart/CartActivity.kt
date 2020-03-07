@@ -34,20 +34,20 @@ class CartActivity : Activity(), CartContract.View {
         onRemoveFromCartRequestListener = { presenter.removeFromCartButtonClicked(it) }
     )
 
-    private val payMayaCheckoutClient = PayMayaCheckout.Builder()
-        .clientKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
+    private val payMayaCheckoutClient = PayMayaCheckout.newBuilder()
+        .clientPublicKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
         .environment(PayMayaEnvironment.SANDBOX)
         .logLevel(LogLevel.VERBOSE)
         .build()
 
-    private val payWithPayMayaClient = PayWithPayMaya.Builder()
-        .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
+    private val payWithPayMayaClient = PayWithPayMaya.newBuilder()
+        .clientPublicKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
         .logLevel(LogLevel.VERBOSE)
         .build()
 
-    private val payMayaVaultClient = PayMayaVault.Builder()
-        .clientKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
+    private val payMayaVaultClient = PayMayaVault.newBuilder()
+        .clientPublicKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
         .logLevel(LogLevel.VERBOSE)
         .build()
@@ -85,19 +85,19 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun payWithCheckout(checkoutRequest: CheckoutRequest) {
-        payMayaCheckoutClient.execute(this, checkoutRequest)
+        payMayaCheckoutClient.startCheckoutActivityForResult(this, checkoutRequest)
     }
 
     override fun payWithSinglePayment(singlePaymentRequest: SinglePaymentRequest) {
-        payWithPayMayaClient.executeSinglePayment(this, singlePaymentRequest)
+        payWithPayMayaClient.startSinglePaymentActivityForResult(this, singlePaymentRequest)
     }
 
     override fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest) {
-        payWithPayMayaClient.executeCreateWalletLink(this, walletLinkRequest)
+        payWithPayMayaClient.startCreateWalletLinkActivityForResult(this, walletLinkRequest)
     }
 
     override fun payMayaVaultTokenizeCard() {
-        payMayaVaultClient.execute(this)
+        payMayaVaultClient.startTokenizeCardActivityForResult(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

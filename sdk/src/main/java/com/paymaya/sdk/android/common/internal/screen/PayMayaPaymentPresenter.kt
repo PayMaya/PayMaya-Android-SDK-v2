@@ -1,9 +1,9 @@
 package com.paymaya.sdk.android.common.internal.screen
 
+import com.paymaya.sdk.android.common.PaymentStatus
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
 import com.paymaya.sdk.android.common.internal.*
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
-import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

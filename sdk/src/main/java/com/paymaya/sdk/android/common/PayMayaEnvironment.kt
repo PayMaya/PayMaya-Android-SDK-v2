@@ -1,7 +1,7 @@
 package com.paymaya.sdk.android.common
 
 /**
- * PayMayaEnvironment model defining environment type.
+ * Environment type.
  */
 enum class PayMayaEnvironment {
     SANDBOX,

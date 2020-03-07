@@ -24,12 +24,12 @@ internal object CommonModule {
 
     fun getCheckStatusUseCase(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         CheckStatusUseCase(
             getJson(),
-            VaultModule.getVaultRepository(environment, clientKey, logLevel),
+            VaultModule.getVaultRepository(environment, clientPublicKey, logLevel),
             getLogger(logLevel)
         )
 }

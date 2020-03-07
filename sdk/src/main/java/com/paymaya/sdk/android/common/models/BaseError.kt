@@ -3,7 +3,7 @@ package com.paymaya.sdk.android.common.models
 import kotlinx.serialization.Serializable
 
 /**
- * BaseError class grouping related exceptions classes such as PaymentError and GenericError.
+ * Base class for errors.
  */
 @Serializable
 abstract class BaseError : java.io.Serializable

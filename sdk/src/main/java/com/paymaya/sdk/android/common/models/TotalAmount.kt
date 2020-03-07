@@ -3,15 +3,15 @@ package com.paymaya.sdk.android.common.models
 import android.os.Parcelable
 import com.paymaya.sdk.android.common.serialization.BigDecimalSerializer
 import kotlinx.android.parcel.Parcelize
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
 /**
- * Total amount model. Contains information about amount total value, currency, and details for item's amount.
+ * Contains information about transaction amount: value, currency, included fees.
  *
- * @property value Amounts's value
- * @property currency Amounts's currency
- * @property details Amount details model containing all information about amount.
+ * @property value Payment amount to be charged.
+ * @property currency Currency
+ * @property details Breakdown of fees
  */
 @Parcelize
 @Serializable

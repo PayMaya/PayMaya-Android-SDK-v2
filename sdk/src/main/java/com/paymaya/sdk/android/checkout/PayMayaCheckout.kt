@@ -2,146 +2,70 @@ package com.paymaya.sdk.android.checkout
 
 import android.app.Activity
 import android.content.Intent
-import com.paymaya.sdk.android.checkout.internal.CheckoutActivity
+import com.paymaya.sdk.android.checkout.internal.PayMayaCheckoutImpl
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
+import com.paymaya.sdk.android.common.CheckPaymentStatusResult
 import com.paymaya.sdk.android.common.LogLevel
-import com.paymaya.sdk.android.common.PayMayaClientBase
 import com.paymaya.sdk.android.common.PayMayaEnvironment
-import com.paymaya.sdk.android.common.exceptions.BadRequestException
-import com.paymaya.sdk.android.common.internal.Constants
-import com.paymaya.sdk.android.common.internal.Constants.TAG
-import com.paymaya.sdk.android.common.internal.di.CommonModule
-import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentActivity
 
 /**
- * Main class to Checkout Payment process. Allows to execute checkout request with all data.
- *
- * @property clientKey Client key.
- * @property environment Property defining environment type.
+ * Checkout client.
  */
-class PayMayaCheckout private constructor(
-    clientKey: String,
-    environment: PayMayaEnvironment,
-    logLevel: LogLevel
-) : PayMayaClientBase(
-    clientKey,
-    environment,
-    logLevel,
-    CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel)
-) {
-
-    private val logger = CommonModule.getLogger(logLevel)
+interface PayMayaCheckout {
 
     /**
-     * Function allowing to execute payment with checkout request data.
+     * Initiates the checkout flow.
+     * <p>
+     * Use <code>onActivityResult</code> to get the result (<code>PayMayaCheckoutResult</code>).
      *
-     * @param activity Activity.
-     * @param requestData Checkout request containing all information about checkout payment.
+     * @param activity Current activity.
+     * @param request Checkout request containing all information about
+     *        the payment.
      */
-    fun execute(activity: Activity, requestData: CheckoutRequest) {
-        val intent = CheckoutActivity.newIntent(
-            activity,
-            requestData,
-            clientKey,
-            environment,
-            logLevel
-        )
-        activity.startActivityForResult(intent, Constants.CHECKOUT_REQUEST_CODE)
+    fun startCheckoutActivityForResult(activity: Activity, request: CheckoutRequest)
+
+    /**
+     * Gets the payment result. Call it from your Activity's <code>onActivityResult</code>
+     * to get the result of the payment.
+     *
+     * @return Returns non-null <code>PayMayaCheckoutResult</code> if the completed activity
+     *         was the activity started by the <code>startCheckoutActivityForResult</code> method.
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayMayaCheckoutResult?
+
+    fun checkPaymentStatus(id: String): CheckPaymentStatusResult
+
+    companion object {
+        /**
+         * Returns new PayMayaCheckout client builder.
+         */
+        fun newBuilder(): Builder =
+            PayMayaCheckoutImpl.BuilderImpl()
     }
 
     /**
-     * Function checking which the request code should be answered. This function also extras checkout id and for
-     * appropriate result status return checkout results class.
-     *
-     * @return appropriate CheckoutResult class object for success, cancel or failure status
+     * Checkout client builder.
      */
-    fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ): PayMayaCheckoutResult? {
-        if (requestCode == Constants.CHECKOUT_REQUEST_CODE) {
-            requireNotNull(data)
-            val checkoutId = data.getStringExtra(PayMayaPaymentActivity.EXTRAS_RESULT_ID)
-
-            return when (resultCode) {
-                Activity.RESULT_OK -> {
-                    logger.i(TAG, "PayMaya Checkout result: OK")
-                    PayMayaCheckoutResult.Success(checkoutId)
-                }
-
-                Activity.RESULT_CANCELED -> {
-                    logger.i(TAG, "PayMaya Checkout result: CANCELED")
-                    PayMayaCheckoutResult.Cancel(checkoutId)
-                }
-
-                PayMayaPaymentActivity.RESULT_FAILURE -> {
-                    logger.e(TAG, "PayMaya Checkout result: FAILURE")
-                    val exception =
-                        data.getSerializableExtra(PayMayaPaymentActivity.EXTRAS_FAILURE_EXCEPTION) as Exception
-
-                    if (exception is BadRequestException) {
-                        logger.e(TAG, exception.error.toString())
-                    }
-
-                    PayMayaCheckoutResult.Failure(checkoutId, exception)
-                }
-                else ->
-                    throw IllegalStateException("Invalid result code: $resultCode")
-            }
-        }
-
-        return null
-    }
-
-    /**
-     * Main checkout builder class. Allows to set clients key, environment type, log level and
-     * create new object of PayMayaCheckout class.
-     *
-     * @property clientKey Client key.
-     * @property environment Property defining environment type.
-     * @property logLevel Log type.
-     */
-    data class Builder(
-        var clientKey: String? = null,
-        var environment: PayMayaEnvironment? = null,
-        var logLevel: LogLevel = LogLevel.WARN
-    ) {
+    interface Builder {
 
         /**
-         * Function allowing to set client key
-         *
-         * @param value New client key.
+         * Sets client public key. Required.
          */
-        fun clientKey(value: String) =
-            apply { this.clientKey = value }
+        fun clientPublicKey(value: String): Builder
 
         /**
-         * Function allowing to set environment type.
-         *
-         * @param value New environment type.
+         * Sets environment type (sandbox or production). Required.
          */
-        fun environment(value: PayMayaEnvironment) =
-            apply { this.environment = value }
+        fun environment(value: PayMayaEnvironment): Builder
 
         /**
-         * Function allowing to set log level.
-         *
-         * @param value New log level.
+         * Sets log level. See <code>LogLevel</code> for details. Optional.
          */
-        fun logLevel(value: LogLevel) =
-            apply { this.logLevel = value }
+        fun logLevel(value: LogLevel): Builder
 
         /**
-         * Function allowing to build new PayMayaCheckout object.
-         *
-         * @return new PayMayaCheckout object.
+         * Builds PayMayaCheckout client.
          */
-        fun build() =
-            PayMayaCheckout(
-                requireNotNull(clientKey),
-                requireNotNull(environment),
-                logLevel
-            )
+        fun build(): PayMayaCheckout
     }
 }

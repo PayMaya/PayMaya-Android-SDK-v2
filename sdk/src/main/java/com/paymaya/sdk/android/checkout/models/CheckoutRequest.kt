@@ -1,27 +1,27 @@
 package com.paymaya.sdk.android.checkout.models
 
+import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
 import com.paymaya.sdk.android.common.serialization.JSONObjectParceler
 import com.paymaya.sdk.android.common.serialization.JSONObjectSerializer
-import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.WriteWith
 import kotlinx.serialization.Serializable
 import org.json.JSONObject
 
 /**
- * Checkout request model encapsulating exhaustive information about the buyer, the items inside the cart,
- * transaction amount, status of payment, request reference number, URLs and metadata.
+ * Model with data required to initiate checkout payment.
+ * Contains information about the buyer, the items inside the cart,
+ * transaction amount, status of payment and other details.
  *
- * @property totalAmount Model of total amount. Contains information about amount currency,
- * total value and details for whole items list.
- * @property buyer Model of buyer. Contains all basic information about buyer.
- * @property items List of all items chosen by buyer.
+ * @property totalAmount Transaction amount details.
+ * @property buyer Details of the buyer.
+ * @property items List of items.
  * @property requestReferenceNumber Reference number assigned by the merchant to identify a transaction.
- * @property redirectUrl Model defining redirect URL's used to redirect to specific pages once the payment
- * process is done.
- * @property metadata Model defining metadata.
+ * @property redirectUrl Set of redirect URLs upon process completion.
+ * @property metadata Additional data about the specific checkout. This can be
+ *           supplied during the checkout creation.
  */
 @Parcelize
 @Serializable

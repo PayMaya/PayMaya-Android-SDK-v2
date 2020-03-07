@@ -1,14 +1,12 @@
 package com.paymaya.sdk.android.common.exceptions
 
 /**
- * HttpException class describes an exception that occurred during the processing of HTTP requests.
+ * Unknown Http exception occurred.
  *
- * @property code The event code that are associated with the HTTP exception.
- * @property message The detail message of exception.
- * @property cause The exceptions cause.
+ * @property code Http response code.
+ * @property message Http response message.
  */
-class HttpException(
+class HttpException internal constructor(
     val code: Int,
-    message: String,
-    cause: Throwable? = null
-) : Exception(message, cause)
+    message: String
+) : Exception(message)

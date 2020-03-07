@@ -1,75 +1,72 @@
 package com.paymaya.sdk.android.paywithpaymaya
 
-import java.lang.Exception
-
-
 sealed class PayWithPayMayaResult
 
 /**
- * SinglePaymentResult representing appropriate class for success, cancel or failure status
+ * Result of the payment.
  */
 sealed class SinglePaymentResult : PayWithPayMayaResult() {
 
     /**
-     * Success class represent success status for single payment result. Takes paymentId property.
+     * Success result of the Single Payment.
      *
-     * @property paymentId Single payment id identifier.
+     * @property paymentId Payment identifier.
      */
-    class Success(
+    class Success internal constructor(
         val paymentId: String
     ) : SinglePaymentResult()
 
     /**
-     * Cancel class represent cancel status for single payment result. Takes paymentId property.
+     * Canceled result of the Single Payment.
      *
-     * @property paymentId Single payment id identifier.
+     * @property paymentId Payment identifier.
      */
-    class Cancel(
+    class Cancel internal constructor(
         val paymentId: String? = null
     ) : SinglePaymentResult()
 
     /**
-     * Failure class represent failure status for single payment result. Takes paymentId and exception properties.
+     * Failed result of the Single Payment.
      *
-     * @property paymentId Single payment id identifier.
-     * @property extension An exception that occurred when single payment result is failure.
+     * @property paymentId Payment identifier.
+     * @property exception Exception with detailed reason of the failure.
      */
-    class Failure(
+    class Failure internal constructor(
         val paymentId: String? = null,
         val exception: Exception
     ) : SinglePaymentResult()
 }
 
 /**
- * SinglePaymentResult representing appropriate class for success, cancel or failure status
+ * Result of the creation of the wallet link.
  */
 sealed class CreateWalletLinkResult : PayWithPayMayaResult() {
 
     /**
-     * Success class represent success status for create wallet link result. Takes linkId property.
+     * Success result of the creation of the wallet link.
      *
-     * @property linkId Wallet link id identifier.
+     * @property linkId Wallet link identifier.
      */
-    class Success(
+    class Success internal constructor(
         val linkId: String
     ) : CreateWalletLinkResult()
 
     /**
-     * Cancel class represent cancel status for create wallet link result. Takes linkId property.
+     * Canceled result of the creation of the wallet link.
      *
      * @property linkId Wallet link id identifier.
      */
-    class Cancel(
+    class Cancel internal constructor(
         val linkId: String? = null
     ) : CreateWalletLinkResult()
 
     /**
-     * Failure class represent failure status for create wallet link result. Takes linkId and exception properties.
+     * Failed result of the creation of the wallet link.
      *
      * @property linkId Wallet link id identifier.
-     * @property extension An exception that occurred when create wallet link result is failure.
+     * @property exception Exception with detailed reason of the failure.
      */
-    class Failure(
+    class Failure internal constructor(
         val linkId: String? = null,
         val exception: Exception
     ) : CreateWalletLinkResult()

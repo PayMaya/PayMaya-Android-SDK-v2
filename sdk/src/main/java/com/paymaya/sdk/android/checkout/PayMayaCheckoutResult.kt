@@ -1,37 +1,32 @@
 package com.paymaya.sdk.android.checkout
 
-import java.lang.Exception
-
-/**
- * PayMayaCheckoutResult representing appropriate class for success, cancel or failure status
- */
 sealed class PayMayaCheckoutResult {
 
     /**
-     * Success class represent success status for checkout result and takes checkoutId property
+     * Class representing success status of the Checkout payment.
      *
      * @property checkoutId Checkout id identifier.
      */
-    class Success(
+    class Success internal constructor(
         val checkoutId: String
     ) : PayMayaCheckoutResult()
 
     /**
-     * Cancel class represent cancel status for checkout result and takes checkoutId property
+     * Class representing canceled status of the Checkout payment.
      *
-     * @property checkoutId Checkout id identifier.
+     * @property checkoutId Checkout id identifier if available or null.
      */
-    class Cancel(
+    class Cancel internal constructor(
         val checkoutId: String? = null
     ) : PayMayaCheckoutResult()
 
     /**
-     * Failure class represent failure status for checkout result and takes checkoutId and exception properties
+     * Failure class representing failure status of the Checkout payment.
      *
-     * @property checkoutId Checkout id identifier.
-     * @property extension An exception that occurred when checkout result is failure.
+     * @property checkoutId Checkout id identifier if available or null.
+     * @property exception Exception with detailed reason of the failure.
      */
-    class Failure(
+    class Failure internal constructor(
         val checkoutId: String? = null,
         val exception: Exception
     ) : PayMayaCheckoutResult()

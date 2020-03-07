@@ -9,10 +9,10 @@ import com.paymaya.sdk.android.checkout.models.Buyer
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PaymentStatus
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
 import com.paymaya.sdk.android.common.internal.*
-import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl

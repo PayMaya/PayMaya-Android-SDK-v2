@@ -14,24 +14,24 @@ internal class CreateWalletLinkActivity : PayMayaPaymentActivity<CreateWalletLin
 
     override fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ): PayMayaPaymentContract.Presenter<CreateWalletLinkRequest> =
-        PayWithPayMayaModule.getCreateWalletLinkPresenter(environment, clientKey, logLevel)
+        PayWithPayMayaModule.getCreateWalletLinkPresenter(environment, clientPublicKey, logLevel)
 
     companion object {
         fun newIntent(
             activity: Activity,
-            requestData: CreateWalletLinkRequest,
-            clientKey: String,
+            request: CreateWalletLinkRequest,
+            clientPublicKey: String,
             environment: PayMayaEnvironment,
             logLevel: LogLevel
         ): Intent {
             val bundle = Bundle()
-            bundle.putParcelable(EXTRAS_REQUEST_DATA, requestData)
+            bundle.putParcelable(EXTRAS_REQUEST, request)
             val intent = Intent(activity, CreateWalletLinkActivity::class.java)
             intent.putExtra(EXTRAS_BUNDLE, bundle)
-            intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
+            intent.putExtra(EXTRAS_CLIENT_PUBLIC_KEY, clientPublicKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
             intent.putExtra(EXTRAS_LOG_LEVEL, logLevel)
             return intent

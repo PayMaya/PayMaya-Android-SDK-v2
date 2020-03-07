@@ -21,7 +21,7 @@ class VaultRepositoryTest {
     @Test
     fun sandbox() {
         val repository =
-            VaultRepository(PayMayaEnvironment.SANDBOX, CLIENT_KEY, json, httpClient = OkHttpClient())
+            VaultRepository(PayMayaEnvironment.SANDBOX, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
         assert(repository.baseUrl == BuildConfig.API_VAULT_BASE_URL_SANDBOX)
     }
@@ -29,12 +29,12 @@ class VaultRepositoryTest {
     @Test
     fun production() {
         val repository =
-            VaultRepository(PayMayaEnvironment.PRODUCTION, CLIENT_KEY, json, httpClient = OkHttpClient())
+            VaultRepository(PayMayaEnvironment.PRODUCTION, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
         assert(repository.baseUrl == BuildConfig.API_VAULT_BASE_URL_PRODUCTION)
     }
 
     companion object {
-        private const val CLIENT_KEY = "SOME KEY"
+        private const val CLIENT_PUBLIC_KEY = "SOME KEY"
     }
 }

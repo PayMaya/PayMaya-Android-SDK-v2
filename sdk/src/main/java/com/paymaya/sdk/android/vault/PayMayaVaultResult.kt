@@ -1,20 +1,14 @@
 package com.paymaya.sdk.android.vault
 
 /**
- * PayMayaVaultResult representing appropriate class for success or cancel status
+ * Result of the card tokenization process.
  */
 sealed class PayMayaVaultResult {
 
     /**
-     * Success class represent success status for paymaya vault result.
-     *
-     * @property paymentTokenId Payment token id.
-     * @property state State.
-     * @property createdAt CreatedAt.
-     * @property updatedAt UpdatedAt.
-     * @property issuer Issuer.
+     * Success result of the card tokenization process.
      */
-    class Success(
+    class Success internal constructor(
         val paymentTokenId: String,
         val state: String,
         val createdAt: String,
@@ -23,7 +17,7 @@ sealed class PayMayaVaultResult {
     ) : PayMayaVaultResult()
 
     /**
-     * Cancel object represent cancel status for paymaya vault result.
+     * Canceled result of the card tokenization process.
      */
     object Cancel : PayMayaVaultResult()
 }

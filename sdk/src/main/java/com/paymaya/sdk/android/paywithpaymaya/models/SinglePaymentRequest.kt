@@ -11,15 +11,12 @@ import kotlinx.serialization.Serializable
 import org.json.JSONObject
 
 /**
- * Single payment request model encapsulating exhaustive information about transaction amount,
- * request reference number, URLs and metadata.
+ * Model with data required to initiate PayWithPayMaya single payment.
  *
- * @property totalAmount Model of total amount. Contains information about amount currency,
- * total value and details for whole items list.
+ * @property totalAmount Transaction amount details.
  * @property requestReferenceNumber Reference number assigned by the merchant to identify a transaction.
- * @property redirectUrl Model defining redirect URL's used to redirect to specific pages once the payment
- * process is done.
- * @property metadata Model defining metadata.
+ * @property redirectUrl Set of redirect URLs upon process completion.
+ * @property metadata Metadata.
  */
 @Parcelize
 @Serializable

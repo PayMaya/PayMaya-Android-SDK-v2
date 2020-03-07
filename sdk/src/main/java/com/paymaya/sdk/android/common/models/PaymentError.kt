@@ -3,12 +3,12 @@ package com.paymaya.sdk.android.common.models
 import kotlinx.serialization.Serializable
 
 /**
- * PaymentError class describes an exception that occurred during payment process.
+ * Payment error returned by PayMaya gateway.
  *
- * @property code The event code that are associated with the error.
- * @property message Error message.
- * @property parameters List of payment error parameters.
- * @property details Model of PaymentErrorDetail which collect all of payment error detail information.
+ * @property code Code.
+ * @property message Message.
+ * @property parameters Error parameters.
+ * @property details Error details.
  */
 @Serializable
 data class PaymentError(

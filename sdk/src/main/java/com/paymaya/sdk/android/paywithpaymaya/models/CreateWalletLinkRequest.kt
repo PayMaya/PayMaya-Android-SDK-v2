@@ -10,13 +10,11 @@ import kotlinx.serialization.Serializable
 import org.json.JSONObject
 
 /**
- * Create wallet link request model encapsulating exhaustive information about request reference number,
- * URLs and metadata.
+ * Model with data required to create a wallet link.
  *
  * @property requestReferenceNumber Reference number assigned by the merchant to identify a transaction.
- * @property redirectUrl Model defining redirect URL's used to redirect to specific pages once the payment
- * process is done.
- * @property metadata Model defining metadata.
+ * @property redirectUrl Set of redirect URLs upon process completion.
+ * @property metadata Metadata.
  */
 @Parcelize
 @Serializable

@@ -9,8 +9,8 @@ internal abstract class PayMayaGatewayBaseRepository(
     protected val httpClient: OkHttpClient
 ) {
 
-    protected fun prepareAuthorizationValue(clientKey: String): String {
-        val authorization = "$clientKey:" // Note: password is empty
+    protected fun prepareAuthorizationValue(clientPublicKey: String): String {
+        val authorization = "$clientPublicKey:" // Note: password is empty
         val authorizationEncoded = String(
             Base64.encode(authorization.toByteArray(Charsets.UTF_8), Base64.NO_WRAP),
             Charsets.UTF_8

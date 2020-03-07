@@ -1,6 +1,6 @@
 package com.paymaya.sdk.android.common.internal
 
-import com.paymaya.sdk.android.common.internal.models.PaymentStatus
+import com.paymaya.sdk.android.common.PaymentStatus
 
 internal open class ResponseWrapper
 

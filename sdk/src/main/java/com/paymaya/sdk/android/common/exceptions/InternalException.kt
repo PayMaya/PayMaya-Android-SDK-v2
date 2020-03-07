@@ -1,12 +1,12 @@
 package com.paymaya.sdk.android.common.exceptions
 
 /**
- * InternalException class defines internal exceptions.
+ * Unexpected response from the backed was retrieved.
  *
- * @property message The detail message of exception.
- * @property cause The exceptions cause.
+ * @property message Detail message.
+ * @property cause Cause (optional).
  */
-class InternalException(
+class InternalException internal constructor(
     message: String,
     cause: Throwable? = null
 ) : Exception(message, cause)

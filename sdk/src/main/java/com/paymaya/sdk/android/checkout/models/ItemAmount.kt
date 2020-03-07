@@ -8,10 +8,10 @@ import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
 /**
- * Item amount model. Contains detail information about each item's amount
+ * Details about each item's amount.
  *
- * @property value Item's amount value
- * @property details Item's amount details model
+ * @property value Payment amount to be charged to the card.
+ * @property details Breakdown of fees.
  */
 @Parcelize
 @Serializable

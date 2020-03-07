@@ -7,7 +7,9 @@ import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
 /**
- * Amount details model. Contains all information about amount
+ * Amount details.
+ * In checkout process, the merchant can optionally provide these details.
+ * If provided, it will reflect to the Checkout Page and will be viewed by the buyer for review.
  *
  * @property discount Discount.
  * @property serviceCharge Service charge.
@@ -17,7 +19,7 @@ import java.math.BigDecimal
  */
 @Parcelize
 @Serializable
-class AmountDetails(
+data class AmountDetails(
     @Serializable(with = BigDecimalSerializer::class)
     val discount: BigDecimal? = null,
     @Serializable(with = BigDecimalSerializer::class)

@@ -101,8 +101,6 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
         payMayaCheckoutClient.onActivityResult(requestCode, resultCode, data)?.let {
             presenter.checkoutCompleted(it)
             return

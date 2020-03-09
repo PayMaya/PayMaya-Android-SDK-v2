@@ -46,6 +46,9 @@ interface PayWithPayMaya {
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayWithPayMayaResult?
 
+    /**
+     * Checks status of the payment. The method is synchronous, don't call it from the Main thread.
+     */
     fun checkPaymentStatus(id: String): CheckPaymentStatusResult
 
     companion object {

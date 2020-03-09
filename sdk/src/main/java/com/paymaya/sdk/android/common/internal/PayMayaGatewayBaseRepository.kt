@@ -22,7 +22,9 @@ internal abstract class PayMayaGatewayBaseRepository(
         const val HEADER_CONTENT_TYPE = "Content-Type"
         const val HEADER_AUTHORIZATION = "Authorization"
         const val HEADER_CONTENT_LENGTH = "Content-Length"
+        const val HEADER_X_PAYMAYA_SDK = "x-paymaya-sdk"
         const val MIME_APPLICATION_JSON = "application/json"
+        const val SDK_VERSION_PREFIX = "android-v"
         private const val AUTH_BASIC_PREFIX = "Basic"
     }
 }

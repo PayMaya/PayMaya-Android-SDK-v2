@@ -13,7 +13,8 @@ import kotlin.coroutines.CoroutineContext
 internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUseCase<R>>(
     private val sendRequestUseCase: U,
     private val checkStatusUseCase: CheckStatusUseCase,
-    private val logger: Logger
+    private val logger: Logger,
+    private val paymentStatusAutoCheck: Boolean = true
 ) : PayMayaPaymentContract.Presenter<R>, CoroutineScope {
 
     private lateinit var requestModel: R
@@ -38,15 +39,20 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
         this.view = null
     }
 
-    // On the first Back button click - stop loading page, send check payment status request
-    // On the second Back button click - close activity with 'canceled' status
     override fun backButtonPressed() {
-        checkStatusJob?.let {
-            it.cancel()
-            view?.finishCanceled(resultId)
-        } ?: run {
+        if (paymentStatusAutoCheck) {
+            // On the first Back button click - stop loading page, send check payment status request
+            // On the second Back button click - close activity with 'canceled' status
+            checkStatusJob?.let {
+                it.cancel()
+                view?.finishCanceled(resultId)
+            } ?: run {
+                paymentJob?.cancel()
+                handleCancellation()
+            }
+        } else {
             paymentJob?.cancel()
-            handleCancellation()
+            view?.finishCanceled(resultId)
         }
     }
 

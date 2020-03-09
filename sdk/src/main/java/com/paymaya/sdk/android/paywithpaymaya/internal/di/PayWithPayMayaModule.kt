@@ -41,7 +41,8 @@ internal object PayWithPayMayaModule {
         PayMayaPaymentPresenter(
             getCreateWalletLinkUseCase(environment, clientPublicKey, logLevel),
             CommonModule.getCheckStatusUseCase(environment, clientPublicKey, logLevel),
-            CommonModule.getLogger(logLevel)
+            CommonModule.getLogger(logLevel),
+            paymentStatusAutoCheck = false
         )
 
     fun getSinglePaymentUseCase(

@@ -36,6 +36,7 @@ internal class VaultRepository(
             )
             .header(HEADER_AUTHORIZATION, authorizationValue)
             .header(HEADER_CONTENT_LENGTH, bodyString.length.toString())
+            .header(HEADER_X_PAYMAYA_SDK, "$SDK_VERSION_PREFIX${BuildConfig.VERSION_NAME}")
             .post(requestBody)
             .build()
 
@@ -53,6 +54,7 @@ internal class VaultRepository(
             )
             .header(HEADER_AUTHORIZATION, authorizationValue)
             .header(HEADER_CONTENT_LENGTH, "0")
+            .header(HEADER_X_PAYMAYA_SDK, "$SDK_VERSION_PREFIX${BuildConfig.VERSION_NAME}")
             .get()
             .build()
 

@@ -5,9 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.webkit.CookieManager
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
@@ -66,6 +64,10 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         payMayaPaymentActivityWebView.loadUrl(redirectUrl)
     }
 
+    override fun showNoConnectionScreen() {
+        payMayaNoConnectionScreen.visibility = View.VISIBLE
+    }
+
     override fun finishSuccess(resultId: String) {
         val intent = Intent()
         intent.putExtra(EXTRAS_RESULT_ID, resultId)
@@ -99,6 +101,9 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     override fun hideWebView() {
         payMayaPaymentActivityWebView.visibility = View.GONE
         payMayaPaymentActivityWebView.webViewClient = NoOpWebViewClientImpl()
+
+        // Checkout web page automatically sends Status requests, which we want to ignore.
+        // Note: This relies on the implementation of the PayMaya’s Checkout web page.
         payMayaPaymentActivityWebView.stopLoading()
     }
 
@@ -114,6 +119,13 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
             hideProgressBar()
             super.onPageFinished(view, url)
         }
+
+        override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError) {
+            super.onReceivedError(view, request, error)
+            if (!request?.url.toString().endsWith(REQUEST_STATUS_SUFFIX)) {
+                presenter.connectionLost()
+            }
+        }
     }
 
     class NoOpWebViewClientImpl : WebViewClient() {
@@ -124,6 +136,8 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     }
 
     companion object {
+        private const val REQUEST_STATUS_SUFFIX = "/status"
+
         const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
         const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
         const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"

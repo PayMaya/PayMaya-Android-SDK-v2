@@ -31,4 +31,19 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/payMayaNoConnectionScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:padding="20dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:text="@string/paymaya_connection_error"
+        android:textSize="20sp"
+        android:background="#80353535"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
 </FrameLayout>

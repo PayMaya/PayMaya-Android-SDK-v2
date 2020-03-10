@@ -123,4 +123,10 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
             val responseWrapper = checkStatusUseCase.run(id)
             processResponse(responseWrapper)
         }
+
+    override fun connectionLost() {
+        launch {
+            view?.showNoConnectionScreen()
+        }
+    }
 }

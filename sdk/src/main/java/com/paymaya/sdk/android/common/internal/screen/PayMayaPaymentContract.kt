@@ -31,6 +31,7 @@ internal interface PayMayaPaymentContract {
         fun hideProgressBar()
         fun hideWebView()
         fun showCheckingPaymentStatusLabel()
+        fun showNoConnectionScreen()
     }
 
     interface Presenter<R : PayMayaRequest> {
@@ -38,5 +39,6 @@ internal interface PayMayaPaymentContract {
         fun viewDestroyed()
         fun backButtonPressed()
         fun urlBeingLoaded(url: String): Boolean
+        fun connectionLost()
     }
 }

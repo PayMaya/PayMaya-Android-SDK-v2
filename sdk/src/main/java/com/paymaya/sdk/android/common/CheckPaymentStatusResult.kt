@@ -1,18 +1,27 @@
 package com.paymaya.sdk.android.common
 
-import com.paymaya.sdk.android.common.internal.models.PaymentStatus
-import java.lang.Exception
-
 sealed class CheckPaymentStatusResult {
 
-    class Success(
+    /**
+     * Checking payment status succeeded.
+     *
+     * @property status Payment status.
+     */
+    class Success internal constructor(
         val status: PaymentStatus
     ) : CheckPaymentStatusResult()
 
-    object Cancel
-        : CheckPaymentStatusResult()
+    /**
+     * Checking payment status canceled.
+     */
+    object Cancel : CheckPaymentStatusResult()
 
-    class Failure(
+    /**
+     * Checking payment status failed.
+     *
+     * @property exception Exception with detailed reason of the failure.
+     */
+    class Failure internal constructor(
         val exception: Exception
     ) : CheckPaymentStatusResult()
 }

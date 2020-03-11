@@ -1,21 +1,20 @@
-package com.paymaya.sdk.android.common
+package com.paymaya.sdk.android.common.internal
 
-import com.paymaya.sdk.android.common.internal.CheckStatusUseCase
-import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
-import com.paymaya.sdk.android.common.internal.ResponseWrapper
-import com.paymaya.sdk.android.common.internal.StatusSuccessResponseWrapper
+import com.paymaya.sdk.android.common.CheckPaymentStatusResult
+import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PayMayaEnvironment
 import kotlinx.coroutines.runBlocking
 
-abstract class PayMayaClientBase internal constructor(
-    protected val clientKey: String,
+internal abstract class PayMayaClientBase internal constructor(
+    protected val clientPublicKey: String,
     protected val environment: PayMayaEnvironment,
     protected val logLevel: LogLevel,
     private val checkStatusUseCase: CheckStatusUseCase
 ) {
 
-    fun checkStatus(checkoutId: String): CheckPaymentStatusResult =
+    fun checkPaymentStatus(id: String): CheckPaymentStatusResult =
         runBlocking {
-            val result = checkStatusUseCase.run(checkoutId)
+            val result = checkStatusUseCase.run(id)
             processResponse(result)
         }
 

@@ -14,24 +14,24 @@ internal object VaultModule {
 
     fun getVaultRepository(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         VaultRepository(
             environment,
-            clientKey,
+            clientPublicKey,
             CommonModule.getJson(),
             CommonModule.getHttpClient(logLevel)
         )
 
     fun getTokenizeCardUseCase(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         TokenizeCardUseCase(
             CommonModule.getJson(),
-            getVaultRepository(environment, clientKey, logLevel),
+            getVaultRepository(environment, clientPublicKey, logLevel),
             CommonModule.getLogger(logLevel)
         )
 
@@ -43,12 +43,12 @@ internal object VaultModule {
 
     fun getTokenizeCardPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel,
         date: Calendar
     ) =
         TokenizeCardPresenter(
-            getTokenizeCardUseCase(environment, clientKey, logLevel),
+            getTokenizeCardUseCase(environment, clientPublicKey, logLevel),
             getCardInfoValidator(date),
             getCardTypeDetector(),
             CommonModule.getLogger(logLevel)

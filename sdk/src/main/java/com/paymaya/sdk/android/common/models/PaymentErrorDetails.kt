@@ -2,6 +2,13 @@ package com.paymaya.sdk.android.common.models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Payment error details.
+ *
+ * @property responseCode Response code.
+ * @property responseDescription Response description.
+ * @property requestReferenceNumber Request reference number.
+ */
 @Serializable
 data class PaymentErrorDetails(
     val responseCode: String? = null,

@@ -7,6 +7,12 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
+/**
+ * Details about each item's amount.
+ *
+ * @property value Payment amount to be charged to the card.
+ * @property details Breakdown of fees.
+ */
 @Parcelize
 @Serializable
 data class ItemAmount(

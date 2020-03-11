@@ -14,24 +14,24 @@ internal class CheckoutActivity : PayMayaPaymentActivity<CheckoutRequest>() {
 
     override fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ): PayMayaPaymentContract.Presenter<CheckoutRequest> =
-        CheckoutModule.getCheckoutPresenter(environment, clientKey, logLevel)
+        CheckoutModule.getCheckoutPresenter(environment, clientPublicKey, logLevel)
 
     companion object {
         fun newIntent(
             activity: Activity,
-            requestData: CheckoutRequest,
-            clientKey: String,
+            request: CheckoutRequest,
+            clientPublicKey: String,
             environment: PayMayaEnvironment,
             logLevel: LogLevel
         ): Intent {
             val bundle = Bundle()
-            bundle.putParcelable(EXTRAS_REQUEST_DATA, requestData)
+            bundle.putParcelable(EXTRAS_REQUEST, request)
             val intent = Intent(activity, CheckoutActivity::class.java)
             intent.putExtra(EXTRAS_BUNDLE, bundle)
-            intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
+            intent.putExtra(EXTRAS_CLIENT_PUBLIC_KEY, clientPublicKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
             intent.putExtra(EXTRAS_LOG_LEVEL, logLevel)
             return intent

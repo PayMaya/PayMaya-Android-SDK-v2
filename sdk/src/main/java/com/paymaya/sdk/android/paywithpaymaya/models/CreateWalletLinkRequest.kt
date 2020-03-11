@@ -9,6 +9,13 @@ import kotlinx.android.parcel.WriteWith
 import kotlinx.serialization.Serializable
 import org.json.JSONObject
 
+/**
+ * Model with data required to create a wallet link.
+ *
+ * @property requestReferenceNumber Reference number assigned by the merchant to identify a transaction.
+ * @property redirectUrl Set of redirect URLs upon process completion.
+ * @property metadata Metadata.
+ */
 @Parcelize
 @Serializable
 data class CreateWalletLinkRequest(

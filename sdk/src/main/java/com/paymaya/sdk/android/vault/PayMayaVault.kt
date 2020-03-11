@@ -4,95 +4,73 @@ import android.app.Activity
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import com.paymaya.sdk.android.common.LogLevel
-import com.paymaya.sdk.android.common.PayMayaClientBase
 import com.paymaya.sdk.android.common.PayMayaEnvironment
-import com.paymaya.sdk.android.common.internal.Constants
-import com.paymaya.sdk.android.common.internal.Constants.TAG
-import com.paymaya.sdk.android.common.internal.di.CommonModule
-import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
-import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardActivity
+import com.paymaya.sdk.android.vault.internal.PayMayaVaultImpl
 
-class PayMayaVault private constructor(
-    clientKey: String,
-    environment: PayMayaEnvironment,
-    logLevel: LogLevel,
-    @DrawableRes private val logoResId: Int?
-) : PayMayaClientBase(
-    clientKey,
-    environment,
-    logLevel,
-    CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel)
-) {
+/**
+ * PayMaya Payment Vault client.
+ */
+interface PayMayaVault {
 
-    private val logger = CommonModule.getLogger(logLevel)
+    /**
+     * Initiates the tokenize card flow. Allows to create a payment token that
+     * represents your customer’s credit or debit card details which can be
+     * used for payments and customer card addition. The payment token is valid
+     * for a specific amount of time. Before it expires, it is valid for single
+     * use only in payment transactions.
+     * <p>
+     * Use <code>onActivityResult</code> to get the result (<code>PayMayaVaultResult</code>).
+     *
+     * @param activity Current activity.
+     */
+    fun startTokenizeCardActivityForResult(activity: Activity)
 
-    fun execute(activity: Activity) {
-        val intent = TokenizeCardActivity.newIntent(
-            activity,
-            clientKey,
-            environment,
-            logLevel,
-            logoResId
-        )
-        activity.startActivityForResult(intent, Constants.VAULT_CARD_FORM_REQUEST_CODE)
+    /**
+     * Gets the result. Call it from your Activity's <code>onActivityResult</code>
+     * to get the result of the token creation process.
+     *
+     * @return Returns non-null <code>PayMayaVaultResult</code> if the completed activity
+     *         was the activity started by the <code>startTokenizeCardActivityForResult</code> method.
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayMayaVaultResult?
+
+    companion object {
+        /**
+         * Returns new PayMayaVault client builder.
+         */
+        fun newBuilder(): Builder =
+            PayMayaVaultImpl.BuilderImpl()
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayMayaVaultResult? {
-        if (requestCode == Constants.VAULT_CARD_FORM_REQUEST_CODE) {
+    /**
+     * PayMayaVault client builder.
+     */
+    interface Builder {
 
-            return when (resultCode) {
-                Activity.RESULT_OK -> {
-                    logger.i(TAG, "PayMay Vault result: OK")
-                    requireNotNull(data)
-                    val bundle = data.getBundleExtra(TokenizeCardActivity.EXTRAS_BUNDLE)
-                    val result = bundle.getParcelable<TokenizeCardResponse>(TokenizeCardActivity.EXTRAS_RESULT)
-                    requireNotNull(result)
-                    PayMayaVaultResult.Success(
-                        paymentTokenId = result.paymentTokenId,
-                        state = result.state,
-                        createdAt = result.createdAt,
-                        updatedAt = result.updatedAt,
-                        issuer = result.issuer
-                    )
-                }
+        /**
+         * Sets client public key. Required.
+         */
+        fun clientPublicKey(value: String): Builder
 
-                Activity.RESULT_CANCELED -> {
-                    logger.i(TAG, "PayMay Vault result: CANCELED")
-                    PayMayaVaultResult.Cancel
-                }
+        /**
+         * Sets environment type (sandbox or production). Required.
+         */
+        fun environment(value: PayMayaEnvironment): Builder
 
-                else ->
-                    throw IllegalStateException("Invalid result code: $resultCode")
-            }
-        }
+        /**
+         * Sets log level. See <code>LogLevel</code> for details. Optional.
+         */
+        fun logLevel(value: LogLevel): Builder
 
-        return null
-    }
+        /**
+         * Sets custom logo. Styles can be also used to customize logo and other elements.
+         * Optional.
+         */
+        fun logo(@DrawableRes value: Int): Builder
 
-    class Builder(
-        var clientKey: String? = null,
-        var environment: PayMayaEnvironment? = null,
-        var logLevel: LogLevel = LogLevel.WARN,
-        var logoResId: Int? = null
-    ) {
-        fun clientKey(value: String) =
-            apply { this.clientKey = value }
-
-        fun environment(value: PayMayaEnvironment) =
-            apply { this.environment = value }
-
-        fun logLevel(value: LogLevel) =
-            apply { this.logLevel = value }
-
-        fun build() =
-            PayMayaVault(
-                requireNotNull(clientKey),
-                requireNotNull(environment),
-                logLevel,
-                logoResId
-            )
-
-        fun logo(@DrawableRes value: Int) =
-            apply { this.logoResId = value }
+        /**
+         * Builds PayMayaVault client.
+         */
+        fun build(): PayMayaVault
     }
 }

@@ -25,14 +25,14 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
         val intent = requireNotNull(intent)
         val bundle = requireNotNull(intent.getBundleExtra(EXTRAS_BUNDLE))
-        val requestModel: R = requireNotNull(bundle.getParcelable(EXTRAS_REQUEST_DATA))
-        val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
+        val requestModel: R = requireNotNull(bundle.getParcelable(EXTRAS_REQUEST))
+        val clientPublicKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_PUBLIC_KEY))
         val environment = requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
         val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
 
         initializeView()
 
-        presenter = buildPresenter(environment, clientKey, logLevel)
+        presenter = buildPresenter(environment, clientPublicKey, logLevel)
         presenter.viewCreated(this, requestModel)
     }
 
@@ -43,7 +43,7 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
     protected abstract fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ): PayMayaPaymentContract.Presenter<R>
 
@@ -124,10 +124,10 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     }
 
     companion object {
-        const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
+        const val EXTRAS_CLIENT_PUBLIC_KEY = "EXTRAS_CLIENT_PUBLIC_KEY"
         const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
         const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"
-        const val EXTRAS_REQUEST_DATA = "EXTRAS_REQUEST_DATA"
+        const val EXTRAS_REQUEST = "EXTRAS_REQUEST"
         const val EXTRAS_BUNDLE = "EXTRAS_BUNDLE"
 
         const val RESULT_FAILURE = 1063

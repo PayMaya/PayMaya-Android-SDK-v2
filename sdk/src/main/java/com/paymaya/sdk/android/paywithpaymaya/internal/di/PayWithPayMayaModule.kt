@@ -12,57 +12,58 @@ internal object PayWithPayMayaModule {
 
     fun getPayWithPayMayaRepository(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         PayWithPayMayaRepository(
             environment,
-            clientKey,
+            clientPublicKey,
             CommonModule.getJson(),
             CommonModule.getHttpClient(logLevel)
         )
 
     fun getCreateWalletLinkUseCase(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         CreateWalletLinkUseCase(
             CommonModule.getJson(),
-            getPayWithPayMayaRepository(environment, clientKey, logLevel),
+            getPayWithPayMayaRepository(environment, clientPublicKey, logLevel),
             CommonModule.getLogger(logLevel)
         )
 
     fun getCreateWalletLinkPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         PayMayaPaymentPresenter(
-            getCreateWalletLinkUseCase(environment, clientKey, logLevel),
-            CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel),
-            CommonModule.getLogger(logLevel)
+            getCreateWalletLinkUseCase(environment, clientPublicKey, logLevel),
+            CommonModule.getCheckStatusUseCase(environment, clientPublicKey, logLevel),
+            CommonModule.getLogger(logLevel),
+            paymentStatusAutoCheck = false
         )
 
     fun getSinglePaymentUseCase(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         SinglePaymentUseCase(
             CommonModule.getJson(),
-            getPayWithPayMayaRepository(environment, clientKey, logLevel),
+            getPayWithPayMayaRepository(environment, clientPublicKey, logLevel),
             CommonModule.getLogger(logLevel)
         )
 
     fun getSinglePaymentPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         PayMayaPaymentPresenter(
-            getSinglePaymentUseCase(environment, clientKey, logLevel),
-            CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel),
+            getSinglePaymentUseCase(environment, clientPublicKey, logLevel),
+            CommonModule.getCheckStatusUseCase(environment, clientPublicKey, logLevel),
             CommonModule.getLogger(logLevel)
         )
 }

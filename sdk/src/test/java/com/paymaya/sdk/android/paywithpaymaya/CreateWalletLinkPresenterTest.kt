@@ -5,10 +5,10 @@ import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.paymaya.sdk.android.common.LogLevel
+import com.paymaya.sdk.android.common.PaymentStatus
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
 import com.paymaya.sdk.android.common.internal.*
-import com.paymaya.sdk.android.common.internal.models.PaymentStatus
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl

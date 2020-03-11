@@ -21,7 +21,7 @@ class CheckoutRepositoryTest {
     @Test
     fun sandbox() {
         val repository =
-            CheckoutRepository(PayMayaEnvironment.SANDBOX, CLIENT_KEY, json, httpClient = OkHttpClient())
+            CheckoutRepository(PayMayaEnvironment.SANDBOX, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
         assert(repository.baseUrl == BuildConfig.API_CHECKOUT_BASE_URL_SANDBOX)
     }
@@ -29,12 +29,12 @@ class CheckoutRepositoryTest {
     @Test
     fun production() {
         val repository =
-            CheckoutRepository(PayMayaEnvironment.PRODUCTION, CLIENT_KEY, json, httpClient = OkHttpClient())
+            CheckoutRepository(PayMayaEnvironment.PRODUCTION, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
         assert(repository.baseUrl == BuildConfig.API_CHECKOUT_BASE_URL_PRODUCTION)
     }
 
     companion object {
-        private const val CLIENT_KEY = "SOME KEY"
+        private const val CLIENT_PUBLIC_KEY = "SOME KEY"
     }
 }

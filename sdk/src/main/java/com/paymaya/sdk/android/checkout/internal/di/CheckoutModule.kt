@@ -11,35 +11,35 @@ internal object CheckoutModule {
 
     fun getCheckoutRepository(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         CheckoutRepository(
             environment,
-            clientKey,
+            clientPublicKey,
             CommonModule.getJson(),
             CommonModule.getHttpClient(logLevel)
         )
 
     fun getCheckoutUseCase(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         CheckoutUseCase(
             CommonModule.getJson(),
-            getCheckoutRepository(environment, clientKey, logLevel),
+            getCheckoutRepository(environment, clientPublicKey, logLevel),
             CommonModule.getLogger(logLevel)
         )
 
     fun getCheckoutPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ) =
         PayMayaPaymentPresenter(
-            getCheckoutUseCase(environment, clientKey, logLevel),
-            CommonModule.getCheckStatusUseCase(environment, clientKey, logLevel),
+            getCheckoutUseCase(environment, clientPublicKey, logLevel),
+            CommonModule.getCheckStatusUseCase(environment, clientPublicKey, logLevel),
             CommonModule.getLogger(logLevel)
         )
 }

@@ -1,7 +1,12 @@
 package com.paymaya.sdk.android.common.exceptions
 
-class HttpException(
+/**
+ * Unknown Http exception occurred.
+ *
+ * @property code Http response code.
+ * @property message Http response message.
+ */
+class HttpException internal constructor(
     val code: Int,
-    message: String,
-    cause: Throwable? = null
-) : Exception(message, cause)
+    message: String
+) : Exception(message)

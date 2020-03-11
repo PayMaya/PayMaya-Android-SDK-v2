@@ -2,6 +2,14 @@ package com.paymaya.sdk.android.common.models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Payment error returned by PayMaya gateway.
+ *
+ * @property code Code.
+ * @property message Message.
+ * @property parameters Error parameters.
+ * @property details Error details.
+ */
 @Serializable
 data class PaymentError(
     val code: String,

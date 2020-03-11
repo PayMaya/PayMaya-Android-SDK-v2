@@ -10,6 +10,14 @@ import kotlinx.android.parcel.WriteWith
 import kotlinx.serialization.Serializable
 import org.json.JSONObject
 
+/**
+ * Model with data required to initiate PayWithPayMaya single payment.
+ *
+ * @property totalAmount Transaction amount details.
+ * @property requestReferenceNumber Reference number assigned by the merchant to identify a transaction.
+ * @property redirectUrl Set of redirect URLs upon process completion.
+ * @property metadata Metadata.
+ */
 @Parcelize
 @Serializable
 data class SinglePaymentRequest(

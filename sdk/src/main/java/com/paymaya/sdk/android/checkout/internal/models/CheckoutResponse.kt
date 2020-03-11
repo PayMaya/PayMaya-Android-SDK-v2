@@ -17,30 +17,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.paymaya.sdk.android.common
+package com.paymaya.sdk.android.checkout.internal.models
 
-sealed class CheckPaymentStatusResult {
+import kotlinx.serialization.Serializable
 
-    /**
-     * Checking payment status succeeded.
-     *
-     * @property status Payment status.
-     */
-    class Success internal constructor(
-        val status: PaymentStatus
-    ) : CheckPaymentStatusResult()
-
-    /**
-     * Checking payment status canceled.
-     */
-    object Cancel : CheckPaymentStatusResult()
-
-    /**
-     * Checking payment status failed.
-     *
-     * @property exception Exception with detailed reason of the failure.
-     */
-    class Failure internal constructor(
-        val exception: Exception
-    ) : CheckPaymentStatusResult()
-}
+@Serializable
+internal data class CheckoutResponse(
+    val checkoutId: String,
+    val redirectUrl: String
+)

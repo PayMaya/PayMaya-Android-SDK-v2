@@ -153,8 +153,8 @@ class CartPresenter(
         withContext(Dispatchers.IO) {
             // NOTE: checkStatus() is blocking, don't run it on the Main thread.
             when (paymentMethod) {
-                PaymentMethod.CHECKOUT -> payMayaCheckoutClient.checkStatus(id)
-                PaymentMethod.PAY_WITH_PAYMAYA_SINGLE_PAYMENT -> payWithPayMayaClient.checkStatus(id)
+                PaymentMethod.CHECKOUT -> payMayaCheckoutClient.checkPaymentStatus(id)
+                PaymentMethod.PAY_WITH_PAYMAYA_SINGLE_PAYMENT -> payWithPayMayaClient.checkPaymentStatus(id)
                 else -> throw IllegalStateException("Not supported method type")
             }
         }

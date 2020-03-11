@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2020  PayMaya Philippines, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package com.paymaya.sdk.android.common.internal.screen
 
 import android.annotation.SuppressLint
@@ -23,14 +42,14 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
         val intent = requireNotNull(intent)
         val bundle = requireNotNull(intent.getBundleExtra(EXTRAS_BUNDLE))
-        val requestModel: R = requireNotNull(bundle.getParcelable(EXTRAS_REQUEST_DATA))
-        val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
+        val requestModel: R = requireNotNull(bundle.getParcelable(EXTRAS_REQUEST))
+        val clientPublicKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_PUBLIC_KEY))
         val environment = requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
         val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
 
         initializeView()
 
-        presenter = buildPresenter(environment, clientKey, logLevel)
+        presenter = buildPresenter(environment, clientPublicKey, logLevel)
         presenter.viewCreated(this, requestModel)
     }
 
@@ -41,7 +60,7 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
     protected abstract fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ): PayMayaPaymentContract.Presenter<R>
 
@@ -101,9 +120,6 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     override fun hideWebView() {
         payMayaPaymentActivityWebView.visibility = View.GONE
         payMayaPaymentActivityWebView.webViewClient = NoOpWebViewClientImpl()
-
-        // Checkout web page automatically sends Status requests, which we want to ignore.
-        // Note: This relies on the implementation of the PayMaya’s Checkout web page.
         payMayaPaymentActivityWebView.stopLoading()
     }
 
@@ -122,6 +138,9 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError) {
             super.onReceivedError(view, request, error)
+
+            // Checkout web page automatically sends Status requests, which we want to ignore.
+            // Note: This relies on the implementation of the PayMaya’s Checkout web page.
             if (!request?.url.toString().endsWith(REQUEST_STATUS_SUFFIX)) {
                 presenter.connectionLost()
             }
@@ -138,10 +157,10 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     companion object {
         private const val REQUEST_STATUS_SUFFIX = "/status"
 
-        const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
+        const val EXTRAS_CLIENT_PUBLIC_KEY = "EXTRAS_CLIENT_PUBLIC_KEY"
         const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
         const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"
-        const val EXTRAS_REQUEST_DATA = "EXTRAS_REQUEST_DATA"
+        const val EXTRAS_REQUEST = "EXTRAS_REQUEST"
         const val EXTRAS_BUNDLE = "EXTRAS_BUNDLE"
 
         const val RESULT_FAILURE = 1063

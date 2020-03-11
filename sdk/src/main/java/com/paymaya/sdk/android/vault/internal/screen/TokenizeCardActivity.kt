@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2020  PayMaya Philippines, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package com.paymaya.sdk.android.vault.internal.screen
 
 import android.app.Activity
@@ -37,11 +56,11 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         val intent = requireNotNull(intent)
         val environment =
             requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
-        val clientKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_KEY))
+        val clientPublicKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_PUBLIC_KEY))
         val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
         val logoResId = intent.getIntExtra(EXTRAS_LOGO_RES_ID, UNDEFINED_RES_ID)
 
-        presenter = buildPresenter(environment, clientKey, logLevel)
+        presenter = buildPresenter(environment, clientPublicKey, logLevel)
 
         initializeView(logoResId)
 
@@ -112,10 +131,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
 
     private fun buildPresenter(
         environment: PayMayaEnvironment,
-        clientKey: String,
+        clientPublicKey: String,
         logLevel: LogLevel
     ): TokenizeCardContract.Presenter =
-        VaultModule.getTokenizeCardPresenter(environment, clientKey, logLevel, Calendar.getInstance())
+        VaultModule.getTokenizeCardPresenter(environment, clientPublicKey, logLevel, Calendar.getInstance())
 
     override fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse) {
         val bundle = Bundle()
@@ -233,7 +252,7 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     companion object {
-        private const val EXTRAS_CLIENT_KEY = "EXTRAS_CLIENT_KEY"
+        private const val EXTRAS_CLIENT_PUBLIC_KEY = "EXTRAS_CLIENT_PUBLIC_KEY"
         private const val EXTRAS_ENVIRONMENT = "EXTRAS_ENVIRONMENT"
         private const val EXTRAS_LOG_LEVEL = "EXTRAS_LOG_LEVEL"
         private const val EXTRAS_LOGO_RES_ID = "EXTRAS_LOGO_RES_ID"
@@ -244,13 +263,13 @@ internal class TokenizeCardActivity : AppCompatActivity(),
 
         fun newIntent(
             activity: Activity,
-            clientKey: String,
+            clientPublicKey: String,
             environment: PayMayaEnvironment,
             logLevel: LogLevel,
             @DrawableRes logoResId: Int?
         ): Intent {
             val intent = Intent(activity, TokenizeCardActivity::class.java)
-            intent.putExtra(EXTRAS_CLIENT_KEY, clientKey)
+            intent.putExtra(EXTRAS_CLIENT_PUBLIC_KEY, clientPublicKey)
             intent.putExtra(EXTRAS_ENVIRONMENT, environment)
             intent.putExtra(EXTRAS_LOG_LEVEL, logLevel)
             logoResId?.let { intent.putExtra(EXTRAS_LOGO_RES_ID, it) }

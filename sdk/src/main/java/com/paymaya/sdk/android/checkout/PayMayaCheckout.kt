@@ -34,8 +34,7 @@ interface PayMayaCheckout {
 
     /**
      * Initiates the checkout flow.
-     * <p>
-     * Use <code>onActivityResult</code> to get the result (<code>PayMayaCheckoutResult</code>).
+     * Use [onActivityResult] to get the result ([PayMayaCheckoutResult]).
      *
      * @param activity Current activity.
      * @param request Checkout request containing all information about
@@ -44,11 +43,11 @@ interface PayMayaCheckout {
     fun startCheckoutActivityForResult(activity: Activity, request: CheckoutRequest)
 
     /**
-     * Gets the payment result. Call it from your Activity's <code>onActivityResult</code>
+     * Gets the payment result. Call it from your Activity's [Activity.onActivityResult]
      * to get the result of the payment.
      *
-     * @return Returns non-null <code>PayMayaCheckoutResult</code> if the completed activity
-     *         was the activity started by the <code>startCheckoutActivityForResult</code> method.
+     * @return Returns non-null [PayMayaCheckoutResult] if the completed activity
+     *         was the activity started by the [startCheckoutActivityForResult] method.
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayMayaCheckoutResult?
 
@@ -59,7 +58,7 @@ interface PayMayaCheckout {
 
     companion object {
         /**
-         * Returns new PayMayaCheckout client builder.
+         * Returns new PayMayaCheckout client [Builder].
          */
         fun newBuilder(): Builder =
             PayMayaCheckoutImpl.BuilderImpl()
@@ -81,7 +80,7 @@ interface PayMayaCheckout {
         fun environment(value: PayMayaEnvironment): Builder
 
         /**
-         * Sets log level. See <code>LogLevel</code> for details. Optional.
+         * Sets log level. See [LogLevel] for details. Optional.
          */
         fun logLevel(value: LogLevel): Builder
 

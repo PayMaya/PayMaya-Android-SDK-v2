@@ -24,7 +24,7 @@ sealed class PayMayaCheckoutResult(
 ) {
 
     /**
-     * Class representing success status of the Checkout payment.
+     * Success result of the Checkout payment.
      *
      * @property checkoutId Checkout id identifier.
      */
@@ -33,7 +33,7 @@ sealed class PayMayaCheckoutResult(
     ) : PayMayaCheckoutResult(checkoutId)
 
     /**
-     * Class representing canceled status of the Checkout payment.
+     * Canceled result of the Checkout payment.
      *
      * @property checkoutId Checkout id identifier if available or null.
      */
@@ -42,7 +42,7 @@ sealed class PayMayaCheckoutResult(
     ) : PayMayaCheckoutResult(checkoutId)
 
     /**
-     * Failure class representing failure status of the Checkout payment.
+     * Failed result of the Checkout payment.
      *
      * @property checkoutId Checkout id identifier if available or null.
      * @property exception Exception with detailed reason of the failure.

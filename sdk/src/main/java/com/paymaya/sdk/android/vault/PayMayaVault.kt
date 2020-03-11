@@ -37,25 +37,24 @@ interface PayMayaVault {
      * used for payments and customer card addition. The payment token is valid
      * for a specific amount of time. Before it expires, it is valid for single
      * use only in payment transactions.
-     * <p>
-     * Use <code>onActivityResult</code> to get the result (<code>PayMayaVaultResult</code>).
+     * Use [onActivityResult] to get the result ([PayMayaVaultResult]).
      *
      * @param activity Current activity.
      */
     fun startTokenizeCardActivityForResult(activity: Activity)
 
     /**
-     * Gets the result. Call it from your Activity's <code>onActivityResult</code>
+     * Gets the result. Call it from your Activity's [Activity.onActivityResult]
      * to get the result of the token creation process.
      *
-     * @return Returns non-null <code>PayMayaVaultResult</code> if the completed activity
-     *         was the activity started by the <code>startTokenizeCardActivityForResult</code> method.
+     * @return Returns non-null [PayMayaVaultResult] if the completed activity
+     *         was the activity started by the [startTokenizeCardActivityForResult] method.
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayMayaVaultResult?
 
     companion object {
         /**
-         * Returns new PayMayaVault client builder.
+         * Returns new PayMayaVault client [Builder].
          */
         fun newBuilder(): Builder =
             PayMayaVaultImpl.BuilderImpl()
@@ -77,7 +76,7 @@ interface PayMayaVault {
         fun environment(value: PayMayaEnvironment): Builder
 
         /**
-         * Sets log level. See <code>LogLevel</code> for details. Optional.
+         * Sets log level. See [LogLevel] for details. Optional.
          */
         fun logLevel(value: LogLevel): Builder
 

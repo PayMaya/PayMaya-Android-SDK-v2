@@ -84,6 +84,8 @@ internal class PayMayaCheckoutImpl constructor(
 
                     if (exception is BadRequestException) {
                         logger.e(TAG, exception.error.toString())
+                    } else {
+                        logger.e(TAG, exception.toString())
                     }
 
                     PayMayaCheckoutResult.Failure(checkoutId, exception)

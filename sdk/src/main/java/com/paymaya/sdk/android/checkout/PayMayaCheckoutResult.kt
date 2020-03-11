@@ -19,7 +19,9 @@
 
 package com.paymaya.sdk.android.checkout
 
-sealed class PayMayaCheckoutResult {
+sealed class PayMayaCheckoutResult(
+    open val checkoutId: String?
+) {
 
     /**
      * Class representing success status of the Checkout payment.
@@ -27,8 +29,8 @@ sealed class PayMayaCheckoutResult {
      * @property checkoutId Checkout id identifier.
      */
     class Success internal constructor(
-        val checkoutId: String
-    ) : PayMayaCheckoutResult()
+        override val checkoutId: String
+    ) : PayMayaCheckoutResult(checkoutId)
 
     /**
      * Class representing canceled status of the Checkout payment.
@@ -36,8 +38,8 @@ sealed class PayMayaCheckoutResult {
      * @property checkoutId Checkout id identifier if available or null.
      */
     class Cancel internal constructor(
-        val checkoutId: String? = null
-    ) : PayMayaCheckoutResult()
+        override val checkoutId: String? = null
+    ) : PayMayaCheckoutResult(checkoutId)
 
     /**
      * Failure class representing failure status of the Checkout payment.
@@ -46,7 +48,7 @@ sealed class PayMayaCheckoutResult {
      * @property exception Exception with detailed reason of the failure.
      */
     class Failure internal constructor(
-        val checkoutId: String? = null,
+        override val checkoutId: String? = null,
         val exception: Exception
-    ) : PayMayaCheckoutResult()
+    ) : PayMayaCheckoutResult(checkoutId)
 }

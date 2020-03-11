@@ -26,6 +26,8 @@ import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 internal interface TokenizeCardContract {
     interface View {
         fun finishSuccess(tokenizeCardResponse: TokenizeCardResponse)
+        fun finishCanceled()
+
         fun showCardNumberError()
         fun hideCardNumberError()
         fun showCardExpirationDateError()
@@ -37,17 +39,18 @@ internal interface TokenizeCardContract {
         fun showCardCvcHint()
         fun hideCardCvcHint()
         fun showCardExpirationDateHint()
+
         fun showProgressBar()
         fun hideProgressBar()
+
         fun hideKeyboard()
         fun showErrorPopup(message: Resource)
-        fun finishCanceled()
     }
 
     interface Presenter {
         fun viewCreated(view: View)
         fun viewDestroyed()
-        fun backButtonPressed()
+
         fun cardNumberChanged(cardNumber: String)
         fun cardExpirationDateChanged()
         fun cardCvcChanged()
@@ -55,6 +58,7 @@ internal interface TokenizeCardContract {
         fun cardExpirationDateFocusReceived()
         fun cardExpirationDateFocusLost(value: String)
         fun cardCvcFocusLost(value: String)
+
         fun payButtonClicked(
             cardNumberWithSpaces: String,
             cardExpirationDate: String,
@@ -62,5 +66,6 @@ internal interface TokenizeCardContract {
         )
         fun screenMaskClicked()
         fun cardCvcInfoClicked()
+        fun backButtonPressed()
     }
 }

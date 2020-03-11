@@ -53,7 +53,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.3.1"
     implementation "com.squareup.okhttp3:okhttp:4.3.1"
     implementation "ru.gildor.coroutines:kotlin-coroutines-okhttp:1.0"
-    implementation "com.google.android.material:material:1.2.0-alpha05"
+    implementation "com.google.android.material:material:1.1.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"
 

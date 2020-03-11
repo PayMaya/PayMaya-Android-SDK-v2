@@ -29,6 +29,7 @@ import com.paymaya.sdk.android.vault.internal.helpers.CardInfoValidator
 import com.paymaya.sdk.android.vault.internal.screen.TokenizeCardPresenter
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 internal object VaultModule {
 
     fun getVaultRepository(

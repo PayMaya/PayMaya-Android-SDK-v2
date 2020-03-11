@@ -40,11 +40,6 @@ internal class CreateWalletLinkUseCase(
     override fun prepareSuccessResponse(responseBody: ResponseBody): RedirectSuccessResponseWrapper {
         val createWalletLinkResponse = json.parse(CreateWalletLinkResponse.serializer(), responseBody.string())
 
-        // TODO check if really needed
-        // if (Build.MANUFACTURER.toLowerCase().contains("samsung")) {
-        //   redirectUrl += "&cssfix=true"
-        // }
-
         return RedirectSuccessResponseWrapper(
             createWalletLinkResponse.linkId,
             createWalletLinkResponse.redirectUrl

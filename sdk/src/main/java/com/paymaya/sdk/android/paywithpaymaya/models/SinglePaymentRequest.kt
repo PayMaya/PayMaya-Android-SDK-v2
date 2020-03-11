@@ -43,7 +43,6 @@ data class SinglePaymentRequest(
     val totalAmount: TotalAmount,
     val requestReferenceNumber: String,
     override val redirectUrl: RedirectUrl,
-    // TODO makes sense to have this? maybe metadata should be a string?
     @Serializable(with = JSONObjectSerializer::class)
     val metadata: @WriteWith<JSONObjectParceler> JSONObject? = null
 ) : PayMayaRequest

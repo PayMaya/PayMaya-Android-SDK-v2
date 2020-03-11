@@ -37,11 +37,6 @@ internal class CheckStatusUseCase(
     override fun prepareSuccessResponse(responseBody: ResponseBody): StatusSuccessResponseWrapper {
         val response = json.parse(StatusResponse.serializer(), responseBody.string())
 
-        // TODO check if really needed
-        // if (Build.MANUFACTURER.toLowerCase().contains("samsung")) {
-        //   redirectUrl += "&cssfix=true"
-        // }
-
         return StatusSuccessResponseWrapper(
             response.id,
             response.status

@@ -66,6 +66,7 @@ internal class PayMayaVaultImpl internal constructor(
                     logger.i(TAG, "PayMay Vault result: OK")
                     requireNotNull(data)
                     val bundle = data.getBundleExtra(TokenizeCardActivity.EXTRAS_BUNDLE)
+                    requireNotNull(bundle)
                     val result = bundle.getParcelable<TokenizeCardResponse>(TokenizeCardActivity.EXTRAS_RESULT)
                     requireNotNull(result)
                     PayMayaVaultResult.Success(

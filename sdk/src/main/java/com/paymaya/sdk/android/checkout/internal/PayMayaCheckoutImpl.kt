@@ -69,6 +69,7 @@ internal class PayMayaCheckoutImpl constructor(
             return when (resultCode) {
                 Activity.RESULT_OK -> {
                     logger.i(TAG, "PayMaya Checkout result: OK")
+                    requireNotNull(checkoutId)
                     PayMayaCheckoutResult.Success(checkoutId)
                 }
 

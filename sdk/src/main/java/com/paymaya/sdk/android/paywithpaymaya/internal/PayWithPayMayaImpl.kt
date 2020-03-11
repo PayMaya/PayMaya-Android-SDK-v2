@@ -84,6 +84,7 @@ internal class PayWithPayMayaImpl internal constructor(
                 return when (resultCode) {
                     Activity.RESULT_OK -> {
                         logger.i(TAG, "Pay With PayMaya result: OK")
+                        requireNotNull(resultId)
                         SinglePaymentResult.Success(resultId)
                     }
 
@@ -114,6 +115,7 @@ internal class PayWithPayMayaImpl internal constructor(
                 return when (resultCode) {
                     Activity.RESULT_OK -> {
                         logger.i(TAG, "Pay With PayMaya result: OK")
+                        requireNotNull(resultId)
                         CreateWalletLinkResult.Success(resultId)
                     }
 

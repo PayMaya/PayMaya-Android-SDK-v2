@@ -39,8 +39,8 @@ internal class PayWithPayMayaRepository(
 ) : PayMayaGatewayBaseRepository(json, httpClient) {
 
     val baseUrl = when (environment) {
-        PayMayaEnvironment.PRODUCTION -> BuildConfig.API_PAY_WITH_PAYMAYA_BASE_URL_PRODUCTION
-        PayMayaEnvironment.SANDBOX -> BuildConfig.API_PAY_WITH_PAYMAYA_BASE_URL_SANDBOX
+        PayMayaEnvironment.PRODUCTION -> "$BASE_URL_PRODUCTION$BASE_URL_SUFFIX"
+        PayMayaEnvironment.SANDBOX -> "$BASE_URL_SANDBOX$BASE_URL_SUFFIX"
     }
 
     suspend fun singlePayment(requestModel: SinglePaymentRequest): Response {
@@ -49,7 +49,7 @@ internal class PayWithPayMayaRepository(
         val requestBody = bodyString.toRequestBody()
 
         val request = Request.Builder()
-            .url(baseUrl + PAY_WITH_PAYMAYA_SINGLE_PAYMENT_ENDPOINT)
+            .url(baseUrl + SINGLE_PAYMENT_ENDPOINT)
             .header(
                 HEADER_CONTENT_TYPE,
                 MIME_APPLICATION_JSON
@@ -69,7 +69,7 @@ internal class PayWithPayMayaRepository(
         val requestBody = bodyString.toRequestBody()
 
         val request = Request.Builder()
-            .url(baseUrl + PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_ENDPOINT)
+            .url(baseUrl + CREATE_WALLET_LINK_ENDPOINT)
             .header(
                 HEADER_CONTENT_TYPE,
                 MIME_APPLICATION_JSON
@@ -84,7 +84,11 @@ internal class PayWithPayMayaRepository(
     }
 
     companion object {
-        private const val PAY_WITH_PAYMAYA_SINGLE_PAYMENT_ENDPOINT = "payments"
-        private const val PAY_WITH_PAYMAYA_CREATE_WALLET_LINK_ENDPOINT = "link"
+        private const val SINGLE_PAYMENT_ENDPOINT = "payments"
+        private const val CREATE_WALLET_LINK_ENDPOINT = "link"
+        private const val BASE_URL_SUFFIX = "/payby/v2/paymaya/"
+
+        const val BASE_URL_PRODUCTION = "https://pg.paymaya.com"
+        const val BASE_URL_SANDBOX = "https://pg-sandbox.paymaya.com"
     }
 }

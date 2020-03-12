@@ -19,7 +19,6 @@
 
 package com.paymaya.sdk.android.vault
 
-import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.vault.internal.VaultRepository
 import kotlinx.serialization.json.Json
@@ -42,7 +41,7 @@ class VaultRepositoryTest {
         val repository =
             VaultRepository(PayMayaEnvironment.SANDBOX, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.baseUrl == BuildConfig.API_VAULT_BASE_URL_SANDBOX)
+        assert(repository.baseUrl.startsWith(VaultRepository.BASE_URL_SANDBOX))
     }
 
     @Test
@@ -50,7 +49,7 @@ class VaultRepositoryTest {
         val repository =
             VaultRepository(PayMayaEnvironment.PRODUCTION, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.baseUrl == BuildConfig.API_VAULT_BASE_URL_PRODUCTION)
+        assert(repository.baseUrl.startsWith(VaultRepository.BASE_URL_PRODUCTION))
     }
 
     companion object {

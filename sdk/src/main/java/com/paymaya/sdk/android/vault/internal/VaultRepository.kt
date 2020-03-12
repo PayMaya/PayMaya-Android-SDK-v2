@@ -38,8 +38,8 @@ internal class VaultRepository(
 ) : PayMayaGatewayBaseRepository(json, httpClient) {
 
     val baseUrl = when (environment) {
-        PayMayaEnvironment.PRODUCTION -> BuildConfig.API_VAULT_BASE_URL_PRODUCTION
-        PayMayaEnvironment.SANDBOX -> BuildConfig.API_VAULT_BASE_URL_SANDBOX
+        PayMayaEnvironment.PRODUCTION -> "$BASE_URL_PRODUCTION$BASE_URL_SUFFIX"
+        PayMayaEnvironment.SANDBOX -> "$BASE_URL_SANDBOX$BASE_URL_SUFFIX"
     }
 
     suspend fun tokenizeCard(requestModel: TokenizeCardRequest): Response {
@@ -84,5 +84,9 @@ internal class VaultRepository(
         private const val PAYMENTS_ENDPOINT = "payments"
         private const val STATUS_ENDPOINT = "status"
         private const val VAULT_CREATE_TOKEN = "payment-tokens"
+        private const val BASE_URL_SUFFIX = "/payments/v1/"
+
+        const val BASE_URL_PRODUCTION = "https://pg.paymaya.com"
+        const val BASE_URL_SANDBOX = "https://pg-sandbox.paymaya.com"
     }
 }

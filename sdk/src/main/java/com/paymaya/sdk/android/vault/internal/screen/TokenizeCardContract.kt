@@ -20,7 +20,7 @@
 package com.paymaya.sdk.android.vault.internal.screen
 
 import androidx.annotation.DrawableRes
-import com.paymaya.sdk.android.common.internal.Resource
+import com.paymaya.sdk.android.common.internal.AndroidString
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 
 internal interface TokenizeCardContract {
@@ -44,7 +44,7 @@ internal interface TokenizeCardContract {
         fun hideProgressBar()
 
         fun hideKeyboard()
-        fun showErrorPopup(message: Resource)
+        fun showErrorPopup(message: AndroidString)
     }
 
     interface Presenter {

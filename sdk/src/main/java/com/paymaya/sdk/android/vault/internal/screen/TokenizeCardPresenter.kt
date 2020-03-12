@@ -24,7 +24,7 @@ import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.common.internal.Constants.TAG
 import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
 import com.paymaya.sdk.android.common.internal.Logger
-import com.paymaya.sdk.android.common.internal.Resource
+import com.paymaya.sdk.android.common.internal.AndroidString
 import com.paymaya.sdk.android.common.internal.ResponseWrapper
 import com.paymaya.sdk.android.common.models.BaseError
 import com.paymaya.sdk.android.common.models.GenericError
@@ -276,23 +276,23 @@ internal class TokenizeCardPresenter(
         view?.showErrorPopup(message)
     }
 
-    private fun getExceptionMessage(exception: Exception): Resource =
+    private fun getExceptionMessage(exception: Exception): AndroidString =
         when (exception) {
             is BadRequestException -> getMessageBadRequestMessage(exception.error)
-            is UnknownHostException -> Resource(R.string.paymaya_connection_error)
+            is UnknownHostException -> AndroidString(R.string.paymaya_connection_error)
             else -> {
                 logger.e(TAG, "Unknown error: ${exception.javaClass.simpleName}")
-                Resource(R.string.paymaya_unknown_error)
+                AndroidString(R.string.paymaya_unknown_error)
             }
         }
 
-    private fun getMessageBadRequestMessage(baseError: BaseError): Resource =
+    private fun getMessageBadRequestMessage(baseError: BaseError): AndroidString =
         when (baseError) {
-            is GenericError -> Resource(baseError.error)
-            is PaymentError -> Resource(getPaymentErrorMessage(baseError))
+            is GenericError -> AndroidString(baseError.error)
+            is PaymentError -> AndroidString(getPaymentErrorMessage(baseError))
             else -> {
                 logger.e(TAG, "Unknown error: ${baseError.javaClass.simpleName}")
-                Resource(R.string.paymaya_unknown_error)
+                AndroidString(R.string.paymaya_unknown_error)
             }
         }
 

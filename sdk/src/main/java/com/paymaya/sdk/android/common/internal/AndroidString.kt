@@ -22,19 +22,19 @@ package com.paymaya.sdk.android.common.internal
 import android.content.Context
 import androidx.annotation.StringRes
 
-internal sealed class Resource {
+internal sealed class AndroidString {
     companion object {
-        operator fun invoke(text: String): Resource = Complete(text)
-        operator fun invoke(id: Int): Resource = Contextual(id)
+        operator fun invoke(text: String): AndroidString = Raw(text)
+        operator fun invoke(id: Int): AndroidString = Res(id)
     }
 
-    abstract fun inContext(context: Context): String
+    abstract fun stringify(context: Context): String
 
-    data class Contextual(@StringRes val resourceId: Int) : Resource() {
-        override fun inContext(context: Context): String = context.getString(resourceId)
+    private data class Res(@StringRes val resourceId: Int) : AndroidString() {
+        override fun stringify(context: Context): String = context.getString(resourceId)
     }
 
-    data class Complete(val text: String) : Resource() {
-        override fun inContext(context: Context): String = text
+    private data class Raw(val text: String) : AndroidString() {
+        override fun stringify(context: Context): String = text
     }
 }

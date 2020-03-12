@@ -100,6 +100,8 @@ internal class PayWithPayMayaImpl internal constructor(
 
                         if (exception is BadRequestException) {
                             logger.e(TAG, exception.error.toString())
+                        } else {
+                            logger.e(TAG, exception.toString())
                         }
 
                         SinglePaymentResult.Failure(resultId, exception)

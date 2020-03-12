@@ -132,7 +132,7 @@ class PayMayaCheckoutPresenterTest {
             presenter.viewCreated(view, prepareCheckoutRequest())
             presenter.backButtonPressed()
 
-            verify(view).finishCanceled(null)
+            verify(view).finishCanceled(resultId = null)
         }
     }
 

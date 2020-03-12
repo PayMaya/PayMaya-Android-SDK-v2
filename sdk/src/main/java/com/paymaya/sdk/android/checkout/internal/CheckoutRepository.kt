@@ -19,13 +19,11 @@
 
 package com.paymaya.sdk.android.checkout.internal
 
-import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.checkout.models.CheckoutRequest
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.PayMayaGatewayBaseRepository
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import ru.gildor.coroutines.okhttp.await
@@ -43,20 +41,11 @@ internal class CheckoutRepository(
     }
 
     suspend fun checkout(requestModel: CheckoutRequest): Response {
-        val authorizationValue = prepareAuthorizationValue(clientPublicKey)
         val bodyString = json.stringify(CheckoutRequest.serializer(), requestModel)
-        val requestBody = bodyString.toRequestBody()
 
-        val request = Request.Builder()
+        val request = getBaseRequestBuilder(clientPublicKey, bodyString.length)
             .url(baseUrl + CHECKOUT_ENDPOINT)
-            .header(
-                HEADER_CONTENT_TYPE,
-                MIME_APPLICATION_JSON
-            )
-            .header(HEADER_AUTHORIZATION, authorizationValue)
-            .header(HEADER_CONTENT_LENGTH, bodyString.length.toString())
-            .header(HEADER_X_PAYMAYA_SDK, "$SDK_VERSION_PREFIX${BuildConfig.VERSION_NAME}")
-            .post(requestBody)
+            .post(bodyString.toRequestBody())
             .build()
 
         return httpClient.newCall(request).await()

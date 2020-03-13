@@ -64,11 +64,12 @@ internal class PayWithPayMayaRepository(
     }
 
     companion object {
-        private const val SINGLE_PAYMENT_ENDPOINT = "payments"
-        private const val CREATE_WALLET_LINK_ENDPOINT = "link"
-        private const val BASE_URL_SUFFIX = "/payby/v2/paymaya/"
-
         const val BASE_URL_PRODUCTION = "https://pg.paymaya.com"
         const val BASE_URL_SANDBOX = "https://pg-sandbox.paymaya.com"
+
+        private const val BASE_URL_SUFFIX = "/payby/v2/paymaya/"
+
+        private const val SINGLE_PAYMENT_ENDPOINT = "payments"
+        private const val CREATE_WALLET_LINK_ENDPOINT = "link"
     }
 }

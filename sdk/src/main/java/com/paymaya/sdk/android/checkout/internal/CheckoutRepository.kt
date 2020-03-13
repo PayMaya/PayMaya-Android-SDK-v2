@@ -52,10 +52,11 @@ internal class CheckoutRepository(
     }
 
     companion object {
-        private const val CHECKOUT_ENDPOINT = "checkouts"
-        private const val BASE_URL_SUFFIX = "/checkout/v1/"
-
         const val BASE_URL_PRODUCTION = "https://pg.paymaya.com"
         const val BASE_URL_SANDBOX = "https://pg-sandbox.paymaya.com"
+
+        private const val BASE_URL_SUFFIX = "/checkout/v1/"
+
+        private const val CHECKOUT_ENDPOINT = "checkouts"
     }
 }

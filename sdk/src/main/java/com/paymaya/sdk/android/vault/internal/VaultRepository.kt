@@ -44,7 +44,7 @@ internal class VaultRepository(
         val bodyString = json.stringify(TokenizeCardRequest.serializer(), requestModel)
 
         val request = getBaseRequestBuilder(clientPublicKey, bodyString.length)
-            .url(baseUrl + VAULT_CREATE_TOKEN)
+            .url(baseUrl + CREATE_TOKEN_ENDPOINT)
             .post(bodyString.toRequestBody())
             .build()
 
@@ -61,12 +61,13 @@ internal class VaultRepository(
     }
 
     companion object {
-        private const val PAYMENTS_ENDPOINT = "payments"
-        private const val STATUS_ENDPOINT = "status"
-        private const val VAULT_CREATE_TOKEN = "payment-tokens"
-        private const val BASE_URL_SUFFIX = "/payments/v1/"
-
         const val BASE_URL_PRODUCTION = "https://pg.paymaya.com"
         const val BASE_URL_SANDBOX = "https://pg-sandbox.paymaya.com"
+
+        private const val BASE_URL_SUFFIX = "/payments/v1/"
+
+        private const val PAYMENTS_ENDPOINT = "payments"
+        private const val STATUS_ENDPOINT = "status"
+        private const val CREATE_TOKEN_ENDPOINT = "payment-tokens"
     }
 }

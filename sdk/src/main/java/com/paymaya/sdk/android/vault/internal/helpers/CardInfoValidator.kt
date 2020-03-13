@@ -70,10 +70,10 @@ internal class CardInfoValidator(
     private fun checkLuhnChecksum(input: String): Boolean =
         checksum(input) % 10 == 0
 
-    private fun checksum(input: String) =
+    private fun checksum(input: String): Int =
         addends(input).sum()
 
-    private fun addends(input: String) =
+    private fun addends(input: String): List<Int> =
         input.digits().mapIndexed { i, j ->
             when {
                 (input.length - i + 1) % 2 == 0 -> j

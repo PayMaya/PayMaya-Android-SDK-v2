@@ -121,7 +121,6 @@ class SinglePaymentPresenterTest {
         }
     }
 
-
     @Test
     fun `canceled but succeeded`() {
         runBlocking {
@@ -197,7 +196,7 @@ class SinglePaymentPresenterTest {
             presenter.viewCreated(view, prepareSinglePaymentRequest())
             presenter.backButtonPressed()
 
-            verify(view).finishCanceled(null)
+            verify(view).finishCanceled(resultId = null)
         }
     }
 

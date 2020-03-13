@@ -124,7 +124,7 @@ class CreateWalletLinkPresenterTest {
             presenter.viewCreated(view, prepareCreateWalletLinkRequest())
             presenter.backButtonPressed()
 
-            verify(view).finishCanceled(null)
+            verify(view).finishCanceled(resultId = null)
         }
     }
 

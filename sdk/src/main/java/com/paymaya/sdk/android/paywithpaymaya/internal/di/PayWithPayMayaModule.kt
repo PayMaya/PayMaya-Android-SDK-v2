@@ -27,6 +27,7 @@ import com.paymaya.sdk.android.paywithpaymaya.internal.CreateWalletLinkUseCase
 import com.paymaya.sdk.android.paywithpaymaya.internal.PayWithPayMayaRepository
 import com.paymaya.sdk.android.paywithpaymaya.internal.SinglePaymentUseCase
 
+@Suppress("MemberVisibilityCanBePrivate")
 internal object PayWithPayMayaModule {
 
     fun getPayWithPayMayaRepository(

@@ -25,6 +25,8 @@ import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.internal.Constants.TAG
 import com.paymaya.sdk.android.common.models.GenericError
 import com.paymaya.sdk.android.common.models.PaymentError
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.Response
@@ -37,12 +39,14 @@ internal abstract class SendRequestBaseUseCase<T>(
 ) {
 
     suspend fun run(request: T): ResponseWrapper =
-        try {
-            processResponse(
-                sendRequest(request)
-            )
-        } catch (e: Exception) {
-            ErrorResponseWrapper(e)
+        withContext(Dispatchers.IO) {
+            try {
+                processResponse(
+                    sendRequest(request)
+                )
+            } catch (e: Exception) {
+                ErrorResponseWrapper(e)
+            }
         }
 
     protected abstract suspend fun sendRequest(request: T): Response

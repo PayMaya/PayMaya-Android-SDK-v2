@@ -149,7 +149,7 @@ class CartPresenter(
         } ?: view?.showPaymentIdNotAvailableMessage()
     }
 
-    private suspend fun checkPaymentStatus(id: String) =
+    private suspend fun checkPaymentStatus(id: String): CheckPaymentStatusResult =
         withContext(Dispatchers.IO) {
             // NOTE: checkStatus() is blocking, don't run it on the Main thread.
             when (paymentMethod) {
@@ -160,21 +160,19 @@ class CartPresenter(
         }
 
     override fun checkoutCompleted(result: PayMayaCheckoutResult) {
+        resultId = result.checkoutId
         when (result) {
             is PayMayaCheckoutResult.Success -> {
-                resultId = result.checkoutId
                 val message = "Success, checkoutId: ${result.checkoutId}"
                 view?.showResultSuccessMessage(message)
             }
 
             is PayMayaCheckoutResult.Cancel -> {
-                resultId = result.checkoutId
                 val message = "Canceled, checkoutId: ${result.checkoutId}"
                 view?.showResultCancelMessage(message)
             }
 
             is PayMayaCheckoutResult.Failure -> {
-                resultId = result.checkoutId
                 val message = "Failure, checkoutId: ${result.checkoutId}, exception: ${result.exception}"
                 view?.showResultFailureMessage(message, result.exception)
             }

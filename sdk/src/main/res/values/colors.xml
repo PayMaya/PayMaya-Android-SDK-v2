@@ -8,5 +8,5 @@
     <color name="paymaya_vault_button_text_color">#fff</color>
     <color name="paymaya_vault_button_background_color">#6a1713</color>
     <color name="paymaya_vault_progress_bar_color">#1473eb</color>
-    <color name="paymaya_vault_progress_bar_background">#20000000</color>
+    <color name="paymaya_vault_progress_bar_background">#40000000</color>
 </resources>

@@ -16,15 +16,18 @@ interface CartContract {
     interface View {
         fun populateView(productsList: List<Item>)
         fun setTotalAmount(totalAmount: BigDecimal, currency: String)
+
         fun payWithCheckout(checkoutRequest: CheckoutRequest)
         fun payWithSinglePayment(singlePaymentRequest: SinglePaymentRequest)
         fun createWalletLink(walletLinkRequest: CreateWalletLinkRequest)
         fun payMayaVaultTokenizeCard()
+
         fun showResultSuccessMessage(message: String)
         fun showResultCancelMessage(message: String)
         fun showResultFailureMessage(message: String, exception: Exception)
         fun showPaymentIdNotAvailableMessage()
         fun showPaymentDetailedStatus(message: String)
+
         fun showProgressBar()
         fun hideProgressBar()
     }
@@ -36,14 +39,16 @@ interface CartContract {
             payWithPayMayaClient: PayWithPayMaya
         )
         fun viewDestroyed()
+
         fun removeFromCartButtonClicked(product: Item)
         fun payWithCheckoutButtonClicked()
         fun payWithSinglePaymentButtonClicked()
         fun createWalletLinkButtonClicked()
         fun payMayaVaultButtonClicked()
+        fun payMayaCheckRecentPaymentStatusClicked()
+
         fun checkoutCompleted(result: PayMayaCheckoutResult)
         fun payWithPayMayaCompleted(result: PayWithPayMayaResult)
         fun vaultCompleted(result: PayMayaVaultResult)
-        fun payMayaCheckRecentPaymentStatusClicked()
     }
 }

@@ -11,8 +11,9 @@ interface ShopContract {
 
     interface Presenter {
         fun viewCreated(view: View)
-        fun viewDestroyed()
-        fun addToCartButtonClicked(product: ShopItem)
         fun viewResumed()
+        fun viewDestroyed()
+
+        fun addToCartButtonClicked(product: ShopItem)
     }
 }

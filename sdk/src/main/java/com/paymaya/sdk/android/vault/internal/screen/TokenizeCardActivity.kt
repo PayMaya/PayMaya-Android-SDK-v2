@@ -34,7 +34,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
-import com.paymaya.sdk.android.common.internal.Resource
+import com.paymaya.sdk.android.common.internal.AndroidString
 import com.paymaya.sdk.android.vault.internal.di.VaultModule
 import com.paymaya.sdk.android.vault.internal.helpers.AutoFormatTextWatcher
 import com.paymaya.sdk.android.vault.internal.helpers.CardNumberFormatter
@@ -158,10 +158,10 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         payMayaVaultProgressBar.visibility = View.GONE
     }
 
-    override fun showErrorPopup(message: Resource) {
+    override fun showErrorPopup(message: AndroidString) {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.paymaya_error_dialog_title))
-            .setMessage(message.inContext(this))
+            .setMessage(message.stringify(this))
             .setPositiveButton(getString(R.string.paymaya_ok)) { dialog, _ -> dialog.cancel() }
             .create()
             .show()

@@ -26,6 +26,7 @@ import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.di.CommonModule
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 
+@Suppress("MemberVisibilityCanBePrivate")
 internal object CheckoutModule {
 
     fun getCheckoutRepository(

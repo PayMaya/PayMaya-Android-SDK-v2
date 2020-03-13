@@ -19,7 +19,6 @@
 
 package com.paymaya.sdk.android.checkout
 
-import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.checkout.internal.CheckoutRepository
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import kotlinx.serialization.json.Json
@@ -42,7 +41,7 @@ class CheckoutRepositoryTest {
         val repository =
             CheckoutRepository(PayMayaEnvironment.SANDBOX, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.baseUrl == BuildConfig.API_CHECKOUT_BASE_URL_SANDBOX)
+        assert(repository.baseUrl.startsWith(CheckoutRepository.BASE_URL_SANDBOX))
     }
 
     @Test
@@ -50,7 +49,7 @@ class CheckoutRepositoryTest {
         val repository =
             CheckoutRepository(PayMayaEnvironment.PRODUCTION, CLIENT_PUBLIC_KEY, json, httpClient = OkHttpClient())
 
-        assert(repository.baseUrl == BuildConfig.API_CHECKOUT_BASE_URL_PRODUCTION)
+        assert(repository.baseUrl.startsWith(CheckoutRepository.BASE_URL_PRODUCTION))
     }
 
     companion object {

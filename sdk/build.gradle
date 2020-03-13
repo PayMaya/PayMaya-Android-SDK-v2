@@ -2,29 +2,23 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'org.jetbrains.dokka'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 28
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 25
         versionName "2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField "String", "API_CHECKOUT_BASE_URL_SANDBOX", API_CHECKOUT_BASE_URL_SANDBOX
-        buildConfigField "String", "API_CHECKOUT_BASE_URL_PRODUCTION", API_CHECKOUT_BASE_URL_PRODUCTION
-        buildConfigField "String", "API_VAULT_BASE_URL_SANDBOX", API_VAULT_BASE_URL_SANDBOX
-        buildConfigField "String", "API_VAULT_BASE_URL_PRODUCTION", API_VAULT_BASE_URL_PRODUCTION
-        buildConfigField "String", "API_PAY_WITH_PAYMAYA_BASE_URL_SANDBOX", API_PAY_WITH_PAYMAYA_BASE_URL_SANDBOX
-        buildConfigField "String", "API_PAY_WITH_PAYMAYA_BASE_URL_PRODUCTION", API_PAY_WITH_PAYMAYA_BASE_URL_PRODUCTION
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            consumerProguardFiles 'proguard-rules.pro'
         }
     }
 
@@ -53,7 +47,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.3.1"
     implementation "com.squareup.okhttp3:okhttp:4.3.1"
     implementation "ru.gildor.coroutines:kotlin-coroutines-okhttp:1.0"
-    implementation "com.google.android.material:material:1.2.0-alpha05"
+    implementation "com.google.android.material:material:1.1.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"
 

@@ -24,4 +24,4 @@ import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
 
 internal class TokenizeCardSuccessResponseWrapper(
     val response: TokenizeCardResponse
-) : SuccessResponseWrapper()
+) : SuccessResponseWrapper

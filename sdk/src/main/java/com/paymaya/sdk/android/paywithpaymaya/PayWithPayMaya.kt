@@ -35,8 +35,7 @@ interface PayWithPayMaya {
 
     /**
      * Initiates the single payment flow.
-     * <p>
-     * Use <code>onActivityResult</code> to get the result (<code>SinglePaymentResult</code>).
+     * Use [onActivityResult] to get the result ([SinglePaymentResult]).
      *
      * @param activity Current activity.
      * @param request SinglePaymentRequest request containing all information
@@ -46,22 +45,21 @@ interface PayWithPayMaya {
 
     /**
      * Initiates the create wallet link flow that allows charging PayMaya account.
-     * <p>
-     * Use <code>onActivityResult</code> to get the result (<code>CreateWalletLinkResult</code>).
+     * Use [onActivityResult] to get the result ([CreateWalletLinkResult]).
      *
      * @param activity Current activity.
-     * @param request <code>CreateWalletLinkRequest</code> request containing necessary information.
+     * @param request [CreateWalletLinkRequest] request containing necessary information.
      */
     fun startCreateWalletLinkActivityForResult(activity: Activity, request: CreateWalletLinkRequest)
 
     /**
-     * Gets the payment result. Call it from your Activity's <code>onActivityResult</code>
+     * Gets the payment result. Call it from your Activity's [Activity.onActivityResult]
      * to get the result of the payment.
      *
-     * @return Returns non-null <code>PayWithPayMayaResult</code> if the completed activity
-     *         was the activity started by the <code>startSinglePaymentActivityForResult</code> or
-     *         <code>startCreateWalletLinkActivityForResult</code> method.
-     *         The result can be <code>SinglePaymentResult</code> or <code>CreateWalletLinkResult</code>.
+     * @return Returns non-null [PayWithPayMayaResult] if the completed activity
+     *         was the activity started by the [startSinglePaymentActivityForResult] or
+     *         [startCreateWalletLinkActivityForResult] method.
+     *         The result can be [SinglePaymentResult] or [CreateWalletLinkResult].
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): PayWithPayMayaResult?
 
@@ -72,7 +70,7 @@ interface PayWithPayMaya {
 
     companion object {
         /**
-         * Returns new PayWithPayMaya client builder.
+         * Returns new PayWithPayMaya client [Builder].
          */
         fun newBuilder(): Builder =
             PayWithPayMayaImpl.BuilderImpl()
@@ -94,7 +92,7 @@ interface PayWithPayMaya {
         fun environment(value: PayMayaEnvironment): Builder
 
         /**
-         * Sets log level. See <code>LogLevel</code> for details. Optional.
+         * Sets log level. See [LogLevel] for details. Optional.
          */
         fun logLevel(value: LogLevel): Builder
 

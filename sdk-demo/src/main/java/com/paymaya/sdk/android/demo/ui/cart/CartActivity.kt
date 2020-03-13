@@ -37,19 +37,19 @@ class CartActivity : Activity(), CartContract.View {
     private val payMayaCheckoutClient = PayMayaCheckout.newBuilder()
         .clientPublicKey("pk-NCLk7JeDbX1m22ZRMDYO9bEPowNWT5J4aNIKIbcTy2a")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(LogLevel.VERBOSE)
+        .logLevel(LogLevel.WARN)
         .build()
 
     private val payWithPayMayaClient = PayWithPayMaya.newBuilder()
         .clientPublicKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(LogLevel.VERBOSE)
+        .logLevel(LogLevel.WARN)
         .build()
 
     private val payMayaVaultClient = PayMayaVault.newBuilder()
         .clientPublicKey("pk-MOfNKu3FmHMVHtjyjG7vhr7vFevRkWxmxYL1Yq6iFk5")
         .environment(PayMayaEnvironment.SANDBOX)
-        .logLevel(LogLevel.VERBOSE)
+        .logLevel(LogLevel.WARN)
         .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -20,15 +20,24 @@
 package com.paymaya.sdk.android.common.internal
 
 import android.util.Base64
+import com.paymaya.sdk.android.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import okhttp3.Request
 
 internal abstract class PayMayaGatewayBaseRepository(
     protected val json: Json,
     protected val httpClient: OkHttpClient
 ) {
 
-    protected fun prepareAuthorizationValue(clientPublicKey: String): String {
+    protected fun getBaseRequestBuilder(clientPublicKey: String, length: Int) =
+        Request.Builder()
+            .header(HEADER_AUTHORIZATION, prepareAuthorizationValue(clientPublicKey))
+            .header(HEADER_CONTENT_TYPE, MIME_APPLICATION_JSON)
+            .header(HEADER_CONTENT_LENGTH, length.toString())
+            .header(HEADER_X_PAYMAYA_SDK, "$SDK_VERSION_PREFIX${BuildConfig.VERSION_NAME}")
+
+    private fun prepareAuthorizationValue(clientPublicKey: String): String {
         val authorization = "$clientPublicKey:" // Note: password is empty
         val authorizationEncoded = String(
             Base64.encode(authorization.toByteArray(Charsets.UTF_8), Base64.NO_WRAP),
@@ -38,12 +47,12 @@ internal abstract class PayMayaGatewayBaseRepository(
     }
 
     companion object {
-        const val HEADER_CONTENT_TYPE = "Content-Type"
-        const val HEADER_AUTHORIZATION = "Authorization"
-        const val HEADER_CONTENT_LENGTH = "Content-Length"
-        const val HEADER_X_PAYMAYA_SDK = "x-paymaya-sdk"
-        const val MIME_APPLICATION_JSON = "application/json"
-        const val SDK_VERSION_PREFIX = "android-v"
+        private const val HEADER_CONTENT_TYPE = "Content-Type"
+        private const val HEADER_AUTHORIZATION = "Authorization"
+        private const val HEADER_CONTENT_LENGTH = "Content-Length"
+        private const val HEADER_X_PAYMAYA_SDK = "x-paymaya-sdk"
+        private const val MIME_APPLICATION_JSON = "application/json"
+        private const val SDK_VERSION_PREFIX = "android-v"
         private const val AUTH_BASIC_PREFIX = "Basic"
     }
 }

@@ -44,5 +44,6 @@ data class Buyer(
     val contact: Contact? = null,
     val shippingAddress: Address? = null,
     val billingAddress: Address? = null,
+    @Deprecated(message = "Deprecated")
     val ipAddress: String? = null
 ) : Parcelable

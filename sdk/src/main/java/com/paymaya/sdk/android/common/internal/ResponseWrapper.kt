@@ -21,20 +21,20 @@ package com.paymaya.sdk.android.common.internal
 
 import com.paymaya.sdk.android.common.PaymentStatus
 
-internal open class ResponseWrapper
+internal interface ResponseWrapper
 
-internal open class SuccessResponseWrapper : ResponseWrapper()
+internal interface SuccessResponseWrapper : ResponseWrapper
 
 internal class RedirectSuccessResponseWrapper(
     val resultId: String,
     val redirectUrl: String
-) : SuccessResponseWrapper()
+) : SuccessResponseWrapper
 
 internal class StatusSuccessResponseWrapper(
     val id: String,
     val status: PaymentStatus
-) : SuccessResponseWrapper()
+) : SuccessResponseWrapper
 
 internal class ErrorResponseWrapper(
     val exception: Exception
-) : ResponseWrapper()
+) : ResponseWrapper

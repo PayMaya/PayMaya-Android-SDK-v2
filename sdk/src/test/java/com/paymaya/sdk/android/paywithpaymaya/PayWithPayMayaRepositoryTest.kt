@@ -19,7 +19,6 @@
 
 package com.paymaya.sdk.android.paywithpaymaya
 
-import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.paywithpaymaya.internal.PayWithPayMayaRepository
 import kotlinx.serialization.json.Json
@@ -47,7 +46,7 @@ class PayWithPayMayaRepositoryTest {
                 httpClient = OkHttpClient()
             )
 
-        assert(repository.baseUrl == BuildConfig.API_PAY_WITH_PAYMAYA_BASE_URL_SANDBOX)
+        assert(repository.baseUrl.startsWith(PayWithPayMayaRepository.BASE_URL_SANDBOX))
     }
 
     @Test
@@ -60,7 +59,7 @@ class PayWithPayMayaRepositoryTest {
                 httpClient = OkHttpClient()
             )
 
-        assert(repository.baseUrl == BuildConfig.API_PAY_WITH_PAYMAYA_BASE_URL_PRODUCTION)
+        assert(repository.baseUrl.startsWith(PayWithPayMayaRepository.BASE_URL_PRODUCTION))
     }
 
     companion object {

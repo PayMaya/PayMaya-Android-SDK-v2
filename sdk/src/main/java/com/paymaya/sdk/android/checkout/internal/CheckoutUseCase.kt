@@ -40,11 +40,6 @@ internal class CheckoutUseCase(
     override fun prepareSuccessResponse(responseBody: ResponseBody): RedirectSuccessResponseWrapper {
         val checkoutResponse = json.parse(CheckoutResponse.serializer(), responseBody.string())
 
-        // TODO check if really needed
-        // if (Build.MANUFACTURER.toLowerCase().contains("samsung")) {
-        //   redirectUrl += "&cssfix=true"
-        // }
-
         return RedirectSuccessResponseWrapper(
             checkoutResponse.checkoutId,
             checkoutResponse.redirectUrl

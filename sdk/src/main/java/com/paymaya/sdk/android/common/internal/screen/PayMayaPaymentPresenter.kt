@@ -86,7 +86,7 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
         return true
     }
 
-    private fun startPayment() =
+    private fun startPayment(): Job =
         launch {
             resultId = null
             val responseWrapper = sendRequestUseCase.run(requestModel)
@@ -137,10 +137,10 @@ internal class PayMayaPaymentPresenter<R : PayMayaRequest, U : SendRequestBaseUs
     private fun handleCancellation() {
         resultId?.let { id ->
             checkStatusJob = sendCheckStatusRequest(id)
-        } ?: view?.finishCanceled(null)
+        } ?: view?.finishCanceled(resultId = null)
     }
 
-    private fun sendCheckStatusRequest(id: String) =
+    private fun sendCheckStatusRequest(id: String): Job =
         launch {
             view?.hideWebView()
             view?.showProgressBar()

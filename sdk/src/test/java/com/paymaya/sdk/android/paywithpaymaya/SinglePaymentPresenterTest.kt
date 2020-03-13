@@ -121,7 +121,6 @@ class SinglePaymentPresenterTest {
         }
     }
 
-
     @Test
     fun `canceled but succeeded`() {
         runBlocking {

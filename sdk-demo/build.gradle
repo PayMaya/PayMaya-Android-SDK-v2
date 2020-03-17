@@ -1,8 +1,23 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.betomorrow.appcenter'
+
+def getAppCenterApiToken = { ->
+    project.hasProperty('appCenterApiToken') ? appCenterApiToken : ""
+}
+
+def getAppCenterOwnerName = { ->
+    project.hasProperty('appCenterOwnerName') ? appCenterOwnerName : ""
+}
+
+def getAppCenterAppName = { ->
+    project.hasProperty('appCenterAppName') ? appCenterAppName : ""
+}
+
+def getAppCenterDistributionGroup = { ->
+    project.hasProperty('appCenterDistributionGroup') ? appCenterDistributionGroup : ""
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -15,10 +30,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release {
+            storeFile file('debug.keystore')
+            keyAlias = 'android'
+            keyPassword = 'android'
+            storePassword = 'android'
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "style"
+    productFlavors {
+        defaultstyle {
+            applicationIdSuffix ".defaultstyle"
+            versionNameSuffix "-defaultstyle"
+        }
+        customstyle {
+            applicationIdSuffix ".customstyle"
+            versionNameSuffix "-customstyle"
         }
     }
 }
@@ -27,9 +63,32 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3"
+    implementation "androidx.appcompat:appcompat:1.1.0"
+    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "androidx.constraintlayout:constraintlayout:1.1.3"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "com.google.android.material:material:1.1.0"
 
     implementation project(":sdk")
+}
+
+appcenter {
+    // Api Token from AppCenter user profile
+    apiToken = getAppCenterApiToken()
+    // Owner Name from AppCenter Application (see following note)
+    ownerName = getAppCenterOwnerName()
+    // Name of the AppCenter Distribution Group
+    distributionGroups = [getAppCenterDistributionGroup()]
+    // Send mail to testers
+    notifyTesters = true
+    apps {
+        defaultstyleRelease {
+            appName = getAppCenterAppName()
+        }
+        customstyleRelease {
+            appName = getAppCenterAppName()
+        }
+    }
 }

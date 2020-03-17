@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/payMayaPaymentActivityWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/payMayaPaymentActivityProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/paymaya_vault_progress_bar_background"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar style="@style/PayMayaVaultProgressbarBase" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/payMayaCheckingPaymentStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="48dp"
+        android:text="@string/paymaya_checking_payment_status"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/payMayaNoConnectionScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:padding="20dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:text="@string/paymaya_connection_error"
+        android:textSize="20sp"
+        android:background="#80353535"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</FrameLayout>

@@ -1,0 +1,18 @@
+<resources>
+    <string name="paymaya_card_expired_error">Card is expired</string>
+    <string name="paymaya_error_dialog_title">Error</string>
+    <string name="paymaya_ok">OK</string>
+    <string name="paymaya_vault_card_number">Card Number</string>
+    <string name="paymaya_vault_card_exp_date">Expiry Date</string>
+    <string name="paymaya_vault_card_exp_date_hint">MM/YY</string>
+    <string name="paymaya_vault_card_cvc">CVV</string>
+    <string name="paymaya_vault_logo_content_description">Logo</string>
+    <string name="paymaya_vault_pay_button">Pay now</string>
+    <string name="paymaya_connection_error">No internet connection</string>
+    <string name="paymaya_unknown_error">Unknown error occurred</string>
+    <string name="paymaya_invalid_card_number">Invalid card number</string>
+    <string name="paymaya_invalid_date">Invalid date</string>
+    <string name="paymaya_invalid_cvc">Invalid CVV</string>
+    <string name="paymaya_vault_card_details">Card Details</string>
+    <string name="paymaya_checking_payment_status">Checking payment status</string>
+</resources>

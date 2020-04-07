@@ -15,7 +15,7 @@ The SDK includes Demo application which uses Sandbox environment.
 Android OS version 6.0 Marshmallow (API level 23) or higher.
 
 ## Integration
-Grab the latest SDK code from https://github.com/PayMaya/PayMaya-Android-SDK
+Grab the latest SDK code from https://github.com/PayMaya/PayMaya-Android-SDK-v2
 
 ## Checkout
 

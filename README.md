@@ -21,10 +21,8 @@ Android OS version 6.0 Marshmallow (API level 23) or higher.
 Refer [here](https://bintray.com/paymaya/maven-android/paymaya-sdk-android/) for the released versions
 
 ```
-buildscript {
-    repository {
-        jcenter()
-    }
+repositories {
+    jcenter()
 }
 
 dependencies {

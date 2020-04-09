@@ -1,0 +1,12 @@
+apply plugin: 'com.novoda.bintray-release' 
+
+publish {
+    userOrg = 'paymaya'
+    groupId = project.groupId
+    repoName = 'maven-android'
+    artifactId = project.artifactId
+    publishVersion = project.versionName
+    licences = ['MIT']
+    desc = 'Android SDK for PayMaya. Accept payments from within your mobile app.'
+    website = 'https://github.com/PayMaya/PayMaya-Android-SDK-v2'
+}

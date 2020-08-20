@@ -20,11 +20,15 @@
 package com.paymaya.sdk.android.common.internal.screen
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.webkit.*
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
@@ -32,7 +36,7 @@ import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
 import kotlinx.android.synthetic.main.activity_paymaya_payment.*
 
 internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
-    Activity(), PayMayaPaymentContract.View {
+    AppCompatActivity(), PayMayaPaymentContract.View {
 
     private lateinit var presenter: PayMayaPaymentContract.Presenter<R>
 
@@ -68,6 +72,16 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         presenter.backButtonPressed()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                presenter.backButtonPressed()
+                super.onOptionsItemSelected(item)
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun initializeView() {
         CookieManager.getInstance().setAcceptThirdPartyCookies(payMayaPaymentActivityWebView, true)
         if (BuildConfig.DEBUG) {
@@ -77,6 +91,13 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         payMayaPaymentActivityWebView.settings.javaScriptEnabled = true
         payMayaPaymentActivityWebView.settings.allowFileAccess = true
         payMayaPaymentActivityWebView.webViewClient = WebViewClientImpl()
+
+        val toolbar = findViewById<Toolbar>(com.paymaya.sdk.android.R.id.toolbar)
+        setSupportActionBar(toolbar)
+        if (supportActionBar != null) {
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            supportActionBar!!.title = ""
+        }
     }
 
     override fun loadUrl(redirectUrl: String) {

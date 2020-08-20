@@ -1,5 +1,10 @@
 <resources>
 
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!-- Screen background -->
     <style name="PayMayaVaultBackgroundBase" parent="PayMayaVaultBackground">
         <item name="android:layout_width">match_parent</item>

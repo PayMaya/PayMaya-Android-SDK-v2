@@ -8,19 +8,23 @@
 
         <activity
             android:name=".checkout.internal.CheckoutActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/NoActionBar" />
 
         <activity
             android:name=".paywithpaymaya.internal.SinglePaymentActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/NoActionBar" />
 
         <activity
             android:name=".paywithpaymaya.internal.CreateWalletLinkActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/NoActionBar" />
 
         <activity
             android:name=".vault.internal.screen.TokenizeCardActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/NoActionBar" />
 
     </application>
 

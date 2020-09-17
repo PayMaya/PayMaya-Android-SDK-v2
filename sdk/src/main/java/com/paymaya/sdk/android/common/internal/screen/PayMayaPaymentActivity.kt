@@ -94,9 +94,9 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
 
         val toolbar = findViewById<Toolbar>(com.paymaya.sdk.android.R.id.toolbar)
         setSupportActionBar(toolbar)
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.title = ""
+        supportActionBar?.apply {
+          setDisplayHomeAsUpEnabled(true)
+          title = ""
         }
     }
 

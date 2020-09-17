@@ -76,7 +76,7 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         return when (item.itemId) {
             android.R.id.home -> {
                 presenter.backButtonPressed()
-                super.onOptionsItemSelected(item)
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }

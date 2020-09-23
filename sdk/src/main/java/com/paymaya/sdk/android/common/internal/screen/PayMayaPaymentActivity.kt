@@ -92,12 +92,14 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         payMayaPaymentActivityWebView.settings.allowFileAccess = true
         payMayaPaymentActivityWebView.webViewClient = WebViewClientImpl()
 
+        /* TODO: Make a option to use toolbar (either through config, etc.)
         val toolbar = findViewById<Toolbar>(com.paymaya.sdk.android.R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
           setDisplayHomeAsUpEnabled(true)
           title = ""
         }
+         */
     }
 
     override fun loadUrl(redirectUrl: String) {

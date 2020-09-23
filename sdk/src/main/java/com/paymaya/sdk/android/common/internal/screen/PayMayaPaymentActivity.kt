@@ -72,16 +72,6 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         presenter.backButtonPressed()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                presenter.backButtonPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun initializeView() {
         CookieManager.getInstance().setAcceptThirdPartyCookies(payMayaPaymentActivityWebView, true)
         if (BuildConfig.DEBUG) {

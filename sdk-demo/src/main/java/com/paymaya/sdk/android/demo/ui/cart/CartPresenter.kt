@@ -74,6 +74,7 @@ class CartPresenter(
 
     private fun buildCheckoutRequest() =
         CheckoutRequest(
+            com.paymaya.sdk.android.checkout.models.AuthorizationType.Normal,
             TotalAmount(
                 cartRepository.getTotalAmount(),
                 Constants.CURRENCY,

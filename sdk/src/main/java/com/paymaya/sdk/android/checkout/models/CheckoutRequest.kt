@@ -22,7 +22,6 @@ package com.paymaya.sdk.android.checkout.models
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
 import com.paymaya.sdk.android.common.models.RedirectUrl
 import com.paymaya.sdk.android.common.models.TotalAmount
-import com.paymaya.sdk.android.common.serialization.AuthorizationTypeSerializer
 import com.paymaya.sdk.android.common.serialization.JSONObjectParceler
 import com.paymaya.sdk.android.common.serialization.JSONObjectSerializer
 import kotlinx.android.parcel.Parcelize
@@ -45,14 +44,13 @@ import org.json.JSONObject
  */
 @Parcelize
 @Serializable
-data class CheckoutRequest(
-    @Serializable(with = AuthorizationTypeSerializer::class)
-    val authorizationType: AuthorizationType? = null,
+public data class CheckoutRequest(
     val totalAmount: TotalAmount,
     val buyer: Buyer? = null,
     val items: List<Item>,
     val requestReferenceNumber: String,
     override val redirectUrl: RedirectUrl,
     @Serializable(with = JSONObjectSerializer::class)
-    val metadata: @WriteWith<JSONObjectParceler> JSONObject? = null
-) : PayMayaRequest
+    val metadata: @WriteWith<JSONObjectParceler> JSONObject? = null,
+    val authorizationType: AuthorizationType? = null
+    ) : PayMayaRequest

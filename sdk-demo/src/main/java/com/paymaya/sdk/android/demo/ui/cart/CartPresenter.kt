@@ -67,6 +67,7 @@ class CartPresenter(
         paymentMethod = PaymentMethod.CHECKOUT
         resultId = null
         if (cartRepository.getItems().isNotEmpty()) {
+
             val checkoutRequest = buildCheckoutRequest()
             view?.payWithCheckout(checkoutRequest)
         }
@@ -74,7 +75,6 @@ class CartPresenter(
 
     private fun buildCheckoutRequest() =
         CheckoutRequest(
-            com.paymaya.sdk.android.checkout.models.AuthorizationType.Normal,
             TotalAmount(
                 cartRepository.getTotalAmount(),
                 Constants.CURRENCY,

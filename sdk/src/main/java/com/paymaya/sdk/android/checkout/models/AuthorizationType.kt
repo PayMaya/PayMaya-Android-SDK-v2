@@ -1,12 +1,12 @@
 package com.paymaya.sdk.android.checkout.models
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-public enum class AuthorizationType(val value: String) {
-
-    Normal("NORMAL"),
-    Final("FINAL"),
-    Preauthorization("PREAUTHORIZATION")
-
+enum class AuthorizationType {
+    NORMAL,
+    FINAL,
+    PREAUTHORIZATION
 }

@@ -44,7 +44,7 @@ import org.json.JSONObject
  */
 @Parcelize
 @Serializable
-public data class CheckoutRequest(
+data class CheckoutRequest(
     val totalAmount: TotalAmount,
     val buyer: Buyer? = null,
     val items: List<Item>,
@@ -53,4 +53,4 @@ public data class CheckoutRequest(
     @Serializable(with = JSONObjectSerializer::class)
     val metadata: @WriteWith<JSONObjectParceler> JSONObject? = null,
     val authorizationType: AuthorizationType? = null
-    ) : PayMayaRequest
+) : PayMayaRequest

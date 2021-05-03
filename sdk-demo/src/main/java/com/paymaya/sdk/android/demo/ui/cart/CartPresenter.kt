@@ -67,7 +67,6 @@ class CartPresenter(
         paymentMethod = PaymentMethod.CHECKOUT
         resultId = null
         if (cartRepository.getItems().isNotEmpty()) {
-
             val checkoutRequest = buildCheckoutRequest()
             view?.payWithCheckout(checkoutRequest)
         }

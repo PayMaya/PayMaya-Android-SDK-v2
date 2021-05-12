@@ -1,4 +1,7 @@
 # PayMayaSDK
+
+[![Release](https://jitpack.io/v/paymaya/paymaya-android-sdk-v2.svg)](https://jitpack.io/#paymaya/paymaya-android-sdk-v2)
+
 The PayMaya Android SDK is a library that allows you integrate with PayMaya
 payments. It supports following methods:
 * Checkout
@@ -18,7 +21,29 @@ Android OS version 6.0 Marshmallow (API level 23) or higher.
 
 ### Gradle
 
-Refer [here](https://bintray.com/paymaya/maven-android/paymaya-sdk-android/) for the released versions
+#### Jitpack
+
+Refer [here](https://jitpack.io/#paymaya/paymaya-android-sdk-v2) for the released versions.
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.paymaya:paymaya-android-sdk-v2:<release tag>'
+}
+```
+
+#### JCenter
+
+> :warning: Support for this repository has been deprecated (see [here](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/)).
+> Only versions 2.0.1 below are available in JCenter as read-only. Succeeding patches / releases will be uploaded to repositories documented above.
+
+Refer [here](https://bintray.com/paymaya/maven-android/paymaya-sdk-android/) for the released versions.
 
 ```
 repositories {

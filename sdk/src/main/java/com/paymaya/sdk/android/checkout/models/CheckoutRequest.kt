@@ -51,5 +51,6 @@ data class CheckoutRequest(
     val requestReferenceNumber: String,
     override val redirectUrl: RedirectUrl,
     @Serializable(with = JSONObjectSerializer::class)
-    val metadata: @WriteWith<JSONObjectParceler> JSONObject? = null
+    val metadata: @WriteWith<JSONObjectParceler> JSONObject? = null,
+    val authorizationType: AuthorizationType? = null
 ) : PayMayaRequest

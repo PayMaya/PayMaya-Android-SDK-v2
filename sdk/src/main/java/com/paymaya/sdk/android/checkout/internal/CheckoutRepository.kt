@@ -41,7 +41,7 @@ internal class CheckoutRepository(
     }
 
     suspend fun checkout(requestModel: CheckoutRequest): Response {
-        val bodyString = json.stringify(CheckoutRequest.serializer(), requestModel)
+        val bodyString = json.encodeToString(CheckoutRequest.serializer(), requestModel)
 
         val request = getBaseRequestBuilder(clientPublicKey, bodyString.length)
             .url(baseUrl + CHECKOUT_ENDPOINT)

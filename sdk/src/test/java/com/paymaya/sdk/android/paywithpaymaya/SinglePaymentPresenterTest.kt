@@ -27,7 +27,11 @@ import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PaymentStatus
 import com.paymaya.sdk.android.common.exceptions.InternalException
 import com.paymaya.sdk.android.common.exceptions.PaymentFailedException
-import com.paymaya.sdk.android.common.internal.*
+import com.paymaya.sdk.android.common.internal.CheckStatusUseCase
+import com.paymaya.sdk.android.common.internal.ErrorResponseWrapper
+import com.paymaya.sdk.android.common.internal.Logger
+import com.paymaya.sdk.android.common.internal.RedirectSuccessResponseWrapper
+import com.paymaya.sdk.android.common.internal.StatusSuccessResponseWrapper
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentContract
 import com.paymaya.sdk.android.common.internal.screen.PayMayaPaymentPresenter
 import com.paymaya.sdk.android.common.models.RedirectUrl
@@ -40,7 +44,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -68,7 +71,7 @@ class SinglePaymentPresenterTest {
         Dispatchers.setMain(TestCoroutineDispatcher())
         MockitoAnnotations.initMocks(this)
 
-        json = Json(JsonConfiguration.Stable)
+        json = Json
         presenter = PayMayaPaymentPresenter(singlePaymentUseCase, checkStatusUseCase, Logger(LogLevel.DEBUG))
     }
 

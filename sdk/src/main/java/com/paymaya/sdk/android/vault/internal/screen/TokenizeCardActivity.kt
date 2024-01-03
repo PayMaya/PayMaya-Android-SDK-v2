@@ -27,30 +27,32 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.material.textfield.TextInputEditText
 import com.paymaya.sdk.android.R
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.AndroidString
+import com.paymaya.sdk.android.databinding.ActivityPaymayaVaultTokenizeCardBinding
 import com.paymaya.sdk.android.vault.internal.di.VaultModule
 import com.paymaya.sdk.android.vault.internal.helpers.AutoFormatTextWatcher
 import com.paymaya.sdk.android.vault.internal.helpers.CardNumberFormatter
 import com.paymaya.sdk.android.vault.internal.helpers.DateFormatter
 import com.paymaya.sdk.android.vault.internal.models.TokenizeCardResponse
-import kotlinx.android.synthetic.main.activity_paymaya_vault_tokenize_card.*
-import java.util.*
+import java.util.Calendar
 
 internal class TokenizeCardActivity : AppCompatActivity(),
     TokenizeCardContract.View {
 
     private lateinit var presenter: TokenizeCardContract.Presenter
+    private lateinit var binding: ActivityPaymayaVaultTokenizeCardBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_paymaya_vault_tokenize_card)
         supportActionBar?.hide()
 
         val intent = requireNotNull(intent)
@@ -59,6 +61,17 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         val clientPublicKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_PUBLIC_KEY))
         val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
         val logoResId = intent.getIntExtra(EXTRAS_LOGO_RES_ID, UNDEFINED_RES_ID)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                presenter.backButtonPressed()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
+
+        binding = ActivityPaymayaVaultTokenizeCardBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         presenter = buildPresenter(environment, clientPublicKey, logLevel)
 
@@ -72,59 +85,55 @@ internal class TokenizeCardActivity : AppCompatActivity(),
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        presenter.backButtonPressed()
-    }
-
     private fun initializeView(@DrawableRes logoResId: Int) {
         if (logoResId != UNDEFINED_RES_ID) {
-            payMayaVaultLogo.setImageDrawable(getDrawable(logoResId))
+            binding.payMayaVaultLogo.setImageDrawable(AppCompatResources.getDrawable(this, logoResId))
         }
 
-        payMayaVaultPayButton.setOnClickListener {
+        binding.payMayaVaultPayButton.setOnClickListener {
             presenter.payButtonClicked(
-                payMayaVaultCardNumberEditText.text.toString(),
-                payMayaVaultCardExpirationDateEditText.text.toString(),
-                payMayaVaultCardCvcEditText.text.toString()
+                binding.payMayaVaultCardNumberEditText.text.toString(),
+                binding.payMayaVaultCardExpirationDateEditText.text.toString(),
+                binding.payMayaVaultCardCvcEditText.text.toString()
             )
         }
 
-        payMayaVaultCardNumberEditText.onFocusChangeListener =
+        binding.payMayaVaultCardNumberEditText.onFocusChangeListener =
             SimpleFocusLostListener(callbackFocusLost = { presenter.cardNumberFocusLost(it) })
-        payMayaVaultCardNumberEditText.addTextChangedListener(
+        binding.payMayaVaultCardNumberEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardNumberChanged(it) }
         )
-        payMayaVaultCardNumberEditText.addTextChangedListener(
+        binding.payMayaVaultCardNumberEditText.addTextChangedListener(
             AutoFormatTextWatcher(
-                payMayaVaultCardNumberEditText,
+                binding.payMayaVaultCardNumberEditText,
                 CardNumberFormatter()
             )
         )
 
-        payMayaVaultCardExpirationDateEditText.onFocusChangeListener =
+        binding.payMayaVaultCardExpirationDateEditText.onFocusChangeListener =
             SimpleFocusLostListener(
                 callbackFocusReceived = { presenter.cardExpirationDateFocusReceived() },
                 callbackFocusLost = { presenter.cardExpirationDateFocusLost(it) }
             )
-        payMayaVaultCardExpirationDateEditText.addTextChangedListener(
+        binding.payMayaVaultCardExpirationDateEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardExpirationDateChanged() }
         )
-        payMayaVaultCardExpirationDateEditText.addTextChangedListener(
+        binding.payMayaVaultCardExpirationDateEditText.addTextChangedListener(
             AutoFormatTextWatcher(
-                payMayaVaultCardExpirationDateEditText,
+                binding.payMayaVaultCardExpirationDateEditText,
                 DateFormatter()
             )
         )
 
-        payMayaVaultCardCvcEditText.onFocusChangeListener =
+        binding.payMayaVaultCardCvcEditText.onFocusChangeListener =
             SimpleFocusLostListener(callbackFocusLost = { presenter.cardCvcFocusLost(it) })
-        payMayaVaultCardCvcEditText.addTextChangedListener(
+        binding.payMayaVaultCardCvcEditText.addTextChangedListener(
             SimpleTextWatcher { presenter.cardCvcChanged() }
         )
-        payMayaVaultScreenMask.setOnClickListener {
+        binding.payMayaVaultScreenMask.setOnClickListener {
             presenter.screenMaskClicked()
         }
-        payMayaVaultCardCvcHintButtonMask.setOnClickListener {
+        binding.payMayaVaultCardCvcHintButtonMask.setOnClickListener {
             presenter.cardCvcInfoClicked()
         }
     }
@@ -151,11 +160,11 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     override fun showProgressBar() {
-        payMayaVaultProgressBar.visibility = View.VISIBLE
+        binding.payMayaVaultProgressBar.visibility = View.VISIBLE
     }
 
     override fun hideProgressBar() {
-        payMayaVaultProgressBar.visibility = View.GONE
+        binding.payMayaVaultProgressBar.visibility = View.GONE
     }
 
     override fun showErrorPopup(message: AndroidString) {
@@ -168,27 +177,27 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     override fun showCardNumberError() {
-        payMayaVaultCardNumberTextInputLayout.error = getString(R.string.paymaya_invalid_card_number)
+        binding.payMayaVaultCardNumberTextInputLayout.error = getString(R.string.paymaya_invalid_card_number)
     }
 
     override fun hideCardNumberError() {
-        payMayaVaultCardNumberTextInputLayout.error = null
+        binding.payMayaVaultCardNumberTextInputLayout.error = null
     }
 
     override fun hideCardExpirationDateError() {
-        payMayaVaultCardExpirationDateTextInputLayout.error = null
+        binding.payMayaVaultCardExpirationDateTextInputLayout.error = null
     }
 
     override fun showCardExpirationDateError() {
-        payMayaVaultCardExpirationDateTextInputLayout.error = getString(R.string.paymaya_invalid_date)
+        binding.payMayaVaultCardExpirationDateTextInputLayout.error = getString(R.string.paymaya_invalid_date)
     }
 
     override fun hideCardCvcError() {
-        payMayaVaultCardCvcTextInputLayout.error = null
+        binding.payMayaVaultCardCvcTextInputLayout.error = null
     }
 
     override fun showCardCvcError() {
-        payMayaVaultCardCvcTextInputLayout.error = getString(R.string.paymaya_invalid_cvc)
+        binding.payMayaVaultCardCvcTextInputLayout.error = getString(R.string.paymaya_invalid_cvc)
     }
 
     override fun hideKeyboard() {
@@ -200,17 +209,17 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     override fun hideCardCvcHint() {
-        payMayaVaultCardCvcHintImage.visibility = View.GONE
-        payMayaVaultScreenMask.visibility = View.GONE
+        binding.payMayaVaultCardCvcHintImage.visibility = View.GONE
+        binding.payMayaVaultScreenMask.visibility = View.GONE
     }
 
     override fun showCardCvcHint() {
-        payMayaVaultCardCvcHintImage.visibility = View.VISIBLE
-        payMayaVaultScreenMask.visibility = View.VISIBLE
+        binding.payMayaVaultCardCvcHintImage.visibility = View.VISIBLE
+        binding.payMayaVaultScreenMask.visibility = View.VISIBLE
     }
 
     override fun showCardExpirationDateHint() {
-        payMayaVaultCardExpirationDateEditText.hint = getString(R.string.paymaya_vault_card_exp_date_hint)
+        binding.payMayaVaultCardExpirationDateEditText.hint = getString(R.string.paymaya_vault_card_exp_date_hint)
     }
 
     class SimpleFocusLostListener(
@@ -242,12 +251,12 @@ internal class TokenizeCardActivity : AppCompatActivity(),
     }
 
     override fun showCardIcon(@DrawableRes iconRes: Int) {
-        payMayaVaultCardNumberEditText
+        binding.payMayaVaultCardNumberEditText
             .setCompoundDrawablesWithIntrinsicBounds(0, 0, iconRes, 0)
     }
 
     override fun hideCardIcon() {
-        payMayaVaultCardNumberEditText
+        binding.payMayaVaultCardNumberEditText
             .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }
 

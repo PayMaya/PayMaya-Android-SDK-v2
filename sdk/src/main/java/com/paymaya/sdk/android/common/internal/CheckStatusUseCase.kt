@@ -35,7 +35,7 @@ internal class CheckStatusUseCase(
         repository.status(request)
 
     override fun prepareSuccessResponse(responseBody: ResponseBody): StatusSuccessResponseWrapper {
-        val response = json.parse(StatusResponse.serializer(), responseBody.string())
+        val response = json.decodeFromString(StatusResponse.serializer(), responseBody.string())
 
         return StatusSuccessResponseWrapper(
             response.id,

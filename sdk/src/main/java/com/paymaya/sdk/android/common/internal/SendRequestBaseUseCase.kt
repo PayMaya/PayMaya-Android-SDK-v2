@@ -74,7 +74,7 @@ internal abstract class SendRequestBaseUseCase<T>(
         httpResponse.body?.let { responseBody ->
             try {
                 val paymentError =
-                    json.parse(PaymentError.serializer(), responseBody.string())
+                    json.decodeFromString(PaymentError.serializer(), responseBody.string())
 
                 ErrorResponseWrapper(
                     BadRequestException(paymentError.message, paymentError)
@@ -88,7 +88,7 @@ internal abstract class SendRequestBaseUseCase<T>(
         httpResponse.body?.let { responseBody ->
             try {
                 val genericError =
-                    json.parse(GenericError.serializer(), responseBody.string())
+                    json.decodeFromString(GenericError.serializer(), responseBody.string())
 
                 ErrorResponseWrapper(
                     BadRequestException(genericError.error, genericError)

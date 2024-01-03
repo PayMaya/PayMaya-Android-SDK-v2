@@ -22,27 +22,24 @@ package com.paymaya.sdk.android.common.internal.screen
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.webkit.*
-import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.paymaya.sdk.android.BuildConfig
 import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.internal.models.PayMayaRequest
-import kotlinx.android.synthetic.main.activity_paymaya_payment.*
+import com.paymaya.sdk.android.databinding.ActivityPaymayaPaymentBinding
 
 internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     AppCompatActivity(), PayMayaPaymentContract.View {
 
     private lateinit var presenter: PayMayaPaymentContract.Presenter<R>
+    private lateinit var binding: ActivityPaymayaPaymentBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.paymaya.sdk.android.R.layout.activity_paymaya_payment)
 
         val intent = requireNotNull(intent)
         val bundle = requireNotNull(intent.getBundleExtra(EXTRAS_BUNDLE))
@@ -50,6 +47,17 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         val clientPublicKey = requireNotNull(intent.getStringExtra(EXTRAS_CLIENT_PUBLIC_KEY))
         val environment = requireNotNull(intent.getSerializableExtra(EXTRAS_ENVIRONMENT) as PayMayaEnvironment)
         val logLevel = requireNotNull(intent.getSerializableExtra(EXTRAS_LOG_LEVEL) as LogLevel)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                presenter.backButtonPressed()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
+
+        binding = ActivityPaymayaPaymentBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         initializeView()
 
@@ -68,27 +76,23 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
         logLevel: LogLevel
     ): PayMayaPaymentContract.Presenter<R>
 
-    override fun onBackPressed() {
-        presenter.backButtonPressed()
-    }
-
     private fun initializeView() {
-        CookieManager.getInstance().setAcceptThirdPartyCookies(payMayaPaymentActivityWebView, true)
+        CookieManager.getInstance().setAcceptThirdPartyCookies(binding.payMayaPaymentActivityWebView, true)
         if (BuildConfig.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
         @SuppressLint("SetJavaScriptEnabled")
-        payMayaPaymentActivityWebView.settings.javaScriptEnabled = true
-        payMayaPaymentActivityWebView.settings.allowFileAccess = true
-        payMayaPaymentActivityWebView.webViewClient = WebViewClientImpl()
+        binding.payMayaPaymentActivityWebView.settings.javaScriptEnabled = true
+        binding.payMayaPaymentActivityWebView.settings.allowFileAccess = true
+        binding.payMayaPaymentActivityWebView.webViewClient = WebViewClientImpl()
     }
 
     override fun loadUrl(redirectUrl: String) {
-        payMayaPaymentActivityWebView.loadUrl(redirectUrl)
+        binding.payMayaPaymentActivityWebView.loadUrl(redirectUrl)
     }
 
     override fun showNoConnectionScreen() {
-        payMayaNoConnectionScreen.visibility = View.VISIBLE
+        binding.payMayaNoConnectionScreen.visibility = View.VISIBLE
     }
 
     override fun finishSuccess(resultId: String) {
@@ -114,21 +118,21 @@ internal abstract class PayMayaPaymentActivity<R : PayMayaRequest> :
     }
 
     override fun showProgressBar() {
-        payMayaPaymentActivityProgressBar.visibility = View.VISIBLE
+        binding.payMayaPaymentActivityProgressBar.visibility = View.VISIBLE
     }
 
     override fun hideProgressBar() {
-        payMayaPaymentActivityProgressBar.visibility = View.GONE
+        binding.payMayaPaymentActivityProgressBar.visibility = View.GONE
     }
 
     override fun hideWebView() {
-        payMayaPaymentActivityWebView.visibility = View.GONE
-        payMayaPaymentActivityWebView.webViewClient = NoOpWebViewClientImpl()
-        payMayaPaymentActivityWebView.stopLoading()
+        binding.payMayaPaymentActivityWebView.visibility = View.GONE
+        binding.payMayaPaymentActivityWebView.webViewClient = NoOpWebViewClientImpl()
+        binding.payMayaPaymentActivityWebView.stopLoading()
     }
 
     override fun showCheckingPaymentStatusLabel() {
-        payMayaCheckingPaymentStatusLabel.visibility = View.VISIBLE
+        binding.payMayaCheckingPaymentStatusLabel.visibility = View.VISIBLE
     }
 
     inner class WebViewClientImpl : WebViewClient() {

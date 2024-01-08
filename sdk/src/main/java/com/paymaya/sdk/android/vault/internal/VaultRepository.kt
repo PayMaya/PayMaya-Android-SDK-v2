@@ -41,7 +41,7 @@ internal class VaultRepository(
     }
 
     suspend fun tokenizeCard(requestModel: TokenizeCardRequest): Response {
-        val bodyString = json.stringify(TokenizeCardRequest.serializer(), requestModel)
+        val bodyString = json.encodeToString(TokenizeCardRequest.serializer(), requestModel)
 
         val request = getBaseRequestBuilder(clientPublicKey, bodyString.length)
             .url(baseUrl + CREATE_TOKEN_ENDPOINT)

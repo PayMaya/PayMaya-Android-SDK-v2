@@ -20,24 +20,24 @@
 package com.paymaya.sdk.android.common.serialization
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import org.json.JSONObject
 
-@Serializer(forClass = JSONObject::class)
 object JSONObjectSerializer : KSerializer<JSONObject> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("jsonObjectSerializerStringDescriptor", PrimitiveKind.STRING)
+    private val jsonSerializer = JsonElement.serializer()
+    override val descriptor: SerialDescriptor = jsonSerializer.descriptor
 
     override fun serialize(encoder: Encoder, value: JSONObject) {
-        encoder.encodeString(value.toString())
+        encoder.encodeSerializableValue(jsonSerializer,
+            Json.parseToJsonElement(value.toString()))
     }
 
     override fun deserialize(decoder: Decoder): JSONObject {
-        return JSONObject(decoder.decodeString())
+        return JSONObject(
+            decoder.decodeSerializableValue(jsonSerializer).toString())
     }
 }

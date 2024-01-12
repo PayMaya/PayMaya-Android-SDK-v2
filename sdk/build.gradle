@@ -60,4 +60,6 @@ dependencies {
     testImplementation "org.mockito:mockito-inline:3.2.4"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.3"
+    testImplementation "org.json:json:20231013"
+    testImplementation "io.github.nomisrev:kotlinx-serialization-jsonpath:0.2.0"
 }

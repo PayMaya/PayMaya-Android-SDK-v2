@@ -38,7 +38,7 @@ internal class CheckoutUseCase(
         repository.checkout(request)
 
     override fun prepareSuccessResponse(responseBody: ResponseBody): RedirectSuccessResponseWrapper {
-        val checkoutResponse = json.parse(CheckoutResponse.serializer(), responseBody.string())
+        val checkoutResponse = json.decodeFromString(CheckoutResponse.serializer(), responseBody.string())
 
         return RedirectSuccessResponseWrapper(
             checkoutResponse.checkoutId,

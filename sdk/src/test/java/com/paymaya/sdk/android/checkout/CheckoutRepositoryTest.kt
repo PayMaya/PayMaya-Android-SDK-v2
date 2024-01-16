@@ -22,7 +22,6 @@ package com.paymaya.sdk.android.checkout
 import com.paymaya.sdk.android.checkout.internal.CheckoutRepository
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
@@ -33,7 +32,7 @@ class CheckoutRepositoryTest {
 
     @Before
     fun setup() {
-        json = Json(JsonConfiguration.Stable)
+        json = Json
     }
 
     @Test

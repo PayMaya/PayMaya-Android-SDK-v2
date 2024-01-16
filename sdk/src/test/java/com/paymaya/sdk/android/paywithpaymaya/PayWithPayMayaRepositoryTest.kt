@@ -22,7 +22,6 @@ package com.paymaya.sdk.android.paywithpaymaya
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.paywithpaymaya.internal.PayWithPayMayaRepository
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
@@ -33,7 +32,7 @@ class PayWithPayMayaRepositoryTest {
 
     @Before
     fun setup() {
-        json = Json(JsonConfiguration.Stable)
+        json = Json
     }
 
     @Test

@@ -20,7 +20,7 @@
 package com.paymaya.sdk.android.common.serialization
 
 import android.os.Parcel
-import kotlinx.android.parcel.Parceler
+import kotlinx.parcelize.Parceler
 import org.json.JSONObject
 
 object JSONObjectParceler : Parceler<JSONObject?> {

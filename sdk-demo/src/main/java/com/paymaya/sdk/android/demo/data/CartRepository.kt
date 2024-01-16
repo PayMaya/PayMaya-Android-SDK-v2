@@ -4,13 +4,15 @@ import com.paymaya.sdk.android.checkout.models.Item
 import com.paymaya.sdk.android.checkout.models.ItemAmount
 import com.paymaya.sdk.android.common.models.AmountDetails
 import com.paymaya.sdk.android.common.models.TotalAmount
+import com.paymaya.sdk.android.demo.Constants
 import com.paymaya.sdk.android.demo.model.ShopItem
 import java.math.BigDecimal
+import java.math.BigInteger
 
 class CartRepository {
 
     private val items: MutableList<Item> = mutableListOf()
-    private var totalAmount: BigDecimal = BigDecimal(0)
+    private var totalAmount: BigDecimal = BigDecimal(BigInteger.ZERO, Constants.DECIMALS)
     private var totalCount: Int = 0
 
     fun getItems(): List<Item> =

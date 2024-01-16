@@ -38,7 +38,7 @@ internal class SinglePaymentUseCase(
         repository.singlePayment(request)
 
     override fun prepareSuccessResponse(responseBody: ResponseBody): RedirectSuccessResponseWrapper {
-        val singlePaymentResponse = json.parse(SinglePaymentResponse.serializer(), responseBody.string())
+        val singlePaymentResponse = json.decodeFromString(SinglePaymentResponse.serializer(), responseBody.string())
 
         return RedirectSuccessResponseWrapper(
             singlePaymentResponse.paymentId,

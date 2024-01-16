@@ -19,6 +19,7 @@ import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.vault.PayMayaVaultResult
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import kotlin.coroutines.CoroutineContext
 
 class CartPresenter(
@@ -90,7 +91,8 @@ class CartPresenter(
             ),
             cartRepository.getItems(),
             getRequestReferenceNumber(),
-            REDIRECT_URL
+            REDIRECT_URL,
+            metadata = JSONObject("{\"testInt\":1, \"testStr\":\"value\", \"testObj\":{\"testSubInt\":2, \"testSubStr\":\"value2\"}}")
         )
 
     override fun payWithSinglePaymentButtonClicked() {

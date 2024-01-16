@@ -42,7 +42,7 @@ internal class PayWithPayMayaRepository(
     }
 
     suspend fun singlePayment(requestModel: SinglePaymentRequest): Response {
-        val bodyString = json.stringify(SinglePaymentRequest.serializer(), requestModel)
+        val bodyString = json.encodeToString(SinglePaymentRequest.serializer(), requestModel)
 
         val request = getBaseRequestBuilder(clientPublicKey, bodyString.length)
             .url(baseUrl + SINGLE_PAYMENT_ENDPOINT)
@@ -53,7 +53,7 @@ internal class PayWithPayMayaRepository(
     }
 
     suspend fun createWalletLink(requestModel: CreateWalletLinkRequest): Response {
-        val bodyString = json.stringify(CreateWalletLinkRequest.serializer(), requestModel)
+        val bodyString = json.encodeToString(CreateWalletLinkRequest.serializer(), requestModel)
 
         val request = getBaseRequestBuilder(clientPublicKey, bodyString.length)
             .url(baseUrl + CREATE_WALLET_LINK_ENDPOINT)

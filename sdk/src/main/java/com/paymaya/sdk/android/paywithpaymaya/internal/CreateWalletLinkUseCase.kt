@@ -38,7 +38,7 @@ internal class CreateWalletLinkUseCase(
         repository.createWalletLink(request)
 
     override fun prepareSuccessResponse(responseBody: ResponseBody): RedirectSuccessResponseWrapper {
-        val createWalletLinkResponse = json.parse(CreateWalletLinkResponse.serializer(), responseBody.string())
+        val createWalletLinkResponse = json.decodeFromString(CreateWalletLinkResponse.serializer(), responseBody.string())
 
         return RedirectSuccessResponseWrapper(
             createWalletLinkResponse.linkId,

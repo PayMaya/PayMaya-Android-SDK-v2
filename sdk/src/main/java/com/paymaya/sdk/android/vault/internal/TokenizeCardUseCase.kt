@@ -37,7 +37,7 @@ internal class TokenizeCardUseCase(
         repository.tokenizeCard(request)
 
     override fun prepareSuccessResponse(responseBody: ResponseBody): TokenizeCardSuccessResponseWrapper {
-        val response = json.parse(TokenizeCardResponse.serializer(), responseBody.string())
+        val response = json.decodeFromString(TokenizeCardResponse.serializer(), responseBody.string())
 
         return TokenizeCardSuccessResponseWrapper(response)
     }

@@ -15,20 +15,21 @@ import com.paymaya.sdk.android.common.LogLevel
 import com.paymaya.sdk.android.common.PayMayaEnvironment
 import com.paymaya.sdk.android.common.exceptions.BadRequestException
 import com.paymaya.sdk.android.demo.Constants.DECIMALS
-import com.paymaya.sdk.android.demo.R
+import com.paymaya.sdk.android.demo.databinding.ActivityCartBinding
 import com.paymaya.sdk.android.demo.di.PresenterModule
 import com.paymaya.sdk.android.paywithpaymaya.PayWithPayMaya
 import com.paymaya.sdk.android.paywithpaymaya.models.CreateWalletLinkRequest
 import com.paymaya.sdk.android.paywithpaymaya.models.SinglePaymentRequest
 import com.paymaya.sdk.android.vault.PayMayaVault
-import kotlinx.android.synthetic.main.activity_cart.*
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 typealias OnRemoveFromCartRequestListener = (cartItem: Item) -> Unit
 
 class CartActivity : Activity(), CartContract.View {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var binding: ActivityCartBinding
     private val presenter: CartContract.Presenter = PresenterModule.getCartPresenter()
     private var adapter = CartItemAdapter(
         onRemoveFromCartRequestListener = { presenter.removeFromCartButtonClicked(it) }
@@ -54,7 +55,9 @@ class CartActivity : Activity(), CartContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cart)
+
+        binding = ActivityCartBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initView()
         presenter.viewCreated(
@@ -66,18 +69,18 @@ class CartActivity : Activity(), CartContract.View {
 
     private fun initView() {
         linearLayoutManager = LinearLayoutManager(this)
-        cart_products_list.layoutManager = linearLayoutManager
-        cart_products_list.adapter = adapter
+        binding.cartProductsList.layoutManager = linearLayoutManager
+        binding.cartProductsList.adapter = adapter
 
-        pay_with_checkout_button.setOnClickListener { presenter.payWithCheckoutButtonClicked() }
-        pay_with_single_payment_button.setOnClickListener { presenter.payWithSinglePaymentButtonClicked() }
-        create_wallet_link_button.setOnClickListener { presenter.createWalletLinkButtonClicked() }
-        pay_maya_vault_button.setOnClickListener { presenter.payMayaVaultButtonClicked() }
-        check_recent_payment_status.setOnClickListener { presenter.payMayaCheckRecentPaymentStatusClicked() }
+        binding.payWithCheckoutButton.setOnClickListener { presenter.payWithCheckoutButtonClicked() }
+        binding.payWithSinglePaymentButton.setOnClickListener { presenter.payWithSinglePaymentButtonClicked() }
+        binding.createWalletLinkButton.setOnClickListener { presenter.createWalletLinkButtonClicked() }
+        binding.payMayaVaultButton.setOnClickListener { presenter.payMayaVaultButtonClicked() }
+        binding.checkRecentPaymentStatus.setOnClickListener { presenter.payMayaCheckRecentPaymentStatusClicked() }
     }
 
     override fun setTotalAmount(totalAmount: BigDecimal, currency: String) {
-        payment_amount.text = "${totalAmount.setScale(DECIMALS, BigDecimal.ROUND_HALF_DOWN)} $currency"
+        binding.paymentAmount.text = "${totalAmount.setScale(DECIMALS, RoundingMode.HALF_DOWN)} $currency"
     }
 
     override fun populateView(productsList: List<Item>) {
@@ -117,17 +120,17 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun showResultSuccessMessage(message: String) {
-        Snackbar.make(cart_view_container, "Operation succeeded", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.cartViewContainer, "Operation succeeded", Snackbar.LENGTH_SHORT).show()
         Log.i(TAG, message)
     }
 
     override fun showResultCancelMessage(message: String) {
-        Snackbar.make(cart_view_container, "Operation canceled", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.cartViewContainer, "Operation canceled", Snackbar.LENGTH_SHORT).show()
         Log.w(TAG, message)
     }
 
     override fun showResultFailureMessage(message: String, exception: Exception) {
-        Snackbar.make(cart_view_container, "Operation failure", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.cartViewContainer, "Operation failure", Snackbar.LENGTH_SHORT).show()
         Log.e(TAG, message)
         if (exception is BadRequestException) {
             Log.d(TAG, exception.error.toString())
@@ -135,19 +138,19 @@ class CartActivity : Activity(), CartContract.View {
     }
 
     override fun showPaymentIdNotAvailableMessage() {
-        Snackbar.make(cart_view_container, "Payment ID not available", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.cartViewContainer, "Payment ID not available", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun showPaymentDetailedStatus(message: String) {
-        Snackbar.make(cart_view_container, message, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.cartViewContainer, message, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun showProgressBar() {
-        cart_progress_bar.visibility = VISIBLE
+        binding.cartProgressBar.visibility = VISIBLE
     }
 
     override fun hideProgressBar() {
-        cart_progress_bar.visibility = GONE
+        binding.cartProgressBar.visibility = GONE
     }
 
     override fun onDestroy() {
